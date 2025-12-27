@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.venv/
+env/
+.env
+logs/
+*.log
+*.sqlite*
+.vscode/
+.idea/
+alembic/versions/*.pyc
+static/uploads/*
+static/temp/*
+!static/uploads/.gitkeep
+!static/temp/.gitkeep

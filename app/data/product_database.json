@@ -1,0 +1,16 @@
+[
+  {
+    "id": "p001",
+    "brand": "Lakme",
+    "product_name": "9 to 5 Primer + Matte Foundation",
+    "category": "foundation",
+    "shade": "C240 Cool Ivory",
+    "price": 550,
+    "ingredients": ["Water", "Titanium Dioxide", "Dimethicone"],
+    "tags": ["matte", "primer", "long-wear"],
+    "average_rating": 4.4,
+    "in_stock": true,
+    "image_url": "https://example.com/lakme.jpg",
+    "product_url": "https://nykaa.com/lakme"
+  }
+]
