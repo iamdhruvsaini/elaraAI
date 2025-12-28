@@ -1,9 +1,7 @@
 """
-GlamAI - Azure AI Search Service (Advanced)
-Hybrid Product Search + AI Safety Enrichment + RAG-ready
+GlamAI - Azure AI Search Service (Fixed)
+Fix for array field handling
 """
-
-
 
 from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
@@ -13,7 +11,6 @@ from azure.search.documents.indexes.models import (
     SearchableField,
     SearchFieldDataType
 )
-
 from azure.core.credentials import AzureKeyCredential
 from app.core.config import settings
 import logging
@@ -21,9 +18,8 @@ import asyncio
 from typing import List, Optional, Dict, Any
 from app.services.azure import llm_service
 
-
-
 logger = logging.getLogger(__name__)
+
 
 class SearchService:
     def __init__(self):
@@ -37,20 +33,31 @@ class SearchService:
     def _ensure_index_exists(self):
         """Ensures that the Azure Search index exists with correct fields"""
         try:
-            if self.index_name not in [i.name for i in self.index_client.list_indexes()]:
+            existing_indexes = [i.name for i in self.index_client.list_indexes()]
+            
+            if self.index_name not in existing_indexes:
                 logger.info(f"🔧 Creating new Azure Search index: {self.index_name}")
                 fields = [
                     SimpleField(name="id", type=SearchFieldDataType.String, key=True),
-                    SearchableField(name="brand", type=SearchFieldDataType.String, sortable=True),
+                    SearchableField(name="brand", type=SearchFieldDataType.String, sortable=True, filterable=True),
                     SearchableField(name="product_name", type=SearchFieldDataType.String, sortable=True),
-                    SearchableField(name="category", type=SearchFieldDataType.String, sortable=True),
-                    SearchableField(name="shade", type=SearchFieldDataType.String),
+                    SearchableField(name="category", type=SearchFieldDataType.String, sortable=True, filterable=True),
+                    SearchableField(name="shade", type=SearchFieldDataType.String, filterable=True),
                     SimpleField(name="price", type=SearchFieldDataType.Double, sortable=True, filterable=True),
                     SimpleField(name="average_rating", type=SearchFieldDataType.Double, sortable=True, filterable=True),
                     SimpleField(name="total_reviews", type=SearchFieldDataType.Int32, sortable=True, filterable=True),
                     SimpleField(name="in_stock", type=SearchFieldDataType.Boolean, filterable=True),
-                    SearchableField(name="tags", type=SearchFieldDataType.Collection(SearchFieldDataType.String)),
-                    SearchableField(name="ingredients", type=SearchFieldDataType.Collection(SearchFieldDataType.String)),
+                    # CRITICAL: Collection fields must be SearchableField with Collection type
+                    SearchableField(
+                        name="tags",
+                        type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                        filterable=True
+                    ),
+                    SearchableField(
+                        name="ingredients",
+                        type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                        filterable=True
+                    ),
                     SimpleField(name="image_url", type=SearchFieldDataType.String),
                     SimpleField(name="product_url", type=SearchFieldDataType.String),
                 ]
@@ -63,16 +70,70 @@ class SearchService:
             logger.error(f"❌ Error ensuring Azure Search index: {e}")
 
     async def upload_products(self, products: list[dict]):
-        """Upload or merge product data into Azure Search"""
+        """
+        Upload or merge product data into Azure Search.
+        Properly handles Collection fields (ingredients, tags).
+        """
         try:
-            result = self.search_client.upload_documents(documents=products)
-            logger.info(f"✅ Uploaded {len(result)} products to Azure Search")
-        except Exception as e:
-            logger.error(f"❌ Failed to upload products: {e}")
+            clean_products = []
+            
+            for p in products:
+                # Ensure ingredients and tags are lists
+                ingredients = p.get("ingredients", [])
+                if not isinstance(ingredients, list):
+                    ingredients = [ingredients] if ingredients else []
+                
+                tags = p.get("tags", [])
+                if not isinstance(tags, list):
+                    tags = [tags] if tags else []
+                
+                # Clean the product document
+                clean_doc = {
+                    "id": str(p.get("id", "")),
+                    "brand": str(p.get("brand") or ""),
+                    "product_name": str(p.get("product_name") or "Unknown"),
+                    "category": str(p.get("category") or "other"),
+                    "shade": str(p.get("shade") or ""),
+                    "price": float(p.get("price") or 0.0),
+                    "average_rating": float(p.get("average_rating") or 0.0),
+                    "total_reviews": int(p.get("total_reviews") or 0),
+                    "in_stock": bool(p.get("in_stock", True)),
+                    # Ensure collections are lists of strings
+                    "tags": [str(t) for t in tags if t],
+                    "ingredients": [str(i) for i in ingredients if i],
+                    "image_url": str(p.get("image_url") or ""),
+                    "product_url": str(p.get("product_url") or ""),
+                }
+                
+                clean_products.append(clean_doc)
+                logger.info(f"📦 Prepared document for indexing: {clean_doc['product_name']}")
+                logger.info(f"   - Tags: {len(clean_doc['tags'])} items")
+                logger.info(f"   - Ingredients: {len(clean_doc['ingredients'])} items")
 
+            # Upload to Azure Search
+            result = self.search_client.upload_documents(documents=clean_products)
+            
+            # Check results
+            success_count = sum(1 for r in result if r.succeeded)
+            failed_count = len(result) - success_count
+            
+            logger.info(f"✅ Uploaded {success_count} products to Azure Search")
+            
+            if failed_count > 0:
+                logger.warning(f"⚠️ {failed_count} products failed to upload")
+                for r in result:
+                    if not r.succeeded:
+                        logger.error(f"   Failed: {r.key} - {r.error_message}")
+
+        except Exception as e:
+            logger.error(f"❌ Failed to upload products to Azure Search: {e}")
+            logger.error(f"   Products attempted: {len(products)}")
+            if products:
+                logger.error(f"   First product sample: {products[0]}")
+            raise
 
     # ======================================================
-    # 🧠 Hybrid Product Search (Vector + Filtered)
+    # 🧠 Hybrid Product Search
     # ======================================================
     async def search_products(
         self,
@@ -86,51 +147,33 @@ class SearchService:
         enrich_results: bool = True
     ) -> List[Dict[str, Any]]:
         """
-        Hybrid search that combines:
-        - Category + filters
-        - AI semantic relevance
-        - Optional LLM safety enrichment
+        Hybrid search with filters and optional AI enrichment
         """
         try:
-            # 🧩 Base filters
-            filters = ["is_active eq true", "in_stock eq true"]
+            filters = ["in_stock eq true"]
+            
             if category:
                 filters.append(f"category eq '{category}'")
-
-            # 💧 Skin type, tone, undertone filters (optional)
-            if user_profile:
-                if user_profile.get("skin_tone"):
-                    filters.append(f"suitable_skin_tones/any(t: t eq '{user_profile['skin_tone'].lower()}')")
-                if user_profile.get("undertone"):
-                    filters.append(f"suitable_undertones/any(u: u eq '{user_profile['undertone'].lower()}')")
-                if user_profile.get("skin_type"):
-                    filters.append(f"suitable_skin_types/any(s: s eq '{user_profile['skin_type'].lower()}')")
-
+            
             if max_price:
                 filters.append(f"price le {max_price}")
 
-            filter_expr = " and ".join(filters)
+            filter_expr = " and ".join(filters) if filters else None
 
-            # 🔍 Perform hybrid search (vector + text)
             results = self.search_client.search(
                 search_text=query or "*",
                 filter=filter_expr,
-                # select=[
-                #     "id", "brand", "product_name", "category", "shade",
-                #     "price", "image_url", "product_url", "ingredients",
-                #     "average_rating", "total_reviews", "tags",
-                #     "affiliate_link_nykaa", "affiliate_link_amazon"
-                # ],
-                # select=["*"],
                 top=top,
                 order_by=["average_rating desc", "total_reviews desc"]
             )
 
             products = [dict(r) for r in results]
 
-            # 🧠 Optional AI safety enrichment
+            # Optional AI safety enrichment
             if enrich_results and user_profile:
-                enriched_products = await self._enrich_with_safety(products, user_profile, avoid_concerns, avoid_allergens)
+                enriched_products = await self._enrich_with_safety(
+                    products, user_profile, avoid_concerns, avoid_allergens
+                )
                 return enriched_products
 
             return products
@@ -139,12 +182,8 @@ class SearchService:
             logger.error(f"❌ Product search error: {str(e)}")
             return []
 
-
-
-    
-
     # ======================================================
-    # 🧴 AI Safety + Ingredient Analysis
+    # 🧴 AI Safety Enrichment
     # ======================================================
     async def _enrich_with_safety(
         self,
@@ -160,7 +199,6 @@ class SearchService:
             ingredients = product.get("ingredients", [])
             product_name = product.get("product_name", "Unknown Product")
 
-            # Create a concurrent safety check task
             tasks.append(
                 llm_service.check_product_safety(
                     product_name=product_name,
@@ -169,7 +207,6 @@ class SearchService:
                 )
             )
 
-        # Run all safety checks in parallel for speed ⚡
         safety_results = await asyncio.gather(*tasks, return_exceptions=True)
 
         for i, result in enumerate(safety_results):
@@ -200,7 +237,7 @@ class SearchService:
         user_profile: Dict[str, Any],
         max_price: Optional[float] = None
     ) -> List[Dict[str, Any]]:
-        """Find budget-friendly substitutes using AI-enriched product search"""
+        """Find budget-friendly substitutes"""
         return await self.search_products(
             category=category,
             user_profile=user_profile,
@@ -210,7 +247,7 @@ class SearchService:
         )
 
     # ======================================================
-    # 🔥 Trending Product Fetch
+    # 🔥 Trending Products
     # ======================================================
     async def get_trending_products(
         self,
@@ -219,7 +256,7 @@ class SearchService:
     ) -> List[Dict[str, Any]]:
         """Get trending/popular products"""
         try:
-            filter_expr = "is_active eq true and in_stock eq true"
+            filter_expr = "in_stock eq true"
             if category:
                 filter_expr += f" and category eq '{category}'"
 
@@ -241,5 +278,5 @@ class SearchService:
             return []
 
 
-# 🧠 Singleton Instance
+# Singleton Instance
 search_service = SearchService()

@@ -63,6 +63,8 @@ class Settings(BaseSettings):
     AZURE_SEARCH_INDEX_NAME: str = "products-index-v2"
     
     # Azure Blob Storage
+    AZURE_STORAGE_ACCOUNT_NAME: str
+    AZURE_STORAGE_KEY: str
     AZURE_STORAGE_CONNECTION_STRING: str
     AZURE_STORAGE_CONTAINER_FACES: str = "faces"
     AZURE_STORAGE_CONTAINER_OUTFITS: str = "outfits"

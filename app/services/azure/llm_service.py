@@ -4,12 +4,10 @@ AI-powered recommendations, makeup plans, and fashion understanding
 """
 
 from openai import AsyncOpenAI
-
 from app.core.config import settings
 from typing import Dict, Any, List, Optional
 from loguru import logger
 import json
-
 
 
 class LLMService:
@@ -23,29 +21,27 @@ class LLMService:
         )
         self.model = settings.AZURE_OPENAI_DEPLOYMENT_NAME
 
-    # ------------------------------------------------------------
+    # ============================================================
     # 🧩 TEXT-BASED OUTFIT + ACCESSORY PARSING
-    # ------------------------------------------------------------
+    # ============================================================
     async def parse_outfit_description(self, text: str) -> Dict[str, Any]:
         """
         Parse user-provided outfit text.
         Cleans spelling, extracts color, outfit type, and accessories.
-        Example input: "peach lehenga with gold jhumka and silver bangles"
         """
         try:
             prompt = f"""
-You are a global fashion stylist AI specializing all types of wear and accessories around the world.
+You are a global fashion stylist AI specializing in all types of wear and accessories.
 
-Analyze the following user description and extract structured fashion details:
+Analyze the following description and extract structured fashion details:
 
 Description: "{text}"
 
-Your task:
-1. Correct spelling and grammar errors (e.g., "lehenga", "jhumka", "offwhite").
-2. Identify outfit type (e.g., saree, lehenga, gown, kurta, dress, suit, etc.)
-3. Detect color names (normalize to simple color words like peach, gold, cream, red, blue).
-4. Extract accessories with item type (earrings, necklace, bangles, bindi, hair clip, etc.) and material (gold, silver, artificial, diamond, pearl, etc.).
-5. Handle synonyms and alternate spellings (e.g., "jumka" → "jhumka", "ear ring" → "earring").
+Tasks:
+1. Correct spelling and grammar errors
+2. Identify outfit type (saree, lehenga, gown, kurta, dress, suit, etc.)
+3. Detect colors (normalize to simple words: peach, gold, cream, red, blue)
+4. Extract accessories with type and material
 
 Return JSON:
 {{
@@ -63,7 +59,7 @@ Return JSON:
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": "You are a stylist extracting structured fashion and accessory information."},
+                    {"role": "system", "content": "You are a stylist extracting structured fashion information."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.5,
@@ -86,9 +82,9 @@ Return JSON:
                 "confidence": 0.5
             }
 
-    # ------------------------------------------------------------
+    # ============================================================
     # 💄 MAKEUP PLAN GENERATION
-    # ------------------------------------------------------------
+    # ============================================================
     async def generate_makeup_plan(
         self,
         user_profile: Dict[str, Any],
@@ -108,7 +104,7 @@ Return JSON:
                 messages=[
                     {
                         "role": "system",
-                        "content": "You are an expert Indian makeup artist. Create detailed, step-by-step, safe, and aesthetic makeup looks."
+                        "content": "You are an expert makeup artist. Create detailed, step-by-step, safe makeup looks."
                     },
                     {"role": "user", "content": prompt}
                 ],
@@ -118,8 +114,6 @@ Return JSON:
             )
 
             result = json.loads(response.choices[0].message.content)
-
-            # 🩷 Ensure 'occasion' and 'scope' fields are present
             result.setdefault("occasion", occasion)
             result.setdefault("scope", scope)
 
@@ -129,7 +123,6 @@ Return JSON:
         except Exception as e:
             logger.error(f"Makeup plan generation error: {str(e)}")
             raise
-
 
     def _build_makeup_plan_prompt(
         self,
@@ -143,7 +136,7 @@ Return JSON:
 
         concerns_text = ""
         if user_profile.get("skin_concerns"):
-            concerns = [c.get("type", "") for c in user_profile["skin_concerns"]]
+            concerns = [c.get("type", "") if isinstance(c, dict) else str(c) for c in user_profile["skin_concerns"]]
             concerns_text = f"\nSkin Concerns: {', '.join(concerns)}"
 
         allergies_text = ""
@@ -151,58 +144,55 @@ Return JSON:
             allergies_text = f"\nAllergies: {', '.join(user_profile['allergies'])}"
 
         return f"""
-    Create a detailed makeup plan for the following profile and context.
+Create a detailed makeup plan for the following profile and context.
 
-    USER PROFILE:
-    - Skin Tone: {user_profile.get('skin_tone', 'Medium')}
-    - Undertone: {user_profile.get('undertone', 'Warm')}
-    - Skin Type: {user_profile.get('skin_type', 'Combination')}
-    {concerns_text}{allergies_text}
+USER PROFILE:
+- Skin Tone: {user_profile.get('skin_tone', 'Medium')}
+- Undertone: {user_profile.get('undertone', 'Warm')}
+- Skin Type: {user_profile.get('skin_type', 'Combination')}
+{concerns_text}{allergies_text}
 
-    OUTFIT:
-    - Description: {outfit_data.get('refined_description', outfit_data.get('description', 'Not provided'))}
-    - Type: {outfit_data.get('outfit_type', 'unknown')}
-    - Colors: {', '.join(outfit_data.get('colors', []))}
-    - Dominant Color: {outfit_data.get('dominant_color', 'unknown')}
+OUTFIT:
+- Description: {outfit_data.get('refined_description', outfit_data.get('description', 'Not provided'))}
+- Type: {outfit_data.get('outfit_type', 'unknown')}
+- Colors: {', '.join(outfit_data.get('colors', []))}
 
-    ACCESSORIES:
-    {json.dumps(accessories_data, indent=2)}
+ACCESSORIES:
+{json.dumps(accessories_data, indent=2)}
 
-    OCCASION: {occasion}
-    MAKEUP SCOPE: {scope}
+OCCASION: {occasion}
+MAKEUP SCOPE: {scope}
 
-    🎯 TASK:
-    Generate a makeup plan that complements the outfit and occasion. Adjust intensity based on jewelry heaviness and event type.
+Generate a makeup plan that complements the outfit and occasion.
 
-    💄 Return a valid JSON object with this structure:
+Return JSON:
+{{
+  "occasion": "{occasion}",
+  "scope": "{scope}",
+  "style": "style name",
+  "reasoning": "why this style suits the outfit",
+  "intensity": "subtle|moderate|bold",
+  "steps": [
     {{
-    "occasion": "{occasion}",
-    "scope": "{scope}",
-    "style": "Elegant Gold Glow",
-    "reasoning": "why this style suits the outfit and occasion",
-    "intensity": "subtle|moderate|bold",
-    "steps": [
-        {{
-        "step_number": 1,
-        "category": "foundation|eyes|lips|cheeks|base",
-        "instruction": "step-by-step detail",
-        "tool_needed": "brush|blender|fingers",
-        "amount": "pea-size|thin layer|etc",
-        "technique": "how to apply",
-        "expected_result": "description of look",
-        "tips": ["tip1", "tip2"]
-        }}
-    ],
-    "key_focus": ["eyes", "base", "lips"],
-    "estimated_duration": 25,
-    "difficulty": "beginner|intermediate|advanced"
+      "step_number": 1,
+      "category": "foundation|eyes|lips|cheeks|base",
+      "instruction": "step detail",
+      "tool_needed": "brush|blender|fingers",
+      "amount": "pea-size|thin layer",
+      "technique": "how to apply",
+      "expected_result": "description",
+      "tips": ["tip1", "tip2"]
     }}
-    """
+  ],
+  "key_focus": ["eyes", "base", "lips"],
+  "estimated_duration": 25,
+  "difficulty": "beginner|intermediate|advanced"
+}}
+"""
 
-
-    # ------------------------------------------------------------
+    # ============================================================
     # 💍 ACCESSORY RECOMMENDATION
-    # ------------------------------------------------------------
+    # ============================================================
     async def generate_accessory_recommendation(
         self,
         outfit_data: Dict[str, Any],
@@ -239,7 +229,7 @@ Return JSON:
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": "You are a professional Indian stylist balancing jewelry with outfit tone."},
+                    {"role": "system", "content": "You are a professional stylist balancing jewelry with outfit."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.6,
@@ -253,9 +243,9 @@ Return JSON:
             logger.error(f"Accessory recommendation error: {str(e)}")
             raise
 
-    # ------------------------------------------------------------
+    # ============================================================
     # 💇‍♀️ HAIR STYLE RECOMMENDATION
-    # ------------------------------------------------------------
+    # ============================================================
     async def generate_hair_style_suggestion(
         self,
         outfit_data: Dict[str, Any],
@@ -281,7 +271,7 @@ Return JSON:
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": "You are a professional hairstylist specializing in event looks."},
+                    {"role": "system", "content": "You are a professional hairstylist."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.7,
@@ -294,177 +284,133 @@ Return JSON:
         except Exception as e:
             logger.error(f"Hair style suggestion error: {str(e)}")
             raise
-    async def parse_product_label(self, text: str) -> dict:
-            """Extract brand, product name, shade, category, ingredients, etc. from OCR text."""
-            prompt = f"""
-    You are a cosmetic product label parser.
-    From the following OCR text, extract structured information.
 
-    Text:
-    {text}
-
-    Return JSON:
-    {{
-    "brand": "",
-    "product_name": "",
-    "shade": "",
-    "category": "",
-    "description": "",
-    "tags": [],
-    "price": null,
-    "ingredients": []
-    }}
-    """
-            try:
-                response = await self.client.chat.completions.create(
-                    model=self.model,
-                    messages=[
-                        {"role": "system", "content": "You are a product information extraction assistant."},
-                        {"role": "user", "content": prompt}
-                    ],
-                    temperature=0.3,
-                    max_tokens=600,
-                    response_format={"type": "json_object"}
-                )
-
-                return json.loads(response.choices[0].message.content)
-            except Exception as e:
-                logger.error(f"❌ LLM label parsing failed: {e}")
-                raise
-
-    async def check_product_safety(self, product_name: str, product_ingredients: list[str], user_profile: dict) -> dict:
-            """Evaluate whether a product is safe for the user."""
-            try:
-                allergies = user_profile.get("allergies", [])
-                skin_concerns = user_profile.get("skin_concerns", [])
-                skin_type = user_profile.get("skin_type", "unknown")
-
-                prompt = f"""
-    Analyze whether this product is safe for the given user.
-
-    Product: {product_name}
-    Ingredients: {', '.join(product_ingredients)}
-
-    User:
-    - Allergies: {', '.join(allergies) or 'None'}
-    - Skin Type: {skin_type}
-    - Skin Concerns: {', '.join(skin_concerns) or 'None'}
-
-    Return JSON:
-    {{
-    "is_safe": true|false,
-    "warnings": [],
-    "allergens_found": [],
-    "concern_conflicts": [],
-    "recommendation": "safe_to_use|use_with_caution|avoid"
-    }}
-    """
-                response = await self.client.chat.completions.create(
-                    model=self.model,
-                    messages=[
-                        {"role": "system", "content": "You are a dermatologist evaluating product safety."},
-                        {"role": "user", "content": prompt}
-                    ],
-                    temperature=0.3,
-                    max_tokens=500,
-                    response_format={"type": "json_object"}
-                )
-
-                return json.loads(response.choices[0].message.content)
-            except Exception as e:
-                logger.error(f"❌ LLM safety analysis failed: {e}")
-                raise
-
-    # ------------------------------------------------------------
-    # 🧴 PRODUCT SAFETY & FINAL LOOK FEEDBACK
-    # ------------------------------------------------------------
+    # ============================================================
+    # 🧴 PRODUCT SAFETY CHECK (UNIFIED VERSION)
+    # ============================================================
     async def check_product_safety(
-            self,
-            product_name: str,
-            product_ingredients: List[str],
-            user_profile: Dict[str, Any]
-        ) -> Dict[str, Any]:
-            """
-            🧴 Smart safety check for a cosmetic product using AI reasoning + user personalization.
-
-            Args:
-                product_name: Name of the product being checked.
-                product_ingredients: List of extracted ingredients.
-                user_profile: Dict with user's skin_tone, allergies, concerns, and skin_type.
-
-            Returns:
-                Dict with safety analysis (is_safe, warnings, conflicts, recommendation, etc.)
-            """
-
-            try:
-                allergies = user_profile.get("allergies", [])
-                skin_concerns = user_profile.get("skin_concerns", [])
-                skin_type = user_profile.get("skin_type", "unknown")
-                skin_tone = user_profile.get("skin_tone", "unknown")
-
-                prompt = f"""
-        You are an expert cosmetic dermatologist and ingredient analyst.
-        Evaluate the following product for skin safety based on the user's profile.
-
-        ### Product:
-        - Name: {product_name}
-        - Ingredients: {', '.join(product_ingredients) or 'Not provided'}
-
-        ### User Profile:
-        - Skin Type: {skin_type}
-        - Skin Tone: {skin_tone}
-        - Allergies: {', '.join(allergies) or 'None'}
-        - Skin Concerns: {', '.join(skin_concerns) or 'None'}
-
-        Provide your analysis in JSON format:
-        {{
-        "is_safe": true|false,
-        "safety_score": 0.0-1.0,
-        "warnings": ["e.g., Contains alcohol which may irritate dry skin"],
-        "allergens_found": ["Fragrance", "Parabens"],
-        "concern_conflicts": ["Contains comedogenic ingredients"],
-        "severity": "low|moderate|high",
-        "recommendation": "safe_to_use|use_with_caution|avoid",
-        "confidence": 0.0-1.0
-        }}
+        self, 
+        product_name: str, 
+        product_ingredients: List[str], 
+        user_profile: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
+        Smart safety check for a cosmetic product using AI reasoning.
+        
+        Args:
+            product_name: Name of the product
+            product_ingredients: List of ingredients
+            user_profile: Dict with allergies, skin_type, skin_tone, skin_concerns
+        
+        Returns:
+            Dict with safety analysis
+        """
+        try:
+            # Safely extract user profile data
+            allergies = user_profile.get("allergies", [])
+            skin_concerns = user_profile.get("skin_concerns", [])
+            skin_type = user_profile.get("skin_type", "unknown")
+            skin_tone = user_profile.get("skin_tone", "unknown")
+            
+            # Normalize lists
+            if isinstance(allergies, str):
+                allergies = [allergies]
+            if isinstance(skin_concerns, str):
+                skin_concerns = [skin_concerns]
+            
+            # Handle dict items in concerns
+            if skin_concerns and isinstance(skin_concerns[0], dict):
+                skin_concerns = [c.get("type", "") for c in skin_concerns if isinstance(c, dict)]
+            
+            # Filter empty values
+            allergies = [str(a).strip() for a in allergies if a]
+            skin_concerns = [str(c).strip() for c in skin_concerns if c]
+            
+            # Join ingredients safely
+            ingredients_str = ', '.join(product_ingredients) if product_ingredients else 'Not provided'
 
-                response = await self.client.chat.completions.create(
-                    model=self.model,
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": "You are a board-certified dermatologist and cosmetic chemist analyzing ingredient safety."
-                        },
-                        {"role": "user", "content": prompt}
-                    ],
-                    temperature=0.4,
-                    max_tokens=600,
-                    response_format={"type": "json_object"}
-                )
+            prompt = f"""
+You are an expert cosmetic dermatologist and ingredient analyst.
+Evaluate the following product for skin safety based on the user's profile.
 
-                safety_data = json.loads(response.choices[0].message.content)
+Product: {product_name}
+Ingredients: {ingredients_str}
 
-                # 🧠 Add fallback defaults if fields are missing
-                enriched_result = {
-                    "is_safe": safety_data.get("is_safe", True),
-                    "safety_score": safety_data.get("safety_score", 0.9),
-                    "warnings": safety_data.get("warnings", []),
-                    "allergens_found": safety_data.get("allergens_found", []),
-                    "concern_conflicts": safety_data.get("concern_conflicts", []),
-                    "severity": safety_data.get("severity", "low"),
-                    "recommendation": safety_data.get("recommendation", "safe_to_use"),
-                    "confidence": safety_data.get("confidence", 0.85)
-                }
+User Profile:
+- Skin Type: {skin_type}
+- Skin Tone: {skin_tone}
+- Allergies: {', '.join(allergies) or 'None'}
+- Skin Concerns: {', '.join(skin_concerns) or 'None'}
 
-                logger.info(f"🧴 Safety check completed for {product_name} | Safe: {enriched_result['is_safe']}")
-                return enriched_result
+Provide analysis in JSON:
+{{
+  "is_safe": true|false,
+  "safety_score": 0.0-1.0,
+  "warnings": ["warning1", "warning2"],
+  "allergens_found": ["allergen1"],
+  "concern_conflicts": ["conflict1"],
+  "severity": "low|moderate|high",
+  "recommendation": "safe_to_use|use_with_caution|avoid",
+  "confidence": 0.0-1.0
+}}
+"""
 
-            except Exception as e:
-                logger.error(f"❌ Product safety check error for {product_name}: {str(e)}")
-                raise
+            response = await self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are a dermatologist analyzing cosmetic product safety."
+                    },
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.4,
+                max_tokens=600,
+                response_format={"type": "json_object"}
+            )
 
-    async def get_structured_response(self, prompt: str, system_role: str, max_tokens: int = 400):
+            safety_data = json.loads(response.choices[0].message.content)
+
+            # Add fallback defaults
+            result = {
+                "is_safe": safety_data.get("is_safe", True),
+                "safety_score": safety_data.get("safety_score", 0.9),
+                "warnings": safety_data.get("warnings", []),
+                "allergens_found": safety_data.get("allergens_found", []),
+                "concern_conflicts": safety_data.get("concern_conflicts", []),
+                "severity": safety_data.get("severity", "low"),
+                "recommendation": safety_data.get("recommendation", "safe_to_use"),
+                "confidence": safety_data.get("confidence", 0.85)
+            }
+
+            logger.info(f"🧴 Safety check for {product_name} | Safe: {result['is_safe']}")
+            return result
+
+        except Exception as e:
+            logger.error(f"❌ Product safety check error: {str(e)}")
+            # Return safe fallback on error
+            return {
+                "is_safe": True,
+                "safety_score": 0.7,
+                "warnings": [f"Safety check unavailable: {str(e)}"],
+                "allergens_found": [],
+                "concern_conflicts": [],
+                "severity": "unknown",
+                "recommendation": "review_manually",
+                "confidence": 0.5
+            }
+
+    # ============================================================
+    # 📝 HELPER METHODS
+    # ============================================================
+    async def get_structured_response(
+        self, 
+        prompt: str, 
+        system_role: str, 
+        max_tokens: int = 400
+    ) -> Dict[str, Any]:
+        """Get structured JSON response from LLM"""
+        try:
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[
@@ -476,20 +422,32 @@ Return JSON:
                 response_format={"type": "json_object"}
             )
             return json.loads(response.choices[0].message.content)
+        except Exception as e:
+            logger.error(f"Structured response error: {str(e)}")
+            raise
 
-        
+    async def get_text_completion(
+        self, 
+        prompt: str, 
+        system_role: str = "assistant", 
+        max_tokens: int = 300
+    ) -> str:
+        """Get plain text response from LLM"""
+        try:
+            response = await self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": f"You are a {system_role}."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.5,
+                max_tokens=max_tokens
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            logger.error(f"Text completion error: {str(e)}")
+            raise
 
-    async def get_text_completion(self, prompt: str, system_role: str = "assistant", max_tokens: int = 300):
-        response = await self.client.chat.completions.create(
-            model=self.model,
-            messages=[
-                {"role": "system", "content": f"You are a {system_role}."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.5,
-            max_tokens=max_tokens
-        )
-        return response.choices[0].message.content.strip()
 
 # Singleton instance
 llm_service = LLMService()

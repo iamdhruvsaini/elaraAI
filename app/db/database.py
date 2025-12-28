@@ -13,6 +13,7 @@ from loguru import logger
 
 
 
+
 # ============================================================
 # SSL CONTEXT (required for Neon connections)
 # ============================================================
@@ -24,12 +25,12 @@ ssl_context = ssl.create_default_context()
 # Must use: postgresql+asyncpg://user:pass@host/dbname  (no ?sslmode=require)
 async_engine = create_async_engine(
     settings.DATABASE_URL,
-    echo=settings.DEBUG,
+    echo=False,
     future=True,
     connect_args={"ssl": ssl_context},
-    pool_pre_ping=True,
-    pool_size=10,
-    max_overflow=20,
+    # pool_pre_ping=True,
+    # pool_size=10,
+    # max_overflow=20,
 )
 
 # ============================================================
@@ -38,8 +39,9 @@ async_engine = create_async_engine(
 # Must use: postgresql://user:pass@host/dbname?sslmode=require
 sync_engine = create_engine(
     settings.DATABASE_URL_SYNC,
-    echo=settings.DEBUG,
-    pool_pre_ping=True,
+    echo=False,
+    future=True,
+    # pool_pre_ping=True,
 )
 
 # ============================================================
@@ -83,7 +85,7 @@ Base = declarative_base()
 # ✅ app/db/database.py
 
 
-async def get_db() -> AsyncSession:
+async def get_db():
     """
     FastAPI dependency that yields a fully async SQLAlchemy session.
     Automatically rolls back on errors and closes cleanly.
@@ -117,5 +119,5 @@ async def close_db():
     """
     Dispose all database connections gracefully.
     """
-    await async_engine.dispose()
     logger.info("🛑 Async engine connections closed.")
+    await async_engine.dispose()
