@@ -1,0 +1,12 @@
+services:
+  next-app:
+    build:
+      context: .
+      args:
+        - NODE_ENV=production
+    image: frontend-next-app:production
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    command: npm start

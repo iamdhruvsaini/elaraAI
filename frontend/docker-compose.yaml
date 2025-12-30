@@ -1,0 +1,4 @@
+services:
+  next-app:
+    build: .
+    image: frontend-next-app
