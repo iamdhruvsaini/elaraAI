@@ -215,6 +215,9 @@
 }
 
 @layer base {
+  :root {
+    /* Your existing color variables are already defined */
+  }
   * {
     @apply border-border outline-ring/50 p-0 m-0;
   }
@@ -224,5 +227,37 @@
 }
 
 @layer components {
-  
+  /* Custom button style overrides for shadcn buttons */
+
+  /* If you want to add any custom button animations */
+  .btn-hover-lift {
+    @apply transition-transform hover:-translate-y-0.5;
+  }
+
+  /* Custom focus ring style */
+  .btn-focus-custom {
+    @apply focus-visible:ring-primary focus-visible:ring-offset-2;
+  }
+
+  /* Add gradient primary button variant */
+  .btn-gradient {
+    @apply bg-gradient-to-r from-primary via-primary to-accent;
+    @apply hover:from-primary/90 hover:via-primary/90 hover:to-accent/90;
+  }
+
+  /* Add any additional custom classes you need */
+  .btn-shine {
+    @apply relative overflow-hidden;
+  }
+
+  .btn-shine::before {
+    content: "";
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent;
+    @apply -translate-x-full;
+    transition: transform 0.6s;
+  }
+
+  .btn-shine:hover::before {
+    @apply translate-x-full;
+  }
 }

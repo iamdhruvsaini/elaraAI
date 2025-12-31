@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     if (dev) {
       config.watchOptions = {
         poll: 300,
-        aggregateTimeout: 100,
+        aggregateTimeout: 300,
       };
     }
     return config;
