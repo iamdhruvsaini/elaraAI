@@ -34,6 +34,7 @@ async def register(
     """
     Register a new user with email or phone.
     """
+    # print("Registering user: 🎉", user_data)
     # Validate if at least one identifier is provided
     if not user_data.email and not user_data.phone:
         raise HTTPException(

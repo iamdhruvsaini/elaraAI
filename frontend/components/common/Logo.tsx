@@ -1,5 +1,9 @@
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
+/*
+  Logo component that links to the homepage.
+  Consists of an icon and the application name "Elara AI".
+*/
 
 export const Logo = () => {
   return (
