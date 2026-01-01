@@ -12,49 +12,87 @@ from app.models.user import AuthProvider
 # ============= Authentication Schemas =============
 
 class UserRegister(BaseModel):
-    """User registration"""
-    email: Optional[EmailStr] = None
-    phone: Optional[str] = None
-    password: str = Field(..., min_length=8)
-    full_name: Optional[str] = None
-    auth_provider: AuthProvider = AuthProvider.EMAIL
+    """User registration with email and password"""
+    email: EmailStr
+    password: str = Field(..., min_length=8, description="Password must be at least 8 characters")
+    full_name: str = Field(..., min_length=2, max_length=255)
+    phone: Optional[str] = Field(None, description="Optional phone number")
+    
+    @field_validator('password')
+    @classmethod
+    def validate_password(cls, v):
+        """Ensure password has some complexity"""
+        if not any(char.isdigit() for char in v):
+            raise ValueError('Password must contain at least one number')
+        if not any(char.isalpha() for char in v):
+            raise ValueError('Password must contain at least one letter')
+        return v
     
     @field_validator('phone')
     @classmethod
     def validate_phone(cls, v):
-        if v and not v.replace('+', '').replace('-', '').replace(' ', '').isdigit():
-            raise ValueError('Invalid phone number')
+        """Optional phone validation"""
+        if v and not v.replace('+', '').replace('-', '').replace(' ', '').replace('(', '').replace(')', '').isdigit():
+            raise ValueError('Invalid phone number format')
         return v
 
 
 class UserLogin(BaseModel):
-    """User login"""
-    email: Optional[EmailStr] = None
-    phone: Optional[str] = None
+    """User login with email and password"""
+    email: EmailStr
     password: str
 
 
-class OAuthLogin(BaseModel):
-    """OAuth (Google) login"""
-    provider: AuthProvider
-    provider_id: str
-    email: Optional[EmailStr] = None
-    full_name: Optional[str] = None
-    access_token: str
+class GoogleOAuthLogin(BaseModel):
+    """Google OAuth login/registration"""
+    google_id: str = Field(..., description="Unique Google user ID")
+    email: EmailStr
+    full_name: str
+    
+    @field_validator('google_id')
+    @classmethod
+    def validate_google_id(cls, v):
+        if not v or len(v) < 10:
+            raise ValueError('Invalid Google ID')
+        return v
 
 
 class Token(BaseModel):
-    """JWT Token response"""
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
     expires_in: int
+    email: Optional[str] = None
+    username: Optional[str] = None
 
 
 class TokenPayload(BaseModel):
     """JWT Token payload"""
     sub: int  # user_id
     exp: datetime
+    token_type: str = "access"  # "access" or "refresh"
+
+
+class PasswordChange(BaseModel):
+    """Change password request"""
+    current_password: str
+    new_password: str = Field(..., min_length=8)
+    
+    @field_validator('new_password')
+    @classmethod
+    def validate_new_password(cls, v):
+        if not any(char.isdigit() for char in v):
+            raise ValueError('Password must contain at least one number')
+        if not any(char.isalpha() for char in v):
+            raise ValueError('Password must contain at least one letter')
+        return v
+
+
+class EmailCheckResponse(BaseModel):
+    """Email availability check response"""
+    email: str
+    available: bool
+    message: str
 
 
 # ============= Profile Schemas =============
@@ -86,7 +124,7 @@ class SkinConcernDetail(BaseModel):
 class AllergyProfile(BaseModel):
     """User allergy and sensitivity profile"""
     allergies: List[str] = []  # ["parabens", "fragrances"]
-    sensitivity_level: str = "normal"  # low, moderate, high
+    sensitivity_level: str = "normal"  # low, normal, high
 
 
 class ProfileUpdate(BaseModel):
@@ -112,32 +150,32 @@ class UserProfileResponse(BaseModel):
     user_id: int
     
     # Skin Analysis
-    skin_tone: Optional[str]
-    undertone: Optional[str]
-    skin_type: Optional[str]
+    skin_tone: Optional[str] = None
+    undertone: Optional[str] = None
+    skin_type: Optional[str] = None
     skin_concerns: List[Dict[str, Any]] = []
     concern_details: Dict[str, Any] = {}
     
     # Allergies
     allergies: List[str] = []
-    sensitivity_level: str
+    sensitivity_level: str = "normal"
     
     # Images
-    face_image_url: Optional[str]
+    face_image_url: Optional[str] = None
     
     # Preferences
-    preferred_language: str
-    enable_voice_guidance: bool
-    enable_notifications: bool
-    dark_mode: bool
+    preferred_language: str = "en"
+    enable_voice_guidance: bool = True
+    enable_notifications: bool = True
+    dark_mode: bool = False
     
     # Stats
-    total_sessions: int
-    products_count: int
+    total_sessions: int = 0
+    products_count: int = 0
     
     # Timestamps
     created_at: datetime
-    updated_at: Optional[datetime]
+    updated_at: Optional[datetime] = None
     
     class Config:
         from_attributes = True
@@ -146,17 +184,16 @@ class UserProfileResponse(BaseModel):
 class UserResponse(BaseModel):
     """User response with profile"""
     id: int
-    email: Optional[str]
-    phone: Optional[str]
-    full_name: Optional[str]
-    age: Optional[int]
-    location: Optional[str]
+    email: str
+    full_name: Optional[str] = None
+    age: Optional[int] = None
+    location: Optional[str] = None
     auth_provider: AuthProvider
     is_active: bool
     is_verified: bool
     is_premium: bool
     created_at: datetime
-    last_login: Optional[datetime]
+    last_login: Optional[datetime] = None
     profile: Optional[UserProfileResponse] = None
     
     class Config:
@@ -181,3 +218,49 @@ class DashboardResponse(BaseModel):
     upcoming_events: List[Dict[str, Any]] = []
     recent_sessions: List[Dict[str, Any]] = []
     quick_tips: List[str] = []
+
+
+# ============= Password Reset Schemas (Optional for future) =============
+
+class PasswordResetRequest(BaseModel):
+    """Request password reset email"""
+    email: EmailStr
+
+
+class PasswordResetConfirm(BaseModel):
+    """Confirm password reset with token"""
+    token: str
+    new_password: str = Field(..., min_length=8)
+    
+    @field_validator('new_password')
+    @classmethod
+    def validate_password(cls, v):
+        if not any(char.isdigit() for char in v):
+            raise ValueError('Password must contain at least one number')
+        if not any(char.isalpha() for char in v):
+            raise ValueError('Password must contain at least one letter')
+        return v
+
+
+class EmailVerificationRequest(BaseModel):
+    """Request email verification"""
+    email: EmailStr
+
+
+class EmailVerificationConfirm(BaseModel):
+    """Confirm email with token"""
+    token: str
+
+
+# ============= Response Models =============
+
+class MessageResponse(BaseModel):
+    """Generic message response"""
+    message: str
+    success: bool = True
+
+
+class ErrorResponse(BaseModel):
+    """Error response"""
+    detail: str
+    error_code: Optional[str] = None

@@ -1,11 +1,11 @@
 """
 GlamAI - User Models
-Database models for user authentication and profiles
+Database models for modern authentication and profiles
 """
 
 from sqlalchemy import (
     Column, Integer, String, Boolean, DateTime, Enum,
-    Text, JSON, ForeignKey, func, Float
+    Text, JSON, ForeignKey, func, Float, UniqueConstraint
 )
 from sqlalchemy.orm import relationship
 from app.db.database import Base
@@ -16,21 +16,20 @@ class AuthProvider(str, enum.Enum):
     """Authentication provider types"""
     EMAIL = "email"
     GOOGLE = "google"
-    PHONE = "phone"
 
 
 class User(Base):
-    """Main User model"""
+    """Main User model - Simplified for email + Google auth"""
     __tablename__ = "users"
     
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String(255), unique=True, index=True, nullable=True)
-    phone = Column(String(20), unique=True, index=True, nullable=True)
-    hashed_password = Column(String(255), nullable=True)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    phone = Column(String(20), unique=True, index=True, nullable=True)  # Optional phone
+    hashed_password = Column(String(255), nullable=True)  # NULL for OAuth users
     
     # Provider info
-    auth_provider = Column(Enum(AuthProvider), default=AuthProvider.EMAIL)
-    provider_id = Column(String(255), nullable=True)  # Google/OAuth ID
+    auth_provider = Column(Enum(AuthProvider), default=AuthProvider.EMAIL, nullable=False)
+    provider_id = Column(String(255), nullable=True, unique=True, index=True)  # Google ID
     
     # Basic Info
     full_name = Column(String(255), nullable=True)
@@ -38,12 +37,12 @@ class User(Base):
     location = Column(String(255), nullable=True)
     
     # Account Status
-    is_active = Column(Boolean, default=True)
-    is_verified = Column(Boolean, default=False)
-    is_premium = Column(Boolean, default=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    is_verified = Column(Boolean, default=False, nullable=False)
+    is_premium = Column(Boolean, default=False, nullable=False)
     
     # Timestamps
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     last_login = Column(DateTime(timezone=True), nullable=True)
     
@@ -54,13 +53,34 @@ class User(Base):
         uselist=False,
         cascade="all, delete-orphan"
     )
-    vanity = relationship("VanityProduct", back_populates="user", cascade="all, delete-orphan")
-    makeup_sessions = relationship("MakeupSession", back_populates="user", cascade="all, delete-orphan")
-    events = relationship("ScheduledEvent", back_populates="user", cascade="all, delete-orphan")
-    style_sessions = relationship("UserStyleSession", back_populates="user", cascade="all, delete-orphan")
+    vanity = relationship(
+        "VanityProduct",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    makeup_sessions = relationship(
+        "MakeupSession",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    events = relationship(
+        "ScheduledEvent",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    style_sessions = relationship(
+        "UserStyleSession",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    
+    # Ensure email is unique across all auth providers
+    __table_args__ = (
+        UniqueConstraint('email', name='uq_user_email'),
+    )
     
     def __repr__(self):
-        return f"<User {self.email or self.phone}>"
+        return f"<User {self.email}>"
 
 
 class UserProfile(Base):
@@ -68,10 +88,15 @@ class UserProfile(Base):
     __tablename__ = "user_profiles"
     
     id = Column(Integer, primary_key=True, index=True)
-
-    # ✅ FIXED: Proper foreign key linking to users.id
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True)
-
+    
+    # Foreign key to User
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True
+    )
+    
     # Skin Analysis
     skin_tone = Column(String(50), nullable=True)  # Light, Medium, Dark
     undertone = Column(String(50), nullable=True)  # Warm, Cool, Neutral
@@ -103,25 +128,27 @@ class UserProfile(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
-    # ✅ Relationship back to user
+    # Relationship back to user
     user = relationship("User", back_populates="profile")
     
     def __repr__(self):
         return f"<UserProfile user_id={self.user_id}>"
+
+
 class UserStyleSession(Base):
     """
     Dynamic outfit + accessories log for a user
     """
     __tablename__ = "user_style_sessions"
-
+    
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-
+    
     # Outfit info
     outfit_description = Column(Text, nullable=True)
     outfit_type = Column(String(100), nullable=True)
     outfit_colors = Column(JSON, default=list)
-
+    
     # Accessories info
     # Example:
     # {
@@ -129,10 +156,13 @@ class UserStyleSession(Base):
     #   "hand": {"item": "bangle", "material": "silver", "color": {"name": "Lavender", "hex": "#E6E6FA"}}
     # }
     accessories = Column(JSON, default=dict)
-
+    
     # Confidence and timestamp
     confidence = Column(Float, default=0.9)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-
-    # ✅ Correct Relationship — only one
+    
+    # Relationship
     user = relationship("User", back_populates="style_sessions")
+    
+    def __repr__(self):
+        return f"<UserStyleSession id={self.id} user_id={self.user_id}>"
