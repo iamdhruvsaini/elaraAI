@@ -23,23 +23,23 @@ export const DesktopActions = ({
               Create Plan
             </Link>
           </Button>
-          <Button variant="outline" asChild>
+          <Button className="bg-primary text-white"  asChild>
             <Link href="/profile">
               <User className="h-4 w-4" />
               Profile
             </Link>
           </Button>
-          <Button variant="ghost" onClick={onLogout}>
+          <Button className="bg-primary text-white"  onClick={onLogout}>
             Logout
           </Button>
         </>
       ) : (
         <>
-          <Button variant="outline" onClick={onLogin}>
+          <Button  className="bg-primary text-white" onClick={onLogin}>
             <LogIn className="h-4 w-4" />
             Login
           </Button>
-          <Button variant="ghost" asChild>
+          <Button className="bg-primary text-white" asChild>
             <Link href="/signup">
               <UserPlus className="h-4 w-4" />
               Sign Up

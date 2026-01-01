@@ -222,7 +222,7 @@
     @apply border-border outline-ring/50 p-0 m-0;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
   }
 }
 

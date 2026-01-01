@@ -15,7 +15,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b-2 border-border bg-background backdrop-blur">
+      <header className="sticky top-0 z-40 w-full backdrop-blur">
         <div className="container mx-auto">
           <div className="flex h-14 md:h-16 items-center justify-between">
             <Logo />
@@ -52,8 +52,6 @@ export default function Header() {
           )}
         </div>
       </header>
-
-      <div className="h-20 md:h-30 fixed top-0 left-0 right-0 z-30 bg-background/95 backdrop-blur-sm" />
     </>
   );
 }

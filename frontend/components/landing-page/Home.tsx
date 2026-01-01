@@ -31,7 +31,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 mb-16">
             <Button asChild size="lg" className="text-base px-8 shadow-lg">
-              <Link href="/get-started">
+              <Link href="/">
                 <SparklesIcon className="size-5" />
                 Start Your Makeup Plan
               </Link>
@@ -39,10 +39,9 @@ export default function Home() {
             <Button
               asChild
               size="lg"
-              className="text-base px-8 shadow-lg"
-              variant="secondary"
+              className="text-base text-white px-8 shadow-lg bg-primary "
             >
-              <Link href="/explore">
+              <Link href="/">
                 Explore How It Works <ArrowRightIcon className="size-5" />
               </Link>
             </Button>

@@ -30,7 +30,7 @@ export const MobileMenu = ({
       <div className="flex flex-col gap-2 pt-4 border-t border-border">
         {isAuthenticated ? (
           <>
-            <Button asChild className="w-full">
+            <Button asChild className="bg-primary text-white" >
               <Link href="/plan">
                 <Sparkles className="h-4 w-4" />
                 Create Plan
@@ -57,7 +57,7 @@ export const MobileMenu = ({
           <>
             <Button
               variant="outline"
-              className="w-full"
+              className="bg-primary text-white" 
               onClick={() => {
                 onLogin();
                 closeMenu();
@@ -66,7 +66,7 @@ export const MobileMenu = ({
               <LogIn className="h-4 w-4" />
               Login
             </Button>
-            <Button variant="ghost" asChild className="w-full">
+            <Button variant="ghost"  asChild className="bg-primary text-white" >
               <Link href="/signup">
                 <UserPlus className="h-4 w-4" />
                 Sign Up
