@@ -3,9 +3,10 @@ GlamAI - Makeup Session Schemas
 """
 
 from pydantic import BaseModel, Field, HttpUrl
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any,Union
 from datetime import datetime
 from app.models.makeup import OccasionType, MakeupScope, SessionStatus
+from app.models.makeup import OccasionType  # Import the enum
 
 
 # ============= Session Creation =============
@@ -23,14 +24,8 @@ class AccessoryItem(BaseModel):
     material: Optional[str]
     color: Optional[str] = None
 
-from pydantic import BaseModel, Field
-from typing import Optional, Dict, Any, List
-from datetime import datetime
+from pydantic import BaseModel, Field, field_serializer,field_validator
 
-
-from pydantic import BaseModel, Field, field_serializer
-from typing import Optional, Dict, Any, List
-from datetime import datetime
 
 # ============= Style Session =============x``
 class StyleSessionCreate(BaseModel):
@@ -215,50 +210,79 @@ class MakeupSessionResponse(BaseModel):
 
 # ============= Scheduled Events =============
 
+
+
+
+"""
+Event Schemas - Simplified without outfit/accessory URLs
+Add to or replace in: app/schemas/makeup.py
+"""
+
+from pydantic import BaseModel, Field
+from typing import Optional
+from datetime import datetime, time
+
+
 class EventCreate(BaseModel):
-    """Create scheduled event"""
-    event_name: str = Field(..., min_length=1, max_length=500)
+    """Schema for creating a new event"""
+    event_name: str = Field(..., min_length=1, max_length=200)
     event_date: datetime
-    event_time: Optional[str] = None
-    occasion: OccasionType
+    event_time: Optional[time] = None
+    occasion: str = Field(..., min_length=1, max_length=100)
     outfit_description: Optional[str] = None
-    remind_1_day_before: bool = True
-    remind_2_hours_before: bool = True
+    remind_1_day_before: bool = False
+    remind_2_hours_before: bool = False
 
 
 class EventUpdate(BaseModel):
-    """Update scheduled event"""
-    event_name: Optional[str] = None
+    """Schema for updating an event"""
+    event_name: Optional[str] = Field(None, min_length=1, max_length=200)
     event_date: Optional[datetime] = None
-    event_time: Optional[str] = None
-    occasion: Optional[OccasionType] = None
+    event_time: Optional[time] = None
+    occasion: Optional[str] = Field(None, min_length=1, max_length=100)
     outfit_description: Optional[str] = None
     remind_1_day_before: Optional[bool] = None
     remind_2_hours_before: Optional[bool] = None
 
 
 class EventResponse(BaseModel):
-    """Scheduled event response"""
+    """Schema for event response - NO outfit_image_url"""
     id: int
     user_id: int
     event_name: str
     event_date: datetime
-    event_time: Optional[str]
-    occasion: OccasionType
-    outfit_description: Optional[str]
-    outfit_image_url: Optional[str]
-    remind_1_day_before: bool
-    remind_2_hours_before: bool
-    skincare_reminder_sent: bool
-    makeup_reminder_sent: bool
-    session_completed: bool
-    is_active: bool
-    created_at: datetime
+    event_time: Optional[time] = None
+    occasion: str
+    outfit_description: Optional[str] = None
+    # REMOVED: outfit_image_url
+    makeup_session_id: Optional[int] = None
     
+    # Reminder settings
+    remind_1_day_before: bool = False
+    remind_2_hours_before: bool = False
+    skincare_reminder_sent: bool = False
+    makeup_reminder_sent: bool = False
+    
+    # Status
+    is_active: bool = True
+    is_cancelled: bool = False
+    session_completed: bool = False
+    
+    # Timestamps
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
     class Config:
-        from_attributes = True
+        from_attributes = True  # Pydantic v2
+        # orm_mode = True  # Pydantic v1
 
 
+class EventListResponse(BaseModel):
+    """Schema for list of events"""
+    events: list[EventResponse]
+    total: int
+    upcoming: int
+    past: int
 # ============= History =============
 
 class HistoryItem(BaseModel):
