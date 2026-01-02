@@ -29,8 +29,7 @@ export default function Signup() {
       const data=await registerUser({
         full_name: fullName,
         email,
-        password,
-        phone: "9873245671",
+        password
       });
       router.replace("/");
       showToast("Registration successful!", "success","bottom-right");

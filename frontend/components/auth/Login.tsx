@@ -1,14 +1,11 @@
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
 import React, { useState, FormEvent } from "react";
+import { showToast } from "../toast/toast";
+import { useRouter } from "next/navigation";
 
-type SocialProvider = "google" | "email" | "phone";
 
-type LoginProps = {
-  onLogin?: (data: { email: string; password: string }) => Promise<void> | void;
-  onSocial?: (provider: SocialProvider) => void;
-  onSkip?: () => void;
-};
 
 function GoogleIcon() {
   return (
@@ -35,20 +32,32 @@ function PhoneIcon() {
   );
 }
 
-export default function Login({ onLogin, onSocial, onSkip }: LoginProps) {
+export default function Login() {
+  const { loginUser,loginLoading,loginError } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [busy, setBusy] = useState(false);
+  const router=useRouter();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!onLogin) return;
-    setBusy(true);
-    try {
-      await onLogin({ email, password });
-    } finally {
-      setBusy(false);
+    const formData={
+      email,
+      password
     }
+    if(!email || !password){
+      showToast("Missing Fields","error","bottom-right");
+      return;
+    }
+
+    try{
+      await loginUser(formData);
+      router.replace("/");
+      showToast("Login Success","success","bottom-right");
+
+    }catch (error) {
+      showToast("Login Failed","error","bottom-right");
+    }
+   
   }
 
   return (
@@ -61,18 +70,9 @@ export default function Login({ onLogin, onSocial, onSkip }: LoginProps) {
           <div className="space-y-3">
             <button
               type="button"
-              onClick={() => onSocial?.("google")}
               className="w-full flex items-center gap-3 justify-center rounded-md py-3 px-4 bg-primary text-white border border-border btn-focus-custom"
             >
               <GoogleIcon /> <span className="font-medium">Continue with Google</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onSocial?.("email")}
-              className="w-full flex items-center gap-3 justify-center rounded-md py-3 px-4 bg-primary text-white border border-border btn-focus-custom"
-            >
-              <MailIcon /> <span className="font-medium">Continue with Email</span>
             </button>
 
           </div>
@@ -112,11 +112,17 @@ export default function Login({ onLogin, onSocial, onSkip }: LoginProps) {
 
             <button
               type="submit"
-              disabled={busy}
+              disabled={loginLoading}
               className="w-full rounded-md bg-primary text-primary-foreground py-2 mt-1 btn-focus-custom"
             >
-              {busy ? "Signing in..." : "Sign in"}
+              {loginLoading ? "Signing in..." : "Sign in"}
             </button>
+
+            {!!loginError && (
+              <p className="text-sm text-red-600 mt-2">
+                Login failed. Please check your credentials and try again.
+              </p>
+            )}
           </form>
 
         </div>

@@ -1,15 +1,37 @@
 export interface RegisterUserRequest {
   email: string;
-  phone: string;
   password: string;
   full_name: string;
   auth_provider: "email" | "google" | "github";
 }
 
 export interface RegisterUserResponse {
-  id: string;
   email: string;
-  full_name: string;
+  username: string;
   access_token: string;
+  refresh_token: string;
+  token_type: "bearer";
+  expires_in: number;
 }
 
+export interface LoginUserRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginUserResponse {
+  email: string;
+  username: string;
+  access_token: string;
+  refresh_token: string;
+  token_type: "bearer";
+  expires_in: number;
+}
+
+export interface MeResponse {
+  id: string;
+  email: string;
+  username: string;
+  created_at: string;
+  updated_at: string;
+}
