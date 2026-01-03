@@ -18,7 +18,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full backdrop-blur">
+      <header className="sticky bg-white top-0 z-40 w-full backdrop-blur">
         <div className="container mx-auto">
           <div className="flex h-14 md:h-16 items-center justify-between">
             <Logo />
@@ -40,7 +40,7 @@ export default function Header() {
               {mobileMenuOpen ? (
                 <X className="h-6 w-6" />
               ) : (
-                <Menu className="h-6 w-6" />
+                <Menu className="size-6" />
               )}
             </Button>
           </div>

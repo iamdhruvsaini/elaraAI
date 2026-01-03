@@ -31,7 +31,16 @@ export interface LoginUserResponse {
 export interface MeResponse {
   id: string;
   email: string;
-  username: string;
+  full_name: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface CaptureUserImageResponse 
+  {
+  skin_tone: "string",
+  undertone: "string",
+  skin_type: "string",
+  confidence: 1,
+  raw_data: {}
 }

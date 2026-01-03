@@ -1,16 +1,15 @@
-import { LoginUserRequest, LoginUserResponse, MeResponse, RegisterUserRequest, RegisterUserResponse } from "@/redux/services/authentication/types";
+import { MeResponse } from "@/redux/services/authentication/types";
 
-export interface AuthContextType {
+export type AuthContextType = {
   currentUser: MeResponse | null;
   isAuthenticated: boolean;
+  authChecked: boolean;
 
-  registerUser: (
-    user: Omit<RegisterUserRequest, "auth_provider">
-  ) => Promise<RegisterUserResponse>;
+  registerUser: (user: any) => Promise<any>;
   registrationLoading: boolean;
   registrationError: unknown;
 
-  loginUser: (user: LoginUserRequest) => Promise<LoginUserResponse>;
+  loginUser: (user: any) => Promise<any>;
   loginLoading: boolean;
   loginError: unknown;
 

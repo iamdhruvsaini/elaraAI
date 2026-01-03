@@ -1,10 +1,11 @@
-import Home from '@/components/landing-page/Home'
+import Landing from '@/components/landing-page/Landing'
+
 
 
 const HomePage = () => {
   return (
     <>
-      <Home/>
+      <Landing/>
     </>
   )
 }

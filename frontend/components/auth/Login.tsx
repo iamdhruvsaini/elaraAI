@@ -61,9 +61,9 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-start justify-center py-8 md:px-4 text-foreground">
+    <div className="flex items-start justify-center py-8 md:px-4 text-foreground">
       <div className="w-full max-w-md">
-        <div className="bg-white text-card-foreground rounded-lg p-6 shadow-md border border-border">
+        <div className="bg-white text-card-foreground rounded-lg py-6 px-4 shadow-md border border-border">
           <h1 className="text-2xl font-semibold text-center">Welcome Back!</h1>
           <p className="text-sm text-muted-foreground text-center mt-2 mb-4">Sign in to continue</p>
 

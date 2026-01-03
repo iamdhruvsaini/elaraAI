@@ -21,7 +21,22 @@ import type {
 } from "@/redux/services/authentication/types";
 import { AuthContextType } from "@/lib/types/authContext-types";
 
+/* =======================
+   Helpers
+======================= */
 
+const isTokenValid = (token: string) => {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.exp * 1000 > Date.now();
+  } catch {
+    return false;
+  }
+};
+
+/* =======================
+   Context
+======================= */
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -32,16 +47,15 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<MeResponse | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
 
   const [
     registerUserMutation,
     { isLoading: registrationLoading, error: registrationError },
   ] = useRegisterUserMutation();
 
-  const [
-    loginUserMutation,
-    { isLoading: loginLoading, error: loginError },
-  ] = useLoginUserMutation();
+  const [loginUserMutation, { isLoading: loginLoading, error: loginError }] =
+    useLoginUserMutation();
 
   const [getMe] = useLazyGetMeQuery();
 
@@ -73,18 +87,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth_provider: "email",
     }).unwrap();
 
-    if (!response) {
-      return response;
-    }
+    if (!response) return response;
 
     saveTokens(response);
-
     setIsAuthenticated(true);
-    getMe()
-    .unwrap()
-    .then((me) => setCurrentUser(me))
-    .catch(() => clearAuth());
 
+    // background fetch
+    getMe()
+      .unwrap()
+      .then((me) => setCurrentUser(me))
+      .catch(() => clearAuth());
 
     return response;
   };
@@ -95,38 +107,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const loginUser = async (user: LoginUserRequest) => {
     const response = await loginUserMutation(user).unwrap();
-    if (!response) {
-      return response;
-    }
-    saveTokens(response);
-   
-    setIsAuthenticated(true);
-    getMe()
-    .unwrap()
-    .then((me) => setCurrentUser(me))
-    .catch(() => clearAuth());
+    if (!response) return response;
 
+    saveTokens(response);
+    setIsAuthenticated(true);
+
+    // background fetch
+    getMe()
+      .unwrap()
+      .then((me) => setCurrentUser(me))
+      .catch(() => clearAuth());
 
     return response;
   };
 
   /* =======================
-     Restore session on refresh
+     Restore session (FAST)
   ======================= */
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
-    if (!token) return;
 
-    (async () => {
-      try {
-        const me = await getMe().unwrap();
-        setCurrentUser(me);
-        setIsAuthenticated(true);
-      } catch {
-        clearAuth();
-      }
-    })();
+    // 🚀 instant auth decision
+    if (!token || !isTokenValid(token)) {
+      setAuthChecked(true);
+      return;
+    }
+
+    setIsAuthenticated(true);
+    setAuthChecked(true);
+
+    // 🧵 fetch user in background
+    getMe()
+      .unwrap()
+      .then((me) => setCurrentUser(me))
+      .catch(() => clearAuth());
   }, []);
 
   /* =======================
@@ -142,6 +157,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         currentUser,
         isAuthenticated,
+        authChecked,
 
         registerUser,
         registrationLoading,
@@ -161,7 +177,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 };
 
 /* =======================
-   Consume Context
+   Hook
 ======================= */
 
 export const useAuth = (): AuthContextType => {

@@ -17,12 +17,6 @@ export const DesktopActions = ({
     <div className="hidden lg:flex items-center gap-3">
       {isAuthenticated ? (
         <>
-          <Button asChild>
-            <Link href="/plan">
-              <Sparkles className="h-4 w-4" />
-              Create Plan
-            </Link>
-          </Button>
           <Button className="bg-primary text-white"  asChild>
             <Link href="/profile">
               <User className="h-4 w-4" />

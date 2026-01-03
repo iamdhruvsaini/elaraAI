@@ -1,4 +1,4 @@
-import { Home, Compass, Sparkles, User, LogIn, UserPlus } from "lucide-react";
+import { Home, Compass, Sparkles, User, LogIn, UserPlus, PersonStanding } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "./NavLink";
@@ -17,10 +17,13 @@ export const MobileMenu = ({
   onLogout,
 }: Props) => {
   return (
-    <div className="lg:hidden border-t border-border py-4">
+    <div className="lg:hidden border-t border-border bg-white py-4">
       <nav className="flex flex-col gap-1 mb-4">
-        <NavLink href="/" icon={Home} onClick={closeMenu}>
+        <NavLink href="/home" icon={Home} onClick={closeMenu}>
           Home
+        </NavLink>
+        <NavLink href="/profile" icon={PersonStanding} onClick={closeMenu}>
+          Profile
         </NavLink>
         <NavLink href="/how-it-works" icon={Compass} onClick={closeMenu}>
           How It Works

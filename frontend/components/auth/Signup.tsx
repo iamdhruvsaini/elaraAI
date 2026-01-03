@@ -40,9 +40,9 @@ export default function Signup() {
   }
 
   return (
-    <div className="min-h-screen flex items-start justify-center py-8 px-4 text-foreground">
+    <div className="flex items-start justify-center py-8 text-foreground">
       <div className="w-full max-w-md">
-        <div className="bg-white text-card-foreground rounded-lg p-6 shadow-md border border-border">
+        <div className="bg-white text-card-foreground rounded-lg py-6 px-4 shadow-md border border-border">
           <div className="text-center">
             <h1 className="text-xl font-semibold">Let's Get to Know You</h1>
             <p className="text-sm text-muted-foreground mt-1">

@@ -5,6 +5,7 @@ import Header from "@/components/common/header/Header";
 import ReduxProvider from "@/redux/provider";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "react-hot-toast";
+import { Suspense } from "react";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -23,12 +24,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${outfit.className} antialiased px-4`}>
+      <body className={`${outfit.className} antialiased flex flex-col px-4 `}>
         <ReduxProvider>
           <AuthProvider>
             <Toaster position="top-right" />
             <Header />
-            <main className="container mx-auto">{children}</main>
+            
+              <main className="overflow-hidden max-w-[440px] sm:mx-auto">
+                {children}
+              </main>
+          
           </AuthProvider>
         </ReduxProvider>
       </body>

@@ -1,6 +1,7 @@
 import { getBaseUrl } from "@/lib/getBaseUrl";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type {
+  CaptureUserImageResponse,
   LoginUserRequest,
   LoginUserResponse,
   MeResponse,
@@ -36,6 +37,14 @@ export const authApi = createApi({
       }),
     }),
 
+    CaptureUserImage: builder.mutation<CaptureUserImageResponse, any>({
+      query: (body) => ({
+        url: "profile/analyze-face",
+        method: "POST",
+        body,
+      }),
+    }),
+
 
   }),
 });
@@ -43,7 +52,8 @@ export const authApi = createApi({
 export const {
   useRegisterUserMutation,
   useLoginUserMutation,
-  useLazyGetMeQuery
+  useLazyGetMeQuery,
+  useCaptureUserImageMutation
   } = authApi;
 
 export default authApi;
