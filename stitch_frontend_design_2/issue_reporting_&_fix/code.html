@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Issue Reporting &amp; Fix</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee2b6c",
+                        "primary-soft": "#fef2f6", // Light pink for backgrounds
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221016",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-100 antialiased selection:bg-primary selection:text-white">
+<div class="max-w-md mx-auto min-h-screen bg-white dark:bg-[#1a0b10] shadow-2xl relative flex flex-col">
+<header class="sticky top-0 z-40 bg-white/90 dark:bg-[#1a0b10]/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center justify-between">
+<button class="p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+<span class="material-icons text-gray-600 dark:text-gray-300">arrow_back_ios_new</span>
+</button>
+<div class="text-center flex-1 pr-8">
+<h1 class="text-lg font-bold text-gray-900 dark:text-white flex items-center justify-center gap-2">
+                    Let's Fix This! 🔧
+                </h1>
+</div>
+<button class="p-2 -mr-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+<span class="material-icons text-gray-600 dark:text-gray-300">help_outline</span>
+</button>
+</header>
+<main class="flex-1 overflow-y-auto px-4 py-6 space-y-6 pb-40">
+<div class="text-center space-y-1">
+<p class="text-gray-500 dark:text-gray-400 text-sm">No worries, we'll help you get back on track.</p>
+<div class="inline-flex items-center gap-1 px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-full text-xs font-medium">
+<span class="material-icons text-[14px]">timer</span>
+                    Fix time: ~5 minutes
+                </div>
+</div>
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-4">
+<div class="flex justify-between items-start mb-2">
+<div class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Current Step</div>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-primary/10 text-primary border border-primary/20">
+                        Symmetry Issue
+                    </span>
+</div>
+<h2 class="text-xl font-bold text-gray-900 dark:text-white mb-1">Step 4: Winged Liner</h2>
+<div class="flex items-start gap-3 mt-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+<span class="material-icons text-gray-400 mt-0.5 text-lg">edit_note</span>
+<div>
+<p class="text-sm text-gray-600 dark:text-gray-300 italic">"The right wing is thicker and higher than the left one. It looks uneven."</p>
+</div>
+</div>
+</div>
+<div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-soft to-white dark:from-primary/20 dark:to-gray-800 border border-primary/10 dark:border-primary/20 p-5">
+<div class="absolute -top-6 -right-6 w-24 h-24 bg-primary/10 rounded-full blur-2xl"></div>
+<div class="flex gap-4 items-start relative z-10">
+<div class="w-10 h-10 rounded-full bg-white dark:bg-gray-700 flex items-center justify-center shadow-sm shrink-0">
+<span class="material-icons text-primary">auto_awesome</span>
+</div>
+<div>
+<h3 class="font-semibold text-gray-900 dark:text-white text-sm mb-1">AI Insight: Uneven Pressure</h3>
+<p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                            Based on your camera input, it looks like the brush angle shifted. We'll use a concealer technique to sharpen the edge instead of wiping it off completely.
+                        </p>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3 ml-1 flex items-center gap-2">
+<span class="material-icons text-gray-400 text-sm">handyman</span>
+                    Tools You'll Need
+                </h3>
+<div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+<label class="flex-shrink-0 cursor-pointer group">
+<input checked="" class="peer sr-only" type="checkbox"/>
+<div class="w-24 h-24 rounded-xl border-2 border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 peer-checked:border-primary peer-checked:bg-primary-soft dark:peer-checked:bg-primary/10 flex flex-col items-center justify-center gap-2 transition-all p-2 text-center">
+<div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 group-hover:scale-110 transition-transform flex items-center justify-center">
+<span class="material-icons text-gray-500 text-sm">brush</span>
+</div>
+<span class="text-xs font-medium text-gray-700 dark:text-gray-300">Concealer Brush</span>
+<div class="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 peer-checked:bg-primary peer-checked:border-primary flex items-center justify-center">
+<span class="material-icons text-white text-[10px]">check</span>
+</div>
+</div>
+</label>
+<label class="flex-shrink-0 cursor-pointer group">
+<input class="peer sr-only" type="checkbox"/>
+<div class="w-24 h-24 rounded-xl border-2 border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 peer-checked:border-primary peer-checked:bg-primary-soft dark:peer-checked:bg-primary/10 flex flex-col items-center justify-center gap-2 transition-all p-2 text-center">
+<div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 group-hover:scale-110 transition-transform flex items-center justify-center">
+<span class="material-icons text-gray-500 text-sm">cleaning_services</span>
+</div>
+<span class="text-xs font-medium text-gray-700 dark:text-gray-300">Q-Tips</span>
+<div class="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 peer-checked:bg-primary peer-checked:border-primary flex items-center justify-center">
+<span class="material-icons text-white text-[10px] opacity-0 peer-checked:opacity-100">check</span>
+</div>
+</div>
+</label>
+<label class="flex-shrink-0 cursor-pointer group">
+<input class="peer sr-only" type="checkbox"/>
+<div class="w-24 h-24 rounded-xl border-2 border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 peer-checked:border-primary peer-checked:bg-primary-soft dark:peer-checked:bg-primary/10 flex flex-col items-center justify-center gap-2 transition-all p-2 text-center">
+<div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 group-hover:scale-110 transition-transform flex items-center justify-center">
+<span class="material-icons text-gray-500 text-sm">water_drop</span>
+</div>
+<span class="text-xs font-medium text-gray-700 dark:text-gray-300">Micellar Water</span>
+<div class="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 peer-checked:bg-primary peer-checked:border-primary flex items-center justify-center">
+<span class="material-icons text-white text-[10px] opacity-0 peer-checked:opacity-100">check</span>
+</div>
+</div>
+</label>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-3">
+<h3 class="text-sm font-semibold text-gray-900 dark:text-white ml-1">Fix Instructions</h3>
+<div class="flex items-center gap-1 text-xs text-primary font-medium animate-pulse">
+<span class="material-icons text-sm">mic</span>
+                        Listening...
+                    </div>
+</div>
+<div class="space-y-3">
+<div class="bg-white dark:bg-gray-800 rounded-xl border border-primary/30 shadow-sm overflow-hidden transition-all">
+<div class="p-4 cursor-pointer flex justify-between items-center bg-primary-soft/50 dark:bg-primary/5">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">1</div>
+<h4 class="font-semibold text-gray-900 dark:text-white text-sm">Don't Panic, Don't Wipe</h4>
+</div>
+<span class="material-icons text-gray-400 rotate-180 transition-transform">expand_more</span>
+</div>
+<div class="px-4 pb-4 pt-2">
+<p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-3">
+                                Avoid wiping the eyeliner off completely, as it will smudge into your foundation. Instead, let it dry for 30 seconds.
+                            </p>
+<div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 flex gap-3 items-center">
+<span class="material-icons text-amber-500 text-sm">lightbulb</span>
+<p class="text-xs text-gray-500 dark:text-gray-400">Pro Tip: Look down into a mirror to keep the lid smooth.</p>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden hover:border-gray-300 dark:hover:border-gray-600 transition-all">
+<div class="p-4 cursor-pointer flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 flex items-center justify-center text-xs font-bold">2</div>
+<h4 class="font-medium text-gray-700 dark:text-gray-200 text-sm">Shape with Concealer</h4>
+</div>
+<span class="material-icons text-gray-400">expand_more</span>
+</div>
+</div>
+<div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden hover:border-gray-300 dark:hover:border-gray-600 transition-all">
+<div class="p-4 cursor-pointer flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 flex items-center justify-center text-xs font-bold">3</div>
+<h4 class="font-medium text-gray-700 dark:text-gray-200 text-sm">Match the Angle</h4>
+</div>
+<span class="material-icons text-gray-400">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<div class="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+<button class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 flex justify-between items-center">
+<span class="text-sm font-semibold text-gray-700 dark:text-gray-200">Prevention Tips</span>
+<span class="material-icons text-gray-400 text-lg">add</span>
+</button>
+</div>
+</main>
+<div class="absolute bottom-0 left-0 right-0 bg-white dark:bg-[#1a0b10] border-t border-gray-100 dark:border-gray-800 p-4 pb-8 z-50">
+<div class="text-center mb-4">
+<span class="text-xs font-medium text-gray-400 dark:text-gray-500 italic">"Mistakes are proof that you are trying! ✨"</span>
+</div>
+<div class="flex flex-col gap-3">
+<button class="w-full py-3.5 bg-primary hover:bg-primary/90 active:scale-[0.98] text-white rounded-xl font-semibold shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2">
+                    Skip &amp; Continue
+                    <span class="material-icons text-sm">arrow_forward</span>
+</button>
+<div class="flex items-center justify-center px-2">
+<button class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 font-medium transition-colors flex items-center gap-1">
+<span class="material-icons text-sm">support_agent</span>
+                        Contact Support
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

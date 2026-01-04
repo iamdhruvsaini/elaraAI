@@ -253,12 +253,3 @@ The frontend is designed exclusively for mobile devices:
 4. **Input Validation** - Handled by Pydantic (backend) and Zod/form validation (frontend)
 
 ---
-
-## Deployment Checklist
-
-- [ ] Update `NEXT_PUBLIC_API_URL` for production
-- [ ] Configure production database
-- [ ] Set up Azure services (production credentials)
-- [ ] Enable HTTPS
-- [ ] Configure proper CORS origins
-- [ ] Set up monitoring and error tracking
