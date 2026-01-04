@@ -210,21 +210,21 @@ export default function AllergySetupPage() {
 
       {/* Sticky Footer */}
       <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border p-6 safe-bottom">
-        <div className="max-w-[430px] mx-auto space-y-3">
+        <div className="max-w-[430px] mx-auto flex gap-3">
+          <button
+            onClick={handleSkip}
+            className="flex-1 text-center text-sm font-medium text-foreground-muted hover:text-foreground py-3 px-4 rounded-xl border-2 border-border hover:border-primary/50 transition-all"
+          >
+            Skip for Now
+          </button>
           <Button
             variant="gradient"
-            fullWidth
+            className="flex-1"
             onClick={handleSave}
             loading={isLoading}
           >
             Save & Continue
           </Button>
-          <button
-            onClick={handleSkip}
-            className="w-full text-center text-sm text-foreground-muted hover:text-foreground py-2"
-          >
-            Skip for Now
-          </button>
         </div>
       </div>
     </div>

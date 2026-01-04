@@ -1,9 +1,12 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { BottomNav } from "@/components/common/BottomNav";
+
+// Pages where bottom navigation should be hidden (onboarding/setup flows)
+const HIDE_NAV_ROUTES = ["/face-analysis", "/allergy-setup"];
 
 export default function ProtectedLayout({
   children,
@@ -11,7 +14,13 @@ export default function ProtectedLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { authChecked, isAuthenticated } = useAuth();
+
+  // Check if current route should hide bottom navigation
+  const shouldHideNav = HIDE_NAV_ROUTES.some((route) =>
+    pathname.startsWith(route)
+  );
 
   useEffect(() => {
     if (authChecked && !isAuthenticated) {
@@ -37,9 +46,9 @@ export default function ProtectedLayout({
   }
 
   return (
-    <div className="min-h-dvh pb-20">
+    <div className={shouldHideNav ? "min-h-dvh" : "min-h-dvh pb-20"}>
       {children}
-      <BottomNav />
+      {!shouldHideNav && <BottomNav />}
     </div>
   );
 }

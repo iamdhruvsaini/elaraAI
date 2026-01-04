@@ -23,16 +23,10 @@ export default function EventsPage() {
   return (
     <div className="min-h-dvh bg-background safe-top">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+      <div className="px-6 py-4 border-b border-border">
         <h1 className="text-xl font-semibold text-foreground">
           📅 My Events
         </h1>
-        <Link href="/events/new">
-          <Button size="sm" variant="gradient">
-            <Plus size={16} />
-            Add Event
-          </Button>
-        </Link>
       </div>
 
       {/* Content */}

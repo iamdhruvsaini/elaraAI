@@ -237,17 +237,6 @@ export default function VanityPage() {
           ))
         )}
       </div>
-
-      {/* Floating Action Button */}
-      <Link
-        href="/vanity/scan"
-        className="fixed bottom-24 right-6 z-20"
-      >
-        <Button variant="gradient" size="lg" className="shadow-lg shadow-primary/30">
-          <Plus size={20} />
-          Add More Products
-        </Button>
-      </Link>
     </div>
   );
 }
