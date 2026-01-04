@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Camera Capture</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#ee2b8c",
+            "background-light": "#f8f6f7",
+            "background-dark": "#221019",
+          },
+          fontFamily: {
+            "display": ["Plus Jakarta Sans", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "1rem",
+            "xl": "1.5rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .face-guide {
+      width: 60%;
+      height: 80%;
+      border: 3px dashed var(--tw-border-opacity, 1);
+      border-radius: 50%;
+      transform: scaleX(0.85);
+    }
+    .dark .face-guide {
+      border-color: #ffffff;
+    }
+    .light .face-guide {
+      border-color: #ee2b8c;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex h-screen w-full flex-col group/design-root overflow-hidden">
+<!-- Header -->
+<header class="flex-shrink-0">
+<h2 class="text-[#181114] dark:text-white tracking-light text-[28px] font-bold leading-tight px-4 text-center pb-3 pt-12">Capture Your Beautiful Face</h2>
+</header>
+<!-- Main Content -->
+<main class="flex-grow flex flex-col p-4">
+<!-- Camera Viewfinder -->
+<div class="relative flex-grow flex items-center justify-center bg-gray-900 rounded-lg overflow-hidden">
+<img alt="A woman smiling looking at the camera" class="absolute inset-0 w-full h-full object-cover" data-alt="Woman smiling into the camera view" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMasendxnCEsXKEmJaIi0WTv_f4JyZYpQVvVtKD-_NBRf8BS-z0YMrVBBFShKb6FJymTbOGjzym4-MbDLdS3AO9B-aU44AYiCo-I6czu-1v7lTzYRoKCd9sb5YsuQwfoYaKVNMVFPAJU1_zSrL5kgLP4JC-i4f5QsQWoDWdkL5C77gg9cifTiGDeHLC8zOhdzYQVTTFIsct4NK8jjltOd_7TkAElmlj-RTwBj-cMt1voMxbHc_72dIUX6Yt7pQyE3p66p1Eb2Gi6o1"/>
+<!-- Face Guide Overlay -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="face-guide"></div>
+</div>
+</div>
+</main>
+<!-- Footer Controls -->
+<footer class="flex-shrink-0 flex flex-col items-center pb-8 pt-4 px-4 gap-4">
+<!-- Accordion -->
+<div class="w-full max-w-md">
+<details class="flex flex-col rounded-xl bg-background-light dark:bg-background-dark border border-gray-200 dark:border-gray-700 px-4 py-1 group">
+<summary class="flex cursor-pointer items-center justify-between gap-6 py-2">
+<p class="text-[#181114] dark:text-white text-sm font-medium leading-normal">Tips for the Best Results</p>
+<span class="material-symbols-outlined text-[#181114] dark:text-white group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal pb-3">Face natural light • Remove glasses • Neutral expression • Tie hair back</p>
+</details>
+</div>
+<!-- Camera Controls -->
+<div class="flex items-center justify-center gap-10 p-4 w-full max-w-md">
+<button class="flex shrink-0 items-center justify-center rounded-full size-12 bg-black/30 text-white backdrop-blur-sm">
+<span class="material-symbols-outlined text-inherit text-2xl">flash_on</span>
+</button>
+<button class="flex shrink-0 items-center justify-center rounded-full size-20 bg-primary text-white ring-4 ring-primary/30">
+<span class="material-symbols-outlined text-inherit text-4xl">photo_camera</span>
+</button>
+<button class="flex shrink-0 items-center justify-center rounded-full size-12 bg-black/30 text-white backdrop-blur-sm">
+<span class="material-symbols-outlined text-inherit text-2xl">flip_camera_ios</span>
+</button>
+</div>
+<!-- Upload Link -->
+<div class="w-full max-w-md">
+<p class="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal pb-3 pt-1 px-4 text-center underline">Upload Existing Photo</p>
+</div>
+</footer>
+</div>
+</body></html>

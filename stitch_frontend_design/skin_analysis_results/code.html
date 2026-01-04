@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Skin Analysis Results</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13a4ec",
+              "background-light": "#f6f7f8",
+              "background-dark": "#101c22",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 24px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<!-- Top App Bar -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10 border-b border-gray-200 dark:border-gray-800">
+<div class="flex size-12 shrink-0 items-center justify-start text-gray-800 dark:text-gray-200">
+<span class="material-symbols-outlined">arrow_back</span>
+</div>
+<h2 class="text-gray-900 dark:text-gray-100 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Skin Analysis Results</h2>
+<div class="flex size-12 shrink-0 items-center"></div>
+</div>
+<main class="flex-1 px-4 py-6">
+<!-- Headline Text -->
+<h1 class="text-gray-900 dark:text-gray-100 tracking-tight text-[32px] font-bold leading-tight text-center pb-6">✨ Analysis Complete!</h1>
+<!-- Images Slider -->
+<div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-sm mb-8">
+<div class="absolute inset-0 grid grid-cols-2">
+<div class="h-full bg-cover bg-center" data-alt="A woman's face before skin analysis." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA669kxSboPbVTu0Y8GK3XynqnswmmpAbYLAAwmWmJV_FPC4JFZ7kGTM4W4wf4q9WGtLsTMqOot3oNScWtxyvcBSYS4gKtKlNp3FHkmSBSpCPOtpAKa1BaKe_QD9XbtJyG5ZEKtgKnZQaK7swkgIv-ZdPoUwFt-LN0670YqWec6VIs4pmN5_32_Z402PWPwvLjZp0MPC4MTAFtdluY2dH3I99OKzGw2wPDxrA2Gpt7XiQYHUwuIdyQI0va5iwiBZcEcXttemo65zueK");'></div>
+<div class="h-full bg-cover bg-center" data-alt="A woman's face after skin analysis with highlighted areas." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB9zTIW35TyEGlh_i_NBfVaEKR64wyzFK0oDfVxQUSnhoBJC5mhOchCOEgDezSQVEf-Mklzqyoi9LW1p5XKZYC0BBEPXEWNOMifoCZCJx5kQcxN96Gyxzwn25D9oQcS2j8Te58k5ueKp1wT7tsRAZdgGUXEI-A_4mkJKVEjxIK1h1dA-iB6uFEKuFoPlvq7iPSye6VXrjDXbfUJa8iJlBCAhNcrb4N9cGKFsMjQ8A_WNGV0aKTiP-f2gO9_KgD3VUy9VY-sKr50UPME");'></div>
+</div>
+<div class="absolute inset-0">
+<div class="relative w-full h-full">
+<input class="absolute inset-0 w-full h-full cursor-pointer appearance-none bg-transparent group/slider" max="100" min="0" style="--thumb-position: 50%;" type="range" value="50"/>
+<div class="absolute top-0 bottom-0 w-px bg-white/50 left-[var(--thumb-position)] pointer-events-none"></div>
+<div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 left-[var(--thumb-position)] w-10 h-10 rounded-full bg-primary flex items-center justify-center pointer-events-none shadow-lg">
+<span class="material-symbols-outlined text-white" style="font-size: 20px;">unfold_more</span>
+</div>
+</div>
+</div>
+</div>
+<style>
+                input[type=range].group\/slider:focus { outline: none; }
+                input[type=range].group\/slider::-webkit-slider-thumb { appearance: none; width: 40px; height: 100%; background: transparent; cursor: ew-resize; }
+                input[type=range].group\/slider::-moz-range-thumb { width: 40px; height: 100%; background: transparent; border: 0; cursor: ew-resize; }
+            </style>
+<!-- Section: Your Skin Profile -->
+<h2 class="text-gray-900 dark:text-gray-100 text-[22px] font-bold leading-tight tracking-[-0.015em] pb-4">Your Skin Profile</h2>
+<div class="grid grid-cols-2 gap-4 mb-8">
+<div class="col-span-1 p-4 bg-white dark:bg-background-dark dark:border dark:border-gray-700 rounded-xl shadow-sm">
+<p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Skin Tone</p>
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 rounded-full" style="background-color: #e0a989;"></div>
+<p class="font-bold text-gray-800 dark:text-gray-200">MEDIUM</p>
+</div>
+</div>
+<div class="col-span-1 p-4 bg-white dark:bg-background-dark dark:border dark:border-gray-700 rounded-xl shadow-sm">
+<p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Undertone</p>
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 rounded-full" style="background-color: #f2d49b;"></div>
+<p class="font-bold text-gray-800 dark:text-gray-200">WARM/GOLDEN</p>
+</div>
+</div>
+<div class="col-span-2 p-4 bg-white dark:bg-background-dark dark:border dark:border-gray-700 rounded-xl shadow-sm">
+<p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Skin Type</p>
+<p class="font-bold text-gray-800 dark:text-gray-200">COMBINATION</p>
+</div>
+</div>
+<!-- Section: Concerns Detected -->
+<h2 class="text-gray-900 dark:text-gray-100 text-[22px] font-bold leading-tight tracking-[-0.015em] pb-4">⚠️ Concerns Detected (3)</h2>
+<div class="space-y-3">
+<!-- Concern Card 1 -->
+<div class="bg-white dark:bg-background-dark dark:border dark:border-gray-700 rounded-xl shadow-sm p-4 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 rounded-full bg-red-500"></div>
+<div>
+<p class="font-bold text-gray-800 dark:text-gray-200">Mild Acne</p>
+<p class="text-sm text-gray-500 dark:text-gray-400">Location: Cheeks • Severity: Low</p>
+</div>
+</div>
+<a class="text-sm font-semibold text-primary" href="#">View Details →</a>
+</div>
+<!-- Concern Card 2 -->
+<div class="bg-white dark:bg-background-dark dark:border dark:border-gray-700 rounded-xl shadow-sm p-4 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 rounded-full" style="background-color: #967969;"></div>
+<div>
+<p class="font-bold text-gray-800 dark:text-gray-200">Pigmentation</p>
+<p class="text-sm text-gray-500 dark:text-gray-400">Location: Forehead • Severity: Moderate</p>
+</div>
+</div>
+<a class="text-sm font-semibold text-primary" href="#">View Details →</a>
+</div>
+<!-- Concern Card 3 -->
+<div class="bg-white dark:bg-background-dark dark:border dark:border-gray-700 rounded-xl shadow-sm p-4 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 rounded-full bg-black"></div>
+<div>
+<p class="font-bold text-gray-800 dark:text-gray-200">Dark Spots</p>
+<p class="text-sm text-gray-500 dark:text-gray-400">Location: Chin • Severity: Low</p>
+</div>
+</div>
+<a class="text-sm font-semibold text-primary" href="#">View Details →</a>
+</div>
+</div>
+</main>
+<!-- Footer Buttons -->
+<div class="sticky bottom-0 bg-background-light dark:bg-background-dark p-4 border-t border-gray-200 dark:border-gray-800">
+<div class="grid grid-cols-2 gap-4">
+<button class="w-full text-center text-primary dark:text-primary border border-primary rounded-full py-3 font-bold text-base hover:bg-primary/10 transition-colors">Retake</button>
+<button class="w-full text-center text-white bg-primary rounded-full py-3 font-bold text-base hover:bg-opacity-90 transition-opacity">Continue</button>
+</div>
+</div>
+</div>
+</body></html>

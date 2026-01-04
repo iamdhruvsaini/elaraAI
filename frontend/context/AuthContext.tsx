@@ -10,22 +10,24 @@ import React, {
 import {
   useLoginUserMutation,
   useRegisterUserMutation,
+  useGoogleOAuthMutation,
   useLazyGetMeQuery,
-} from "@/redux/services/authentication/authService";
+} from "@/redux/services/authService";
 import type {
   LoginUserRequest,
   RegisterUserRequest,
   RegisterUserResponse,
   LoginUserResponse,
+  GoogleOAuthRequest,
   MeResponse,
-} from "@/redux/services/authentication/types";
-import { AuthContextType } from "@/lib/types/authContext-types";
+  AuthContextType,
+} from "@/lib/types/auth.types";
 
 /* =======================
    Helpers
 ======================= */
 
-const isTokenValid = (token: string) => {
+const isTokenValid = (token: string): boolean => {
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
     return payload.exp * 1000 > Date.now();
@@ -57,6 +59,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loginUserMutation, { isLoading: loginLoading, error: loginError }] =
     useLoginUserMutation();
 
+  const [googleOAuthMutation] = useGoogleOAuthMutation();
+
   const [getMe] = useLazyGetMeQuery();
 
   /* =======================
@@ -81,18 +85,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const registerUser = async (
     user: Omit<RegisterUserRequest, "auth_provider">
-  ) => {
+  ): Promise<RegisterUserResponse> => {
     const response = await registerUserMutation({
       ...user,
       auth_provider: "email",
     }).unwrap();
 
-    if (!response) return response;
+    if (!response) throw new Error("Registration failed");
 
     saveTokens(response);
     setIsAuthenticated(true);
 
-    // background fetch
+    // Background fetch user profile
     getMe()
       .unwrap()
       .then((me) => setCurrentUser(me))
@@ -105,14 +109,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
      Login
   ======================= */
 
-  const loginUser = async (user: LoginUserRequest) => {
+  const loginUser = async (user: LoginUserRequest): Promise<LoginUserResponse> => {
     const response = await loginUserMutation(user).unwrap();
-    if (!response) return response;
+    if (!response) throw new Error("Login failed");
 
     saveTokens(response);
     setIsAuthenticated(true);
 
-    // background fetch
+    // Background fetch user profile
     getMe()
       .unwrap()
       .then((me) => setCurrentUser(me))
@@ -122,13 +126,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   /* =======================
+     Google OAuth
+  ======================= */
+
+  const signInWithGoogle = async (data: GoogleOAuthRequest): Promise<void> => {
+    const response = await googleOAuthMutation(data).unwrap();
+    if (!response) throw new Error("Google sign in failed");
+
+    saveTokens(response);
+    setIsAuthenticated(true);
+
+    // Background fetch user profile
+    getMe()
+      .unwrap()
+      .then((me) => setCurrentUser(me))
+      .catch(() => clearAuth());
+  };
+
+  /* =======================
      Restore session (FAST)
   ======================= */
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
 
-    // 🚀 instant auth decision
+    // Instant auth decision
     if (!token || !isTokenValid(token)) {
       setAuthChecked(true);
       return;
@@ -137,7 +159,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsAuthenticated(true);
     setAuthChecked(true);
 
-    // 🧵 fetch user in background
+    // Fetch user in background
     getMe()
       .unwrap()
       .then((me) => setCurrentUser(me))
@@ -167,7 +189,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         loginLoading,
         loginError,
 
-        signInWithGoogle: async () => {},
+        signInWithGoogle,
         logout,
       }}
     >

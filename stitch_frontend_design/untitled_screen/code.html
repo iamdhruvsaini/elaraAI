@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Analysis Loading</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                font-family: 'Poppins', sans-serif;
+            }
+        }
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        .animate-scan {
+            animation: scan 2s infinite linear;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin 1.5s linear infinite;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-gradient-to-br from-rose-50 to-purple-100">
+<div class="flex flex-col h-screen p-6 text-gray-800">
+<header class="text-center pt-12">
+<h1 class="text-2xl font-semibold text-gray-900">✨ Analyzing Your Skin...</h1>
+</header>
+<main class="flex-grow flex flex-col items-center justify-center space-y-8">
+<div class="relative w-64 h-64 overflow-hidden rounded-2xl shadow-lg">
+<img alt="User's face for skin analysis" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC22b8TOq_nghJGhczN5i5QGfpvPCecrQTuqnyApz8Kp0OQ9Frd2jUzNC4PSS3ephblf4nTjNIm-8eR9m9B9U7nKGwetUVa_6LfGmx2Y7A14P96Grfs5Ond30t4LR2P91PXHimK_jAVX8phBtMnxhmH2mIghzTdjh2KG-QVDSsNankXKzykILjSSe1cp8OZ9zSLLT5NKmvpwaxyaVLoujrN3WE_j12ljcTtrYNMg_6II2VuJ1DLJ0ZZg0k6vzB9C9kSUkxf2OwJewo9"/>
+<div class="absolute inset-0 bg-black/10"></div>
+<div class="absolute top-0 left-0 w-full h-full flex items-center">
+<div class="w-full h-1 bg-cyan-300/80 blur-[2px] shadow-[0_0_15px_5px_rgba(107,235,248,0.7)] animate-scan"></div>
+</div>
+</div>
+<div class="w-full max-w-sm space-y-4">
+<div class="flex items-center space-x-3">
+<div class="w-6 h-6 flex items-center justify-center rounded-full bg-green-500 text-white">
+<span class="material-symbols-outlined text-base">check</span>
+</div>
+<span class="text-gray-700">Detecting skin tone</span>
+</div>
+<div class="flex items-center space-x-3">
+<div class="w-6 h-6 flex items-center justify-center">
+<svg class="w-5 h-5 text-purple-500 animate-spin-slow" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+<path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor"></path>
+</svg>
+</div>
+<span class="text-gray-700">Analyzing undertone</span>
+</div>
+<div class="flex items-center space-x-3">
+<div class="w-6 h-6 flex items-center justify-center rounded-full border-2 border-gray-300"></div>
+<span class="text-gray-500">Checking skin type</span>
+</div>
+<div class="flex items-center space-x-3">
+<div class="w-6 h-6 flex items-center justify-center rounded-full border-2 border-gray-300"></div>
+<span class="text-gray-500">Scanning concerns</span>
+</div>
+</div>
+</main>
+<footer class="pb-10 text-center space-y-4">
+<div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+<div class="bg-purple-500 h-2.5 rounded-full" style="width: 85%"></div>
+</div>
+<p class="text-sm text-gray-500">This will only take a moment!</p>
+</footer>
+</div>
+
+</body></html>

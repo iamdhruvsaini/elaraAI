@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Beauty App Welcome Screen</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee2b8c",
+                        "background-light": "#f8f6f7",
+                        "background-dark": "#221019",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased text-slate-900">
+<div class="relative min-h-screen w-full flex flex-col justify-center items-center overflow-hidden bg-pink-50">
+<div class="absolute inset-0 w-full h-full z-0 bg-black">
+<div class="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat opacity-40" data-alt="Close up of a woman with glowing skin applying makeup with a brush" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB8Je969jfYsACqvfN11ANHi0JzUFFq4CZSQX-Z_tXU_LPo946hNfli-KQb7JzsVgAsehmxoeJ6oRjjvSjelXnCXrkfaBU2ji1uoJVvqVw-tKw4gL15NdV6crL51GXlKV77QHDUuesDzxxFpReYHTse0GEMmf68LlQCwQp_QP-nmUP4bPEDhmOD1N-p-AxzUX471GEzg2bOmIMsy94uS6R8VPOtnTIxRPB-NovUaYfoN7bhBOOm_YVEkw1Z47ywb-TNfHYyDMROjNzc');"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/50"></div>
+</div>
+<div class="relative z-10 w-full max-w-md px-6 flex flex-col items-center justify-center h-full gap-8 py-10">
+<div class="glass-card w-full rounded-3xl p-8 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] flex flex-col gap-6 animate-fade-in-up">
+<div class="text-center">
+<h1 class="text-3xl font-extrabold text-[#181114] leading-tight tracking-tight mb-2">
+                        Discover Your <br/><span class="text-primary">Perfect Look</span>
+</h1>
+<p class="text-slate-500 text-sm font-medium">Elevate your beauty routine with AI.</p>
+</div>
+<div class="flex flex-col gap-4 py-2">
+<div class="flex items-center gap-4">
+<div class="flex items-center justify-center rounded-xl bg-primary/10 shrink-0 size-12 text-primary">
+<span class="material-symbols-outlined text-[28px]">auto_awesome</span>
+</div>
+<div class="flex-1">
+<p class="text-[#181114] text-base font-bold leading-tight">AI recommendations</p>
+<p class="text-slate-500 text-sm">Personalized just for you</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center justify-center rounded-xl bg-primary/10 shrink-0 size-12 text-primary">
+<span class="material-symbols-outlined text-[28px]">play_circle</span>
+</div>
+<div class="flex-1">
+<p class="text-[#181114] text-base font-bold leading-tight">Pro tutorials</p>
+<p class="text-slate-500 text-sm">Step-by-step guides</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center justify-center rounded-xl bg-primary/10 shrink-0 size-12 text-primary">
+<span class="material-symbols-outlined text-[28px]">health_and_safety</span>
+</div>
+<div class="flex-1">
+<p class="text-[#181114] text-base font-bold leading-tight">Skin-safe products</p>
+<p class="text-slate-500 text-sm">Curated dermatological care</p>
+</div>
+</div>
+</div>
+<button class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#ee2b8c] to-[#ff6b9b] text-white font-bold text-lg shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-2">
+                    Get Started
+                    <span class="material-symbols-outlined text-sm font-bold">arrow_forward</span>
+</button>
+<div class="text-center">
+<p class="text-sm text-slate-600">
+                        Already have an account? <a class="text-primary font-bold hover:underline" href="#">Log In</a>
+</p>
+</div>
+</div>
+<div class="flex gap-2 items-center justify-center mt-auto pb-4">
+<div class="w-8 h-2 bg-white rounded-full shadow-sm"></div>
+<div class="w-2 h-2 bg-white/50 rounded-full shadow-sm backdrop-blur-sm"></div>
+<div class="w-2 h-2 bg-white/50 rounded-full shadow-sm backdrop-blur-sm"></div>
+</div>
+</div>
+</div>
+</body></html>

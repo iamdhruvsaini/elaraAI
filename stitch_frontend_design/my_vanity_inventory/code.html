@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Vanity Inventory</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee2b6c",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221016",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.375rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased selection:bg-primary/30">
+<div class="relative flex h-full min-h-screen w-full max-w-md mx-auto flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden shadow-2xl">
+<!-- Header -->
+<header class="sticky top-0 z-20 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md px-4 py-3 border-b border-gray-100 dark:border-white/10">
+<div class="flex items-center justify-between">
+<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-tight flex-1">
+<span class="mr-2">💄</span>4 Products
+                </h2>
+<button class="flex items-center justify-center h-8 px-3 rounded-full text-primary font-bold text-sm bg-primary/10 hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-lg mr-1" style="font-size: 18px;">add</span>
+                    Add New
+                </button>
+</div>
+<!-- Filter Tabs -->
+<div class="flex gap-2 overflow-x-auto no-scrollbar py-3 mt-1 -mx-4 px-4">
+<button class="flex h-8 shrink-0 items-center justify-center px-4 rounded-full bg-primary text-white shadow-md shadow-primary/20 transition-all">
+<p class="text-sm font-semibold leading-normal">All</p>
+</button>
+<button class="flex h-8 shrink-0 items-center justify-center px-4 rounded-full bg-white dark:bg-white/10 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:border-primary/50 transition-all">
+<p class="text-sm font-medium leading-normal">Face</p>
+</button>
+<button class="flex h-8 shrink-0 items-center justify-center px-4 rounded-full bg-white dark:bg-white/10 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:border-primary/50 transition-all">
+<p class="text-sm font-medium leading-normal">Eyes</p>
+</button>
+<button class="flex h-8 shrink-0 items-center justify-center px-4 rounded-full bg-white dark:bg-white/10 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:border-primary/50 transition-all">
+<p class="text-sm font-medium leading-normal">Lips</p>
+</button>
+<button class="flex h-8 shrink-0 items-center justify-center px-4 rounded-full bg-white dark:bg-white/10 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:border-primary/50 transition-all">
+<p class="text-sm font-medium leading-normal">Cheeks</p>
+</button>
+</div>
+</header>
+<!-- Main Content List -->
+<main class="flex-1 pb-24 px-4">
+<!-- Section: Face -->
+<div class="mt-4">
+<h3 class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-3 ml-1">Face (1)</h3>
+<!-- Card Item -->
+<div class="group relative flex gap-4 bg-white dark:bg-white/5 rounded-xl p-3 shadow-sm border border-slate-100 dark:border-white/5 mb-3 transition-all hover:shadow-md hover:border-primary/20">
+<div class="relative shrink-0">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg w-20 h-20 shadow-inner bg-slate-100 dark:bg-slate-800" data-alt="Bottle of liquid foundation makeup" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCMAEeSBnpdrRg1_z0b2o9gLAJBD-RbL6Oeq2rITL5vyjTTg4kKveZlHv_iaasot0MjX3gQS636ArwIMFY6TD3HCv67ARMOr2t3V2-afWYwyYpvJBnDwNeTSh5i7kx-j3HlyY7Rwawe88vEHlq9HIINpASrOdy2Dd52rb8FMTurj62Cxvj_R7w1j6ydsvccJbBr07zMhFoFfh1xtTwn5vfXwL2KCoRSWuWKwlFb_RlM2dGkOMlldWzRZlNnDpZ8J3qjQtbGK3wvQigN");'>
+</div>
+</div>
+<div class="flex flex-1 flex-col justify-center min-w-0">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-slate-900 dark:text-white text-base font-bold leading-tight truncate">Maybelline</p>
+<p class="text-slate-600 dark:text-slate-300 text-sm font-normal leading-normal truncate">Fit Me Foundation</p>
+</div>
+<div class="flex flex-col gap-2 ml-2">
+<button class="text-slate-400 hover:text-primary transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-50 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="text-slate-400 hover:text-red-500 transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-50 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="w-3 h-3 rounded-full bg-[#E3C1A3] border border-black/10 shadow-sm inline-block"></span>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium">Beige</p>
+<span class="text-slate-300 dark:text-slate-600 text-xs">•</span>
+<p class="text-slate-400 dark:text-slate-500 text-xs">Added: Dec 2024</p>
+</div>
+<div class="flex items-center gap-1 mt-2 text-emerald-600 dark:text-emerald-400">
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+<p class="text-xs font-semibold">Safety Checked</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: Eyes -->
+<div class="mt-4">
+<h3 class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-3 ml-1">Eyes (1)</h3>
+<!-- Card Item -->
+<div class="group relative flex gap-4 bg-white dark:bg-white/5 rounded-xl p-3 shadow-sm border border-slate-100 dark:border-white/5 mb-3 transition-all hover:shadow-md hover:border-primary/20">
+<div class="relative shrink-0">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg w-20 h-20 shadow-inner bg-slate-100 dark:bg-slate-800" data-alt="Black eyeliner pencil cosmetic" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDt1cwz51r9K4uxJIwRJyGMD14kpQboWboBoU80AJXT7GyHgp8mCHYT-J6d3ZMtVmXQMEbpNe9YI6kMxiX8JaXZlHF_8jNtmMCDc3MJKQN0Kq8Z0ypqCTj1-Cl-YY3ifGAQw7FU5vD2zqGNJHXKC6eoRUTobDP4YSQ6XT4kGiPjCXIlu0OUeRGDHmydkQZvrJKR7b8jNjWIzCNZcFDmeQcoGNTh7DUR1B6JniG7mJone6Bg4OiyPWQWAv4E-xejzla6Gu9-YTbm6HyI");'>
+</div>
+</div>
+<div class="flex flex-1 flex-col justify-center min-w-0">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-slate-900 dark:text-white text-base font-bold leading-tight truncate">Lakme</p>
+<p class="text-slate-600 dark:text-slate-300 text-sm font-normal leading-normal truncate">Eyeconic Kajal</p>
+</div>
+<div class="flex flex-col gap-2 ml-2">
+<button class="text-slate-400 hover:text-primary transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-50 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="text-slate-400 hover:text-red-500 transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-50 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="w-3 h-3 rounded-full bg-slate-900 border border-white/20 shadow-sm inline-block"></span>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium">Deep Black</p>
+<span class="text-slate-300 dark:text-slate-600 text-xs">•</span>
+<p class="text-slate-400 dark:text-slate-500 text-xs">Added: Dec 2024</p>
+</div>
+<div class="flex items-center gap-1 mt-2 text-emerald-600 dark:text-emerald-400">
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+<p class="text-xs font-semibold">Safety Checked</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: Lips -->
+<div class="mt-4">
+<h3 class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-3 ml-1">Lips (1)</h3>
+<!-- Card Item -->
+<div class="group relative flex gap-4 bg-white dark:bg-white/5 rounded-xl p-3 shadow-sm border border-slate-100 dark:border-white/5 mb-3 transition-all hover:shadow-md hover:border-primary/20">
+<div class="relative shrink-0">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg w-20 h-20 shadow-inner bg-slate-100 dark:bg-slate-800" data-alt="Red lipstick tube open" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC5Ak4JVgdSBCti5Rqg_wudI-2bogXxbarC6UQohn0SwaFKLueNGqQ0wG7EJSRIGmXgxf9y6Z5oErOUFfbQ-DWTcPySCfkB6xx3j16HT0q-EdUT1vA4KVcKlMKppSQFe7BDVXw-iRr8dJ1D5Dm6RhZ7ELodeB1--lAbjYm-8-kkXP4b6lu-OjPrOJ7c7snMnxvZ2ot6kPzcF2AdrBLJQ2w8pF3o1AN9cfDN7EmPlPqaf_hV1HUsmjFTN_FSWda8xFg6yHn8Au0GPJ0g");'>
+</div>
+</div>
+<div class="flex flex-1 flex-col justify-center min-w-0">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-slate-900 dark:text-white text-base font-bold leading-tight truncate">Maybelline</p>
+<p class="text-slate-600 dark:text-slate-300 text-sm font-normal leading-normal truncate">Superstay Ink</p>
+</div>
+<div class="flex flex-col gap-2 ml-2">
+<button class="text-slate-400 hover:text-primary transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-50 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="text-slate-400 hover:text-red-500 transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-50 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="w-3 h-3 rounded-full bg-[#D32F2F] border border-black/10 shadow-sm inline-block"></span>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium">Pioneer Red</p>
+<span class="text-slate-300 dark:text-slate-600 text-xs">•</span>
+<p class="text-slate-400 dark:text-slate-500 text-xs">Added: Dec 2024</p>
+</div>
+<div class="flex items-center gap-1 mt-2 text-amber-500 cursor-pointer hover:underline">
+<span class="material-symbols-outlined text-[16px] animate-pulse">warning</span>
+<p class="text-xs font-semibold">Check Safety</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: Cheeks -->
+<div class="mt-4">
+<h3 class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-3 ml-1">Cheeks (1)</h3>
+<!-- Card Item -->
+<div class="group relative flex gap-4 bg-white dark:bg-white/5 rounded-xl p-3 shadow-sm border border-slate-100 dark:border-white/5 mb-3 transition-all hover:shadow-md hover:border-primary/20">
+<div class="relative shrink-0">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg w-20 h-20 shadow-inner bg-slate-100 dark:bg-slate-800" data-alt="Pink powder blush compact" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCOu4IM8u1pz1j0UJ78e-YrbbcdMmhWoHdkNzmWP_RQ-a3kiPvGSoi_7ULi6wdL9kg6abbxy6Xz521wj5NPadNnbC9_8uE4VPLdmvtrzOIySwdFiW0zOXSLdEBFgQtRGtYm_IoHMbHKzysnQHSc8CD06R-jFUClCVZ82uimJ5bu1ae915MXFr_oirMiQkHUHYQfykJ1D0ZgsG7HQOO4roj3H29Gt6e6qVEgUlQn8bTBxl7Qep8AMB7fJBIXVxP78TvSPVuZkOKrwNJU");'>
+</div>
+</div>
+<div class="flex flex-1 flex-col justify-center min-w-0">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-slate-900 dark:text-white text-base font-bold leading-tight truncate">Colorbar</p>
+<p class="text-slate-600 dark:text-slate-300 text-sm font-normal leading-normal truncate">Cheekillusion Blush</p>
+</div>
+<div class="flex flex-col gap-2 ml-2">
+<button class="text-slate-400 hover:text-primary transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-50 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="text-slate-400 hover:text-red-500 transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-50 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="w-3 h-3 rounded-full bg-[#EC4899] border border-black/10 shadow-sm inline-block"></span>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium">Rose Pink</p>
+<span class="text-slate-300 dark:text-slate-600 text-xs">•</span>
+<p class="text-slate-400 dark:text-slate-500 text-xs">Added: Dec 2024</p>
+</div>
+<div class="flex items-center gap-1 mt-2 text-emerald-600 dark:text-emerald-400">
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+<p class="text-xs font-semibold">Safety Checked</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Add Button -->
+<div class="fixed bottom-6 w-full max-w-md px-4 z-10 pointer-events-none">
+<button class="pointer-events-auto w-full flex items-center justify-center gap-2 h-14 bg-primary text-white rounded-xl shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all hover:scale-[1.02] active:scale-[0.98]">
+<span class="material-symbols-outlined text-2xl">add_circle</span>
+<span class="text-lg font-bold">Add More Products</span>
+</button>
+</div>
+</div>
+</body></html>

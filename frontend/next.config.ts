@@ -1,15 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // webpack: (config, { dev }) => {
-  //   if (dev) {
-  //     config.watchOptions = {
-  //       poll: 300,
-  //       aggregateTimeout: 300,
-  //     };
-  //   }
-  //   return config;
-  // },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

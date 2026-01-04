@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add Product Form</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee2b6c",
+                        "primary-dark": "#d61f5b",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221016",
+                        "surface-dark": "#2f161f",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }input[type="radio"]:checked {
+            background-color: #ee2b6c;
+            border-color: #ee2b6c;
+        }
+        input[type="radio"]:focus {
+            --tw-ring-color: #ee2b6c;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark antialiased transition-colors duration-200">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto bg-background-light dark:bg-background-dark shadow-2xl">
+<div class="sticky top-0 z-10 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-gray-100 dark:border-white/5">
+<div class="flex items-center p-4">
+<button class="text-[#181113] dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<h1 class="text-[#181113] dark:text-white tracking-tight text-xl font-bold leading-tight ml-2">Add Product</h1>
+</div>
+</div>
+<div class="flex-1 px-6 pt-2 pb-8">
+<form action="#" class="flex flex-col gap-5" onsubmit="event.preventDefault();">
+<div class="w-full aspect-square max-h-[320px] mx-auto rounded-3xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-white dark:bg-surface-dark flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+<div class="size-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">add_a_photo</span>
+</div>
+<span class="text-gray-500 dark:text-gray-400 font-medium">Upload Photo</span>
+</div>
+<div class="space-y-1.5">
+<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        Product Category <span class="text-red-500">*</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-gray-400 text-[20px]">category</span>
+</div>
+<select class="block w-full rounded-xl border-gray-200 bg-white dark:bg-surface-dark dark:border-transparent dark:text-white pl-10 pr-10 py-3.5 text-sm focus:border-primary focus:ring-primary shadow-sm appearance-none cursor-pointer">
+<option disabled="" selected="" value="">Select category</option>
+<option value="skincare">Skincare</option>
+<option value="makeup">Makeup</option>
+<option value="haircare">Haircare</option>
+<option value="fragrance">Fragrance</option>
+</select>
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-gray-400">expand_more</span>
+</div>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        Brand
+                    </label>
+<input class="block w-full rounded-xl border-gray-200 bg-white dark:bg-surface-dark dark:border-transparent dark:text-white px-4 py-3.5 text-sm focus:border-primary focus:ring-primary shadow-sm placeholder-gray-400" placeholder="e.g. Fenty Beauty" type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        Product Name <span class="text-red-500">*</span>
+</label>
+<input class="block w-full rounded-xl border-gray-200 bg-white dark:bg-surface-dark dark:border-transparent dark:text-white px-4 py-3.5 text-sm focus:border-primary focus:ring-primary shadow-sm placeholder-gray-400" placeholder="e.g. Pro Filt'r Foundation" type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        Shade / Color
+                    </label>
+<div class="flex items-center gap-3">
+<input class="block w-full rounded-xl border-gray-200 bg-white dark:bg-surface-dark dark:border-transparent dark:text-white px-4 py-3.5 text-sm focus:border-primary focus:ring-primary shadow-sm placeholder-gray-400" placeholder="e.g. 150 Light Neutral" type="text"/>
+<div class="size-[46px] shrink-0 rounded-full border border-gray-200 dark:border-gray-600 bg-[#f3d9c8] shadow-sm relative overflow-hidden">
+<div class="absolute inset-0 shadow-inner rounded-full"></div>
+</div>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        Finish
+                    </label>
+<div class="flex flex-wrap gap-4">
+<label class="inline-flex items-center cursor-pointer">
+<input class="size-4 text-primary border-gray-300 focus:ring-primary" name="finish" type="radio" value="matte"/>
+<span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Matte</span>
+</label>
+<label class="inline-flex items-center cursor-pointer">
+<input class="size-4 text-primary border-gray-300 focus:ring-primary" name="finish" type="radio" value="dewy"/>
+<span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Dewy</span>
+</label>
+<label class="inline-flex items-center cursor-pointer">
+<input class="size-4 text-primary border-gray-300 focus:ring-primary" name="finish" type="radio" value="natural"/>
+<span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Natural</span>
+</label>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        Purchase Date
+                    </label>
+<div class="relative">
+<input class="block w-full rounded-xl border-gray-200 bg-white dark:bg-surface-dark dark:border-transparent dark:text-white px-4 py-3.5 text-sm focus:border-primary focus:ring-primary shadow-sm placeholder-gray-400 [color-scheme:light] dark:[color-scheme:dark]" type="date"/>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        Notes
+                    </label>
+<textarea class="block w-full rounded-xl border-gray-200 bg-white dark:bg-surface-dark dark:border-transparent dark:text-white px-4 py-3 text-sm focus:border-primary focus:ring-primary shadow-sm placeholder-gray-400 resize-none" placeholder="Add any personal notes about this product..." rows="3"></textarea>
+</div>
+<button class="w-full flex items-center justify-center gap-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-200 font-medium py-3.5 rounded-xl transition-colors border border-transparent dark:border-white/5" type="button">
+<span>🔍</span> Scan Ingredients for Safety
+                </button>
+<div class="h-4"></div>
+<div class="flex flex-col gap-3 mt-2">
+<button class="w-full bg-gradient-to-r from-primary to-[#ff5c8d] hover:brightness-105 text-white font-semibold text-base py-4 rounded-2xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98]" type="submit">
+                        Add to Vanity
+                    </button>
+<a class="w-full text-center text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white text-sm font-medium py-2 transition-colors" href="#">
+                        Cancel
+                    </a>
+</div>
+</form>
+</div>
+</div>
+
+</body></html>

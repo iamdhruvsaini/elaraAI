@@ -9,9 +9,11 @@ import { getBaseUrl } from "@/lib/getBaseUrl";
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: `${getBaseUrl()}/api/v1/`,
   prepareHeaders: (headers) => {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
     }
     return headers;
   },
@@ -22,11 +24,15 @@ export const baseQueryWithAuth: BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
-  // 1️⃣ First request
+  // First request
   let result = await rawBaseQuery(args, api, extraOptions);
 
-  // 2️⃣ If token expired
+  // If token expired (401)
   if (result.error?.status === 401) {
+    if (typeof window === "undefined") {
+      return result;
+    }
+
     const refreshToken = localStorage.getItem("refresh_token");
 
     // No refresh token → force logout
@@ -36,7 +42,7 @@ export const baseQueryWithAuth: BaseQueryFn<
       return result;
     }
 
-    // 3️⃣ Try refreshing token
+    // Try refreshing token
     const refreshResult = await rawBaseQuery(
       {
         url: "auth/refresh",
@@ -48,22 +54,19 @@ export const baseQueryWithAuth: BaseQueryFn<
     );
 
     if (refreshResult.data) {
-      const {
-        access_token,
-        refresh_token,
-      } = refreshResult.data as {
+      const { access_token, refresh_token } = refreshResult.data as {
         access_token: string;
         refresh_token: string;
       };
 
-      // 4️⃣ Save new tokens
+      // Save new tokens
       localStorage.setItem("access_token", access_token);
       localStorage.setItem("refresh_token", refresh_token);
 
-      // 5️⃣ Retry original request
+      // Retry original request
       result = await rawBaseQuery(args, api, extraOptions);
     } else {
-      // 6️⃣ Refresh failed → logout
+      // Refresh failed → logout
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
     }
