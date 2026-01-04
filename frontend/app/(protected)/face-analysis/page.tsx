@@ -138,7 +138,8 @@ export default function FaceAnalysisPage() {
       formData.append("image", blob, "face.jpg");
 
       const result = await analyzeFace(formData).unwrap();
-
+      console.log("Analysis result:", result);
+      
       // Store result in sessionStorage for results page
       sessionStorage.setItem("analysisResult", JSON.stringify(result));
       sessionStorage.setItem("capturedImage", capturedImage);
