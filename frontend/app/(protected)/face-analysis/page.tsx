@@ -156,7 +156,7 @@ export default function FaceAnalysisPage() {
       {/* Header */}
       <div className="flex items-center gap-4 px-6 py-4 safe-top">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push("/dashboard")}
           className="p-2 rounded-full hover:bg-white/10 transition-colors"
         >
           <ArrowLeft size={24} className="text-white" />
