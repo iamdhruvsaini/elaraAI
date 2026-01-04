@@ -50,13 +50,13 @@ catch {
 # -------------------------------
 # Run migrations
 # -------------------------------
-Write-Host "Running database migrations..."
-alembic upgrade head
+# Write-Host "Running database migrations..."
+# alembic upgrade head
 
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "Alembic migration failed!" -ForegroundColor Red
-    exit 1
-}
+# if ($LASTEXITCODE -ne 0) {
+#     Write-Host "Alembic migration failed!" -ForegroundColor Red
+#     exit 1
+# }
 
 # -------------------------------
 # Server info
