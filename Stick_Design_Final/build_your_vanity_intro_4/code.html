@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee2b6c",
+                        "primary-dark": "#d61f5b",
+                        "secondary": "#8b5cf6",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221016",
+                        "surface-dark": "#2f161f",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 1,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        .material-symbols-outlined-outline {
+             font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark antialiased transition-colors duration-200 text-[#181113] dark:text-white">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto bg-background-light dark:bg-background-dark shadow-2xl">
+<header class="flex items-center justify-between px-6 pt-6 pb-2 sticky top-0 z-20 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="flex items-center gap-2">
+<div class="size-8 bg-gradient-to-tr from-primary to-secondary rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-md shadow-primary/20">G</div>
+<span class="font-bold text-xl tracking-tight">GlowAI</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors relative text-gray-600 dark:text-gray-300">
+<span class="material-symbols-outlined material-symbols-outlined-outline">language</span>
+</button>
+<button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors relative text-gray-600 dark:text-gray-300">
+<span class="material-symbols-outlined material-symbols-outlined-outline">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border border-white dark:border-background-dark"></span>
+</button>
+<div class="size-9 rounded-full bg-gray-200 dark:bg-surface-dark overflow-hidden border border-gray-100 dark:border-white/10">
+<img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANV4WNvcYUMFEZHy2rQ_FY4jz3xsApI-mMQRyypBYjOQDESyotE2k3sHdhjwfCEZlw3zqg1Yl1aU0jDL1Zqf_NZgfJGC692wg3AQZ9A7iF_BJHtk2DEGc8rKv6VT3VdORCD1CybE0yRD39kKlSspPo4FNChwD_pvm2H0r8H86pfR8wTrY-T3lH8GB3_Xc_wyUQL-lkbsXfI96Uv2MV8UP8CIbv6bybzx6SL81MaoQnybskCrnfA7t17Q1Ts31jNg8b8DRRu9Mcchkz"/>
+</div>
+</div>
+</header>
+<main class="flex-1 px-6 pb-28 overflow-y-auto hide-scrollbar">
+<div class="mt-4 mb-6">
+<h1 class="text-3xl font-bold leading-tight">Good Evening,<br/>Maya! 🌙</h1>
+</div>
+<div class="relative w-full rounded-3xl p-6 bg-gradient-to-br from-[#ec4899] to-[#8b5cf6] text-white shadow-xl shadow-pink-500/20 mb-8 overflow-hidden group">
+<div class="absolute -top-10 -right-10 size-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+<div class="absolute bottom-0 left-0 size-32 bg-purple-500/30 rounded-full blur-2xl pointer-events-none"></div>
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-1">
+<h2 class="text-xl font-bold">Priya's Wedding 💒</h2>
+<span class="bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs font-semibold">Dec 25</span>
+</div>
+<p class="text-white/90 text-sm mb-5 font-medium">3 days away</p>
+<div class="space-y-3 mb-6">
+<div class="flex items-center gap-3 bg-white/10 p-2 rounded-xl backdrop-blur-sm border border-white/10">
+<div class="size-6 rounded-full bg-green-400 flex items-center justify-center text-white shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<span class="text-sm font-medium">Makeup Ready</span>
+</div>
+<div class="flex items-center gap-3 bg-white/10 p-2 rounded-xl backdrop-blur-sm border border-white/10">
+<div class="size-6 rounded-full bg-amber-400 flex items-center justify-center text-white shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[14px]">priority_high</span>
+</div>
+<span class="text-sm font-medium">Products Ready <span class="text-amber-200 ml-1 font-normal">2 missing</span></span>
+</div>
+</div>
+<button class="w-full bg-white text-[#ec4899] font-bold py-3.5 rounded-xl hover:bg-gray-50 active:scale-95 transition-all shadow-lg shadow-black/10">
+                    Prepare Now
+                </button>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-8">
+<button class="bg-white dark:bg-surface-dark p-4 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col items-start gap-3 border border-gray-100 dark:border-white/5 group">
+<div class="size-10 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">
+                    💄
+                </div>
+<span class="font-semibold text-sm text-left">Start Makeup<br/>Now</span>
+</button>
+<button class="bg-white dark:bg-surface-dark p-4 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col items-start gap-3 border border-gray-100 dark:border-white/5 group">
+<div class="size-10 rounded-full bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">
+                    📅
+                </div>
+<span class="font-semibold text-sm text-left">Schedule<br/>Event</span>
+</button>
+<button class="bg-white dark:bg-surface-dark p-4 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col items-start gap-3 border border-gray-100 dark:border-white/5 group">
+<div class="size-10 rounded-full bg-pink-50 dark:bg-pink-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">
+                    🛍️
+                </div>
+<div class="text-left">
+<span class="font-semibold text-sm block">My Vanity</span>
+<span class="text-xs text-gray-500 dark:text-gray-400">4 items</span>
+</div>
+</button>
+<button class="bg-white dark:bg-surface-dark p-4 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col items-start gap-3 border border-gray-100 dark:border-white/5 group">
+<div class="size-10 rounded-full bg-yellow-50 dark:bg-yellow-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">
+                    💡
+                </div>
+<span class="font-semibold text-sm text-left">Hair<br/>Suggestion</span>
+</button>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-white/5 mb-8">
+<h3 class="font-bold text-base mb-4 flex items-center gap-2">
+                Your Activity
+                <span class="text-xs font-normal text-gray-400 bg-gray-100 dark:bg-white/10 px-2 py-0.5 rounded-full">This Week</span>
+</h3>
+<div class="flex justify-between items-center text-center">
+<div class="flex flex-col items-center gap-1 flex-1">
+<span class="text-2xl mb-1">🎨</span>
+<span class="font-bold text-lg">12</span>
+<span class="text-xs text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">Looks Created</span>
+</div>
+<div class="w-px h-10 bg-gray-100 dark:bg-white/10"></div>
+<div class="flex flex-col items-center gap-1 flex-1">
+<span class="text-2xl mb-1">⭐</span>
+<span class="font-bold text-lg">5.0</span>
+<span class="text-xs text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">Avg Rating</span>
+</div>
+<div class="w-px h-10 bg-gray-100 dark:bg-white/10"></div>
+<div class="flex flex-col items-center gap-1 flex-1">
+<span class="text-2xl mb-1">📈</span>
+<span class="font-bold text-lg text-green-500">+15%</span>
+<span class="text-xs text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">Skin Improving</span>
+</div>
+</div>
+</div>
+<div class="mb-4">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-bold text-lg">Recent Looks</h3>
+<button class="text-primary text-sm font-semibold hover:text-primary-dark">View All</button>
+</div>
+<div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+<div class="shrink-0 w-32 flex flex-col gap-2 group cursor-pointer">
+<div class="aspect-[4/5] rounded-2xl bg-gray-200 dark:bg-white/5 overflow-hidden relative shadow-sm">
+<img alt="Look 1" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXHemr7Bqe1kU3I998UMOXzHssHbtBL5Z_ZO01AvquduIaJqcEik4bu2jpRwm-YQG59CWF480sy4KgeotKsEAAZOmO5Tx-Xf-03J8ZP3wfAvfkBuzeP1CxWOC1wpKWarTNeaMMHIYKhqNvwO2AgZNmjjj1GHnRWRnS99Vrev6S9im6FOjFozdWix9ydBLpMb7uTamjfbwJGwfoRbmsvph3uW7UdyS3vr1GqK1eD5282JKDYvz28uBSuxUFHXsnkT1AsH9gE3JHewul"/>
+<div class="absolute bottom-2 right-2 bg-black/50 backdrop-blur-md rounded-full px-2 py-0.5 text-[10px] text-white flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]">favorite</span> 24
+                         </div>
+</div>
+<span class="text-sm font-medium truncate">Date Night Glam</span>
+</div>
+<div class="shrink-0 w-32 flex flex-col gap-2 group cursor-pointer">
+<div class="aspect-[4/5] rounded-2xl bg-gray-200 dark:bg-white/5 overflow-hidden relative shadow-sm">
+<img alt="Look 2" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDclj_g--01J9xn3guOTru9jmqcSFmdx43VC5QBLExW-wmgrecGCXP0RedTB7ZOf9reLF9f1tZRxnzBumibQ4Ic8WgKSynEJZZJYthe3I7Qaf5WoJa8cDguR-Blq79tbXJbHFWW3e4l4_y74bfmygSFj-i9IOT9pqJLiclvhm75p3K-Rs91h8mJrbwcuQCVeCSrunMYsOeJsHv6fcAKWN44YpXQ2PdGVFztfs0GIAshIt81Td8GklJGkUcvdk4ezmt2lmzu6Qs1KaI"/>
+<div class="absolute bottom-2 right-2 bg-black/50 backdrop-blur-md rounded-full px-2 py-0.5 text-[10px] text-white flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]">favorite</span> 18
+                         </div>
+</div>
+<span class="text-sm font-medium truncate">Office Chic</span>
+</div>
+<div class="shrink-0 w-32 flex flex-col gap-2 group cursor-pointer">
+<div class="aspect-[4/5] rounded-2xl bg-gray-200 dark:bg-white/5 overflow-hidden relative shadow-sm">
+<img alt="Look 3" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxrhQCFiUtwxNquj7l8Wians1ie6u-6Ul9x4PZx1cd_4LIZvWMWE60URCHUZa7MqdBGI2WMkr8AwQuuMnWkINxFL04xelCSVa-trIY5rP6HhQW5MabkpiUyBMEGM186XLRUEAeKVP3MM7Hya3iRmnsHqpG3kYiN0VwVb6t9bEZSxBKzvSji9bBplMhwq0MScKLUqxbSx3qifhoLzGUn9sq6EmUWzRIBxGke2DK5mR5-ms3-s5L9syrWKsPgiBAqADnHv4eRgjgkH0O"/>
+<div class="absolute bottom-2 right-2 bg-black/50 backdrop-blur-md rounded-full px-2 py-0.5 text-[10px] text-white flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]">favorite</span> 42
+                         </div>
+</div>
+<span class="text-sm font-medium truncate">Weekend Vibes</span>
+</div>
+</div>
+</div>
+</main>
+<nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white dark:bg-[#1f0f16] border-t border-gray-100 dark:border-white/5 pb-5 pt-2 px-2 z-30">
+<div class="flex items-center justify-around h-16">
+<button class="flex flex-col items-center justify-center gap-1 text-primary w-14 group">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">home</span>
+<span class="text-[10px] font-medium">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 w-14 transition-colors group">
+<span class="material-symbols-outlined material-symbols-outlined-outline group-hover:scale-110 transition-transform">shopping_bag</span>
+<span class="text-[10px] font-medium">Shop</span>
+</button>
+<div class="relative -top-6">
+<button class="size-14 bg-gradient-to-tr from-primary to-secondary rounded-full text-white shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-105 active:scale-95 transition-all ring-4 ring-white dark:ring-background-dark">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</div>
+<button class="flex flex-col items-center justify-center gap-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 w-14 transition-colors group">
+<span class="material-symbols-outlined material-symbols-outlined-outline group-hover:scale-110 transition-transform">calendar_month</span>
+<span class="text-[10px] font-medium">Calendar</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 w-14 transition-colors group">
+<span class="material-symbols-outlined material-symbols-outlined-outline group-hover:scale-110 transition-transform">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</button>
+</div>
+</nav>
+</div>
+</body></html>

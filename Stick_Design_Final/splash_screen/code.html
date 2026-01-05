@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GlamAI - Splash Screen</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Plus+Jakarta+Sans:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee2b8c",
+                        "background-light": "#f8f6f7",
+                        "background-dark": "#221019",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'twinkle': 'twinkle 2s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        twinkle: {
+                            '0%, 100%': { opacity: 0.2, transform: 'scale(0.8)' },
+                            '50%': { opacity: 1, transform: 'scale(1.2)' },
+                        }
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom Sparkle Positions */
+        .sparkle-1 { top: -10%; right: -10%; animation-delay: 0s; }
+        .sparkle-2 { bottom: 10%; left: -15%; animation-delay: 0.5s; }
+        .sparkle-3 { top: 40%; right: -25%; animation-delay: 1s; }
+        
+        /* Ensure full screen height on mobile */
+        body, html { height: 100%; margin: 0; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display antialiased h-full w-full overflow-hidden">
+<!-- Splash Screen Container -->
+<!-- Background: Gradient transitioning from soft pink (#ee2b8c base) to peach to gold -->
+<div class="relative flex h-full w-full flex-col items-center justify-center bg-[linear-gradient(45deg,#ee2b8c_0%,#ffab91_60%,#ffd54f_100%)] text-white p-6">
+<!-- Decorative subtle background blur to enhance luxury feel -->
+<div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+<div class="absolute top-[-20%] left-[-20%] w-[80%] h-[80%] bg-white/10 rounded-full blur-[100px]"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-primary/20 rounded-full blur-[80px]"></div>
+</div>
+<!-- Central Content Wrapper -->
+<div class="relative flex flex-col items-center z-10">
+<!-- Logo Section with Sparkles -->
+<div class="relative mb-8 group">
+<!-- Main Icon -->
+<div class="relative flex items-center justify-center w-32 h-32 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 shadow-2xl">
+<span class="material-symbols-outlined text-6xl text-white drop-shadow-md">
+                        brush
+                    </span>
+</div>
+<!-- Animated Sparkles -->
+<!-- Sparkle Top Right -->
+<svg class="absolute -top-2 -right-2 w-8 h-8 text-yellow-100 animate-twinkle sparkle-1" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"></path>
+</svg>
+<!-- Sparkle Bottom Left -->
+<svg class="absolute bottom-0 -left-4 w-6 h-6 text-white/80 animate-twinkle sparkle-2" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"></path>
+</svg>
+<!-- Tiny Sparkle Top Left -->
+<svg class="absolute top-2 -left-2 w-4 h-4 text-white/60 animate-twinkle sparkle-3" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"></path>
+</svg>
+</div>
+<!-- Typography -->
+<div class="text-center space-y-2">
+<!-- App Name: Serif, Elegant -->
+<h1 class="font-serif text-5xl font-medium tracking-tight text-white drop-shadow-sm">
+                    GlamAI
+                </h1>
+<!-- Tagline: Sans-serif, Thin, Spaced -->
+<p class="font-display text-white/90 text-sm font-light tracking-[0.25em] uppercase mt-3">
+                    Your Personal Makeup Artist
+                </p>
+</div>
+</div>
+<!-- Bottom Loading Indicator (Optional for Splash feel) -->
+<div class="absolute bottom-12 w-full flex justify-center">
+<div class="w-12 h-1 bg-white/30 rounded-full overflow-hidden">
+<div class="h-full bg-white/80 w-1/2 animate-[shimmer_1.5s_infinite] rounded-full"></div>
+</div>
+</div>
+</div>
+<style>
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+    </style>
+</body></html>
