@@ -248,42 +248,108 @@ Return JSON:
     # ============================================================
     async def generate_hair_style_suggestion(
         self,
-        outfit_data: Dict[str, Any],
-        accessories_data: Dict[str, Any],
-        occasion: str
+        outfit_description: str,
+        outfit_style: Optional[str],
+        occasion: str,
+        face_shape: Optional[str] = None,
+        hair_texture: Optional[str] = None,
+        hair_length: Optional[str] = None
     ) -> Dict[str, Any]:
-        """Suggest hairstyle that fits outfit + jewelry"""
+        """
+        Generate personalized hairstyle recommendation based on outfit and user preferences
+        """
         try:
-            prompt = f"""
-Suggest a hairstyle for:
-OUTFIT: {outfit_data.get('outfit_type')} ({', '.join(outfit_data.get('colors', []))})
-ACCESSORIES: {json.dumps(accessories_data)}
+            # Build user context
+            user_context = []
+            if face_shape:
+                user_context.append(f"Face shape: {face_shape}")
+            if hair_texture:
+                user_context.append(f"Hair texture: {hair_texture}")
+            if hair_length:
+                user_context.append(f"Current hair length: {hair_length}")
+            
+            user_info = "\n".join(user_context) if user_context else "No specific preferences provided"
+            
+            prompt = f"""You are an expert hairstylist and fashion consultant. Analyze the outfit and occasion to recommend the perfect hairstyle.
+
+OUTFIT DESCRIPTION: {outfit_description}
+OUTFIT STYLE: {outfit_style or 'Not specified'}
 OCCASION: {occasion}
 
-Return JSON:
+USER INFORMATION:
+{user_info}
+
+Provide a hairstyle recommendation that:
+1. Complements the outfit style and occasion
+2. Flatters the user's face shape (if provided)
+3. Works with their hair texture and length (if provided)
+4. Is practical and achievable
+
+Return a JSON response with this EXACT structure:
 {{
-  "recommended_style": "low bun|open waves|braid|half-up",
-  "alternatives": ["style1", "style2"],
-  "reasoning": "why it suits the look",
-  "tips": ["tip1", "tip2"]
+  "recommended_style": "Specific hairstyle name (e.g., 'Soft Waves with Side Part', 'Sleek Low Bun', 'Textured Beach Waves')",
+  "style_attributes": ["Volume", "Elegant", "Medium Length"],
+  "benefits": [
+    {{
+      "benefit": "Softens the jawline of your Square Face Shape",
+      "description": "The soft waves create a gentle frame that balances angular features"
+    }},
+    {{
+      "benefit": "Adds necessary volume to Fine Texture hair without weighing it down",
+      "description": "Styling techniques enhance natural body while maintaining movement"
+    }},
+    {{
+      "benefit": "Low maintenance choice, perfect for your Busy Schedule",
+      "description": "Can be styled in 15 minutes and holds throughout the day"
+    }}
+  ],
+  "alternatives": ["Alternative style 1", "Alternative style 2", "Alternative style 3"],
+  "styling_tips": [
+    "Start with a volumizing mousse on damp roots",
+    "Use a 1.25\" barrel curling iron, wrapping away from face",
+    "Brush out curls gently and set with flexible hold spray"
+  ],
+  "maintenance_level": "Low|Medium|High"
 }}
+
+IMPORTANT GUIDELINES:
+- recommended_style: Be specific (not just "waves" but "Soft Waves with Side Part")
+- style_attributes: 2-4 key characteristics (Volume, Sleek, Romantic, Structured, Textured, etc.)
+- benefits: Provide 3 benefits that directly relate to the user's face shape, hair texture, or lifestyle
+- alternatives: 3 different styles that would also work
+- styling_tips: 3-4 practical, numbered steps
+- maintenance_level: Rate as Low, Medium, or High based on styling time and upkeep
 """
+
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": "You are a professional hairstylist."},
+                    {
+                        "role": "system",
+                        "content": "You are a professional hairstylist with expertise in matching hairstyles to outfits, occasions, and individual features. Provide detailed, practical recommendations."
+                    },
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.7,
-                max_tokens=700,
+                max_tokens=1000,
                 response_format={"type": "json_object"}
             )
-
-            return json.loads(response.choices[0].message.content)
-
+            
+            result = json.loads(response.choices[0].message.content)
+            
+            # Validate response structure
+            required_keys = ["recommended_style", "benefits", "styling_tips"]
+            if not all(key in result for key in required_keys):
+                raise ValueError("Invalid response structure from LLM")
+            
+            return result
+            
+        except json.JSONDecodeError as e:
+            logger.error(f"JSON decode error in hair style suggestion: {str(e)}")
+            raise ValueError("Failed to parse AI response")
         except Exception as e:
             logger.error(f"Hair style suggestion error: {str(e)}")
-            raise
+            raise Exception(f"Failed to generate hairstyle recommendation: {str(e)}")
 
     # ============================================================
     # 🧴 PRODUCT SAFETY CHECK (UNIFIED VERSION)

@@ -43,6 +43,9 @@ class Settings(BaseSettings):
     AZURE_CUSTOM_VISION_KEY: str
     AZURE_CUSTOM_VISION_PROJECT_ID: str
     AZURE_CUSTOM_VISION_ITERATION_NAME: str
+    # GPT-4 Vision
+    ENABLE_CUSTOM_VISION: bool = False
+    ENABLE_GPT4_VISION: bool = True
     
     # Azure Speech
     AZURE_SPEECH_KEY: str

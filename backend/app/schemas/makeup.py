@@ -5,7 +5,7 @@ GlamAI - Makeup Session Schemas
 from pydantic import BaseModel, Field, HttpUrl
 from typing import Optional, List, Dict, Any,Union
 from datetime import datetime
-from app.models.makeup import OccasionType, MakeupScope, SessionStatus
+from app.models.makeup import OccasionType, MakeupScope, SessionStatus,FaceShape,HairLength,HairTexture
 from app.models.makeup import OccasionType  # Import the enum
 
 
@@ -56,13 +56,47 @@ class StyleSessionResponse(BaseModel):
         from_attributes = True
 # ============= Hair Style Suggestion & AI Recommendations =============
 
+
+
+
+# Pydantic Models
+class HairRecommendationInput(BaseModel):
+    """Input from user"""
+    outfit_description: str = Field(..., min_length=5, max_length=500)
+    outfit_style: Optional[str] = None  # casual, formal, bohemian, etc.
+    occasion: str = Field(..., min_length=2, max_length=100)
+    face_shape: Optional[FaceShape] = None
+    hair_texture: Optional[HairTexture] = None
+    hair_length: Optional[HairLength] = None
+
+class StyleBenefit(BaseModel):
+    """Individual benefit of the hairstyle"""
+    benefit: str
+    description: str
+
 class HairStyleSuggestion(BaseModel):
-    """AI hair style recommendation"""
+    """AI hair style recommendation output"""
     recommended_style: str
+    style_attributes: List[str] = []  # ["Volume", "Elegant", "Medium Length"]
+    benefits: List[StyleBenefit] = []
     alternatives: List[str] = []
-    reasoning: str
-    reference_image_url: Optional[str] = None
-    tips: List[str] = []
+    styling_tips: List[str] = []
+    maintenance_level: Optional[str] = None  # "Low", "Medium", "High"
+
+class HairRecommendationResponse(BaseModel):
+    """Response with saved data"""
+    id: int
+    recommended_style: str
+    style_attributes: List[str]
+    benefits: List[StyleBenefit]
+    alternatives: List[str]
+    styling_tips: List[str]
+    maintenance_level: Optional[str]
+    
+    class Config:
+        from_attributes = True
+
+
 
 
 class AIRecommendation(BaseModel):
@@ -178,9 +212,6 @@ class MakeupSessionResponse(BaseModel):
     outfit_colors: List[str] = []
     accessories_data: Dict[str, Any] = {}
     
-    # Hair
-    hair_style_recommendation: Optional[str]
-    hair_style_chosen: Optional[str]
     
     # Plan & Products
     makeup_plan: Dict[str, Any] = {}
@@ -209,7 +240,6 @@ class MakeupSessionResponse(BaseModel):
 
 
 # ============= Scheduled Events =============
-
 
 
 

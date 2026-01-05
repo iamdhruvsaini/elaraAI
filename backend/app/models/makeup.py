@@ -39,7 +39,25 @@ class SessionStatus(str, enum.Enum):
     CANCELLED = "cancelled"
     PAUSED = "paused"
 
+class FaceShape(str, enum.Enum):
+    ROUND = "round"
+    OVAL = "oval"
+    SQUARE = "square"
+    HEART = "heart"
+    DIAMOND = "diamond"
+    OBLONG = "oblong"
 
+class HairTexture(str, enum.Enum):
+    FINE = "fine"
+    MEDIUM = "medium"
+    THICK = "thick"
+    COARSE = "coarse"
+
+class HairLength(str, enum.Enum):
+    SHORT = "short"
+    MEDIUM = "medium"
+    LONG = "long"
+    
 class MakeupSession(Base):
     """Makeup session tracking"""
     __tablename__ = "makeup_sessions"
@@ -64,9 +82,6 @@ class MakeupSession(Base):
     style_session_id = Column(Integer, ForeignKey("user_style_sessions.id"), nullable=True)
     style_session = relationship("UserStyleSession")
 
-    # Hair Style
-    hair_style_recommendation = Column(String(500), nullable=True)
-    hair_style_chosen = Column(String(500), nullable=True)
     
     # AI Recommendations
     ai_suggestions = Column(JSON, default=dict)
@@ -121,6 +136,33 @@ class MakeupSession(Base):
     
     def __repr__(self):
         return f"<MakeupSession {self.id} - {self.occasion.value}>"
+    
+
+
+
+# Database Model
+class HairRecommendation(Base):
+    __tablename__ = "hair_recommendations"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    
+    # Input data
+    outfit_description = Column(Text, nullable=False)
+    outfit_style = Column(String(100), nullable=True)
+    occasion = Column(String(100), nullable=False)
+    face_shape = Column(String(50), nullable=True)
+    hair_texture = Column(String(50), nullable=True)
+    hair_length = Column(String(50), nullable=True)
+    
+    # Recommendation output
+    recommended_style = Column(String(200), nullable=True)
+    style_attributes = Column(JSON, default=list)  # ["Volume", "Elegant", "Medium Length"]
+    reasoning = Column(JSON, default=list)  # List of benefits
+    alternatives = Column(JSON, default=list)
+    styling_tips = Column(JSON, default=list)
+    
+    user = relationship("User", back_populates="hair_recommendations")
 
 
 class ScheduledEvent(Base):

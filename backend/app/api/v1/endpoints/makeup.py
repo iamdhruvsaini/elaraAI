@@ -8,12 +8,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.db.database import get_db
 from app.models.user import User
-from app.models.makeup import MakeupSession, SessionStatus
+from app.models.makeup import MakeupSession, SessionStatus,HairRecommendation
 from app.schemas.makeup import (
-    SessionStart, MakeupSessionResponse,
-     HairStyleSuggestion, AIRecommendation,
+    SessionStart, MakeupSessionResponse,HairRecommendationInput,
+    AIRecommendation,
     MakeupPlan, ProductMatch, StepCompletion, MistakeReport,
-    MistakeFix, FinalLookSubmit, FinalLookAnalysis,StyleSessionCreate, StyleSessionResponse
+    MistakeFix, FinalLookSubmit, FinalLookAnalysis,StyleSessionCreate, StyleSessionResponse,HairRecommendationResponse
 )
 from app.models.user import User, UserStyleSession
 from app.api.deps.auth import get_current_user
@@ -287,75 +287,75 @@ async def get_style_history(
         for session in sessions
     ]
 
-@router.get("/{session_id}/hair-suggestion", response_model=HairStyleSuggestion)
-async def get_hair_suggestion(
-    session_id: int,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    """
-    Get AI hair style suggestion
-    """
-    # Get session
-    result = await db.execute(
-        select(MakeupSession).where(
-            MakeupSession.id == session_id,
-            MakeupSession.user_id == current_user.id
-        )
-    )
-    session = result.scalar_one_or_none()
+# @router.get("/{session_id}/hair-suggestion", response_model=HairStyleSuggestion)
+# async def get_hair_suggestion(
+#     session_id: int,
+#     current_user: User = Depends(get_current_user),
+#     db: AsyncSession = Depends(get_db)
+# ):
+#     """
+#     Get AI hair style suggestion
+#     """
+#     # Get session
+#     result = await db.execute(
+#         select(MakeupSession).where(
+#             MakeupSession.id == session_id,
+#             MakeupSession.user_id == current_user.id
+#         )
+#     )
+#     session = result.scalar_one_or_none()
     
-    if not session:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Session not found"
-        )
+#     if not session:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="Session not found"
+#         )
     
-    # Get suggestion from LLM
-    outfit_data = {
-        "style": session.outfit_style,
-        "dominant_color": session.outfit_colors[0] if session.outfit_colors else "unknown",
-        "description": session.outfit_description
-    }
+#     # Get suggestion from LLM
+#     outfit_data = {
+#         "style": session.outfit_style,
+#         "dominant_color": session.outfit_colors[0] if session.outfit_colors else "unknown",
+#         "description": session.outfit_description
+#     }
     
-    suggestion = await llm_service.generate_hair_style_suggestion(
-        outfit_data,
-        session.accessories_data,
-        session.occasion.value
-    )
+#     suggestion = await llm_service.generate_hair_style_suggestion(
+#         outfit_data,    
+#         session.accessories_data,
+#         session.occasion.value
+#     )
     
-    # Save to session
-    session.hair_style_recommendation = suggestion["recommended_style"]
-    await db.commit()
+#     # Save to session
+#     session.hair_style_recommendation = suggestion["recommended_style"]
+#     await db.commit()
     
-    return HairStyleSuggestion(**suggestion)
+#     return HairStyleSuggestion(**suggestion)
 
 
-@router.post("/{session_id}/confirm-hair")
-async def confirm_hair_style(
-    session_id: int,
-    chosen_style: str,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    """
-    User confirms chosen hair style
-    """
-    result = await db.execute(
-        select(MakeupSession).where(
-            MakeupSession.id == session_id,
-            MakeupSession.user_id == current_user.id
-        )
-    )
-    session = result.scalar_one_or_none()
+# @router.post("/{session_id}/confirm-hair")
+# async def confirm_hair_style(
+#     session_id: int,
+#     chosen_style: str,
+#     current_user: User = Depends(get_current_user),
+#     db: AsyncSession = Depends(get_db)
+# ):
+#     """
+#     User confirms chosen hair style
+#     """
+#     result = await db.execute(
+#         select(MakeupSession).where(
+#             MakeupSession.id == session_id,
+#             MakeupSession.user_id == current_user.id
+#         )
+#     )
+#     session = result.scalar_one_or_none()
     
-    if not session:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+#     if not session:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
     
-    session.hair_style_chosen = chosen_style
-    await db.commit()
+#     session.hair_style_chosen = chosen_style
+#     await db.commit()
     
-    return {"message": "Hair style confirmed", "style": chosen_style}
+#     return {"message": "Hair style confirmed", "style": chosen_style}
 
 
 @router.get("/{session_id}/accessory-recommendation", response_model=AIRecommendation)
@@ -706,3 +706,131 @@ async def get_session(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
     
     return session
+
+
+
+# '''''''''''''''''''''Hair"'''''''''''''''''''''''''''''
+
+@router.post("/hair-suggest", response_model=HairRecommendationResponse)
+async def get_hair_suggestion(
+    input_data: HairRecommendationInput,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Direct endpoint: User inputs outfit details and gets instant AI recommendation
+    This is the main endpoint users hit after login
+    """
+    try:
+        # Get AI recommendation instantly
+        ai_suggestion = await llm_service.generate_hair_style_suggestion(
+            outfit_description=input_data.outfit_description,
+            outfit_style=input_data.outfit_style,
+            occasion=input_data.occasion,
+            face_shape=input_data.face_shape.value if input_data.face_shape else None,
+            hair_texture=input_data.hair_texture.value if input_data.hair_texture else None,
+            hair_length=input_data.hair_length.value if input_data.hair_length else None
+        )
+        
+        # Save to database for history
+        hair_rec = HairRecommendation(
+            user_id=current_user.id,
+            outfit_description=input_data.outfit_description,
+            outfit_style=input_data.outfit_style,
+            occasion=input_data.occasion,
+            face_shape=input_data.face_shape.value if input_data.face_shape else None,
+            hair_texture=input_data.hair_texture.value if input_data.hair_texture else None,
+            hair_length=input_data.hair_length.value if input_data.hair_length else None,
+            recommended_style=ai_suggestion["recommended_style"],
+            style_attributes=ai_suggestion.get("style_attributes", []),
+            reasoning=ai_suggestion.get("benefits", []),
+            alternatives=ai_suggestion.get("alternatives", []),
+            styling_tips=ai_suggestion.get("styling_tips", [])
+        )
+        
+        db.add(hair_rec)
+        await db.commit()
+        await db.refresh(hair_rec)
+        
+        # Return formatted response immediately
+        return HairRecommendationResponse(
+            id=hair_rec.id,
+            recommended_style=hair_rec.recommended_style,
+            style_attributes=hair_rec.style_attributes,
+            benefits=hair_rec.reasoning,
+            alternatives=hair_rec.alternatives,
+            styling_tips=hair_rec.styling_tips,
+            maintenance_level=ai_suggestion.get("maintenance_level")
+        )
+        
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate recommendation: {str(e)}"
+        )
+
+
+# @router.get("/history", response_model=List[HairRecommendationResponse])
+# async def get_my_recommendations(
+#     current_user: User = Depends(get_current_user),
+#     db: AsyncSession = Depends(get_db),
+#     limit: int = 20
+# ):
+#     """
+#     Get user's past hair recommendations
+#     Optional: View history of previous suggestions
+#     """
+#     result = await db.execute(
+#         select(HairRecommendation)
+#         .where(HairRecommendation.user_id == current_user.id)
+#         .order_by(HairRecommendation.id.desc())
+#         .limit(limit)
+#     )
+#     recommendations = result.scalars().all()
+    
+#     return [
+#         HairRecommendationResponse(
+#             id=rec.id,
+#             recommended_style=rec.recommended_style,
+#             style_attributes=rec.style_attributes,
+#             benefits=rec.reasoning,
+#             alternatives=rec.alternatives,
+#             styling_tips=rec.styling_tips,
+#             maintenance_level=None
+#         )
+#         for rec in recommendations
+#     ]
+
+
+# @router.delete("/{recommendation_id}")
+# async def delete_recommendation(
+#     recommendation_id: int,
+#     current_user: User = Depends(get_current_user),
+#     db: AsyncSession = Depends(get_db)
+# ):
+#     """
+#     Delete a specific recommendation from history
+#     """
+#     result = await db.execute(
+#         select(HairRecommendation).where(
+#             HairRecommendation.id == recommendation_id,
+#             HairRecommendation.user_id == current_user.id
+#         )
+#     )
+#     recommendation = result.scalar_one_or_none()
+    
+#     if not recommendation:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="Recommendation not found"
+#         )
+    
+#     await db.delete(recommendation)
+#     await db.commit()
+    
+#     return {"message": "Recommendation deleted successfully"}
