@@ -7,15 +7,18 @@ import { DesktopNav } from "./DesktopNav";
 import { DesktopActions } from "./DesktopActions";
 import { MobileMenu } from "./MobileMenu";
 import { Logo } from "../Logo";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
+  const {isAuthenticated,logout}=useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const router=useRouter();
   
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full backdrop-blur">
+      <header className="sticky bg-white top-0 z-40 w-full backdrop-blur">
         <div className="container mx-auto">
           <div className="flex h-14 md:h-16 items-center justify-between">
             <Logo />
@@ -24,8 +27,8 @@ export default function Header() {
 
             <DesktopActions
               isAuthenticated={isAuthenticated}
-              onLogin={() => setIsAuthenticated(true)}
-              onLogout={() => setIsAuthenticated(false)}
+              onLogin={() => router.push("/login")}
+              onLogout={() => logout()}
             />
 
             <Button
@@ -37,7 +40,7 @@ export default function Header() {
               {mobileMenuOpen ? (
                 <X className="h-6 w-6" />
               ) : (
-                <Menu className="h-6 w-6" />
+                <Menu className="size-6" />
               )}
             </Button>
           </div>
@@ -46,8 +49,8 @@ export default function Header() {
             <MobileMenu
               isAuthenticated={isAuthenticated}
               closeMenu={() => setMobileMenuOpen(false)}
-              onLogin={() => setIsAuthenticated(true)}
-              onLogout={() => setIsAuthenticated(false)}
+              onLogin={() => router.push("/login")}
+              onLogout={() => logout()}
             />
           )}
         </div>

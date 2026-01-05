@@ -15,7 +15,7 @@ import LiveBadge from "../common/LiveBadge";
 */
 
 
-export default function Home() {
+export default function Landing() {
   return (
     <section className="relative overflow-hidden">
       <div className="wrapper">

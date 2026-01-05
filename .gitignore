@@ -17,3 +17,4 @@ static/temp/*
 !static/temp/.gitkeep
 tests/testing.py
 tests/edy.py
+.roo
