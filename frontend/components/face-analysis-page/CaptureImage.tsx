@@ -1,288 +1,235 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import {
-  ArrowLeft,
-  Camera,
-  RefreshCcw,
-  Loader2,
-} from "lucide-react";
-import { useCaptureUserImageMutation } from "@/redux/services/authentication/authService";
+import React, { useState } from "react";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { useAnalyzeFaceMutation, useUpdateAllergiesMutation } from "@/redux/services/profile/profileService";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import CameraCapture from "./CameraCapture";
+import ResultsDisplay from "./ResultsDisplay";
+import AllergiesForm from "./AllergiesForm";
+
+type FlowStep = "capture" | "results" | "allergies";
 
 const CaptureImage: React.FC = () => {
-  const [stream, setStream] = useState<MediaStream | null>(null);
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState<FlowStep>("capture");
+
+  // Image states
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [capturedFile, setCapturedFile] = useState<File | null>(null);
-  const [isCameraLoading, setIsCameraLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
 
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
-  const [uploadResult, setUploadResult] = useState<any>(null);
+  // Analysis states
+  const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
 
-  const [captureUserImage, { isLoading: isUploading }] =
-    useCaptureUserImageMutation();
+  const [analyzeFace, { isLoading: isAnalyzing }] = useAnalyzeFaceMutation();
+  const [updateAllergies, { isLoading: isUpdatingAllergies }] = useUpdateAllergiesMutation();
 
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  /* =======================
-     Camera helpers
-  ======================= */
-
-  const stopCamera = () => {
-    if (!stream) return;
-
-    stream.getTracks().forEach((track) => {
-      if (track.readyState === "live") track.stop();
-    });
-
-    setStream(null);
-
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-    }
-  };
-
-  const startCamera = async () => {
-    if (stream || capturedImage) return;
-
-    setIsCameraLoading(true);
-    setError(null);
-
-    try {
-      const newStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode },
-        audio: false,
-      });
-
-      setStream(newStream);
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = newStream;
-        videoRef.current.muted = true;
-        videoRef.current.setAttribute("playsinline", "true");
-        await videoRef.current.play();
-      }
-    } catch (err: any) {
-      if (err.name === "NotAllowedError") {
-        setError("Camera permission denied. Please allow access.");
-      } else if (err.name === "NotFoundError") {
-        setError("No camera found on this device.");
-      } else {
-        setError("Unable to access camera.");
-      }
-    } finally {
-      setIsCameraLoading(false);
-    }
-  };
-
-  /* =======================
-     Effects
-  ======================= */
-
-  // Start camera when needed
-  useEffect(() => {
-    if (!capturedImage) {
-      startCamera();
-    }
-
-    return () => {
-      stopCamera();
-    };
-  }, [facingMode, capturedImage]);
-
-  // Cleanup object URLs + timeout
-  useEffect(() => {
-    return () => {
-      if (capturedImage?.startsWith("blob:")) {
-        URL.revokeObjectURL(capturedImage);
-      }
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, [capturedImage]);
-
-  /* =======================
-     Capture logic
-  ======================= */
-
-  const capturePhoto = () => {
-    if (!videoRef.current || !canvasRef.current) return;
-
-    const video = videoRef.current;
-    if (!video.videoWidth || !video.videoHeight) {
-      setError("Video not ready. Try again.");
-      return;
-    }
-
-    const canvas = canvasRef.current;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    canvas.toBlob((blob) => {
-      if (!blob) return;
-
-      const file = new File([blob], "capture.png", { type: "image/png" });
-      setCapturedFile(file);
-      setCapturedImage(URL.createObjectURL(blob));
-      stopCamera();
-    }, "image/png");
-  };
-
-  /* =======================
-     File upload
-  ======================= */
-
-  const openFilePicker = () => {
-    fileInputRef.current?.click();
-  };
-
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !file.type.startsWith("image/")) {
-      setError("Please select an image file.");
-      return;
-    }
-
+  const handleCapture = (file: File, imageUrl: string) => {
     setCapturedFile(file);
-    setCapturedImage(URL.createObjectURL(file));
-    stopCamera();
+    setCapturedImage(imageUrl);
   };
 
-  const uploadCapturedImage = async () => {
+  const handleRetake = () => {
+    if (capturedImage) {
+      URL.revokeObjectURL(capturedImage);
+    }
+    setCapturedImage(null);
+    setCapturedFile(null);
+    setAnalysisResult(null);
+    setAnalysisError(null);
+    setCurrentStep("capture");
+  };
+
+  const handleAnalyze = async () => {
     if (!capturedFile) {
-      setUploadError("No image to upload.");
+      setAnalysisError("No image to analyze.");
       return;
     }
 
-    setUploadError(null);
-    setUploadSuccess(false);
-    setUploadResult(null);
+    setAnalysisError(null);
 
     try {
       const formData = new FormData();
       formData.append("image", capturedFile);
 
-      const response = await captureUserImage(formData).unwrap();
+      const response = await analyzeFace(formData).unwrap();
+      console.log("✅ Face analysis successful:", response);
 
-      // ✅ REQUIRED LOG
-      console.log("✅ Image upload successful:", response);
-
-      setUploadSuccess(true);
-      setUploadResult(response);
-
-      timeoutRef.current = setTimeout(() => {
-        setCapturedImage(null);
-        setCapturedFile(null);
-        setUploadSuccess(false);
-      }, 2000);
+      setAnalysisResult(response);
+      setCurrentStep("results");
     } catch (err: any) {
-      console.error("❌ Upload failed:", err);
-      setUploadError(err?.data?.message || "Upload failed.");
+      console.error("❌ Analysis failed:", err);
+      setAnalysisError(err?.data?.message || "Analysis failed. Please try again.");
     }
   };
 
-  /* =======================
-     UI (UNCHANGED)
-  ======================= */
+  const handleAddAllergies = () => {
+    setCurrentStep("allergies");
+  };
+
+  const handleSkipAllergies = () => {
+    router.push("/profile");
+  };
+
+  const handleSubmitAllergies = async (allergies: string[], sensitivityLevel: string = "normal") => {
+    try {
+      await updateAllergies({ allergies, sensitivity_level: sensitivityLevel }).unwrap();
+      console.log("✅ Allergies updated successfully");
+      router.push("/profile");
+    } catch (error: any) {
+      console.error("❌ Failed to update allergies:", error);
+      setAnalysisError(error?.data?.message || "Failed to update allergies");
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep === "capture") {
+      router.back();
+    } else if (currentStep === "results") {
+      setCurrentStep("capture");
+    } else if (currentStep === "allergies") {
+      setCurrentStep("results");
+    }
+  };
 
   return (
-    <div className="flex-1 flex flex-col bg-white relative">
-      <header className="pt-4 pb-4 flex items-center justify-between sticky top-0 bg-white border-b">
-        <button className="p-2">
-          <ArrowLeft className="w-6 h-6" />
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 flex flex-col">
+      {/* Header */}
+      <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b border-gray-200 px-4 py-3 flex items-center justify-between shadow-sm">
+        <button
+          onClick={handleBack}
+          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5 text-gray-700" />
         </button>
-        <h1 className="font-bold">Capture Your Face</h1>
-        <div className="w-10" />
+        <h1 className="font-semibold text-base text-gray-900">
+          {currentStep === "capture" && "Capture Your Face"}
+          {currentStep === "results" && "Analysis Results"}
+          {currentStep === "allergies" && "Add Allergies"}
+        </h1>
+        <div className="w-9" />
       </header>
 
-      <main className="flex-1 mt-8 px-8 flex flex-col items-center justify-center">
-        <div className="relative w-full max-w-md aspect-[4/5] bg-slate-200 rounded-3xl overflow-hidden">
-          {!capturedImage ? (
-            <>
-              {isCameraLoading && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Loader2 className="animate-spin" />
-                </div>
-              )}
-              {error ? (
-                <div className="flex items-center justify-center h-full text-red-600">
-                  {error}
-                </div>
-              ) : (
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  muted
-                  playsInline
-                  className="w-full h-full object-cover"
-                />
-              )}
-            </>
-          ) : (
-            <img
-              src={capturedImage}
-              alt="Captured"
-              className="w-full h-full object-cover"
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto">
+        {/* STEP 1: CAPTURE */}
+        {currentStep === "capture" && (
+          <>
+            <CameraCapture
+              onCapture={handleCapture}
+              onRetake={handleRetake}
+              capturedImage={capturedImage}
             />
-          )}
-        </div>
 
-        <div className="flex items-center justify-center gap-6 mt-6">
-          {!capturedImage ? (
-            <button onClick={capturePhoto} disabled={!stream}>
-              <Camera />
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                setCapturedImage(null);
-                setCapturedFile(null);
-              }}
-            >
-              Retake
-            </button>
-          )}
-
-          <button
-            onClick={() =>
-              setFacingMode((p) => (p === "user" ? "environment" : "user"))
-            }
-          >
-            <RefreshCcw />
-          </button>
-        </div>
-
-        {capturedImage && (
-          <button
-            onClick={uploadCapturedImage}
-            disabled={isUploading}
-            className="mt-4 bg-primary text-white w-full px-4 py-2 rounded-md"
-          >
-            {isUploading ? "Uploading..." : "Continue"}
-          </button>
+            {analysisError && (
+              <div className="max-w-md mx-auto px-4 pb-4">
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-800">{analysisError}</p>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={onFileChange}
-        />
+        {/* STEP 2: RESULTS */}
+        {currentStep === "results" && analysisResult && capturedImage && (
+          <ResultsDisplay
+            analysisResult={analysisResult}
+            capturedImage={capturedImage}
+          />
+        )}
 
-        <canvas ref={canvasRef} className="hidden" />
+        {/* STEP 3: ALLERGIES */}
+        {currentStep === "allergies" && (
+          <>
+            <AllergiesForm
+              onSubmit={handleSubmitAllergies}
+              isLoading={isUpdatingAllergies}
+            />
+
+            {analysisError && (
+              <div className="max-w-md mx-auto px-4 pb-4">
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-800">{analysisError}</p>
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </main>
+
+      {/* Fixed Bottom Actions */}
+      {currentStep === "capture" && capturedImage && (
+        <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg">
+          <Button
+            onClick={handleAnalyze}
+            disabled={isAnalyzing}
+            className="w-full h-14 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold text-base rounded-xl shadow-lg"
+          >
+            {isAnalyzing ? (
+              <>
+                <Loader2 className="animate-spin w-5 h-5 mr-2" />
+                Analyzing...
+              </>
+            ) : (
+              <>
+                Continue
+                <ArrowLeft className="w-5 h-5 ml-2 rotate-180" />
+              </>
+            )}
+          </Button>
+        </div>
+      )}
+
+      {currentStep === "results" && (
+        <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg space-y-2">
+          <Button
+            onClick={handleAddAllergies}
+            className="w-full h-14 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold text-base rounded-xl shadow-lg"
+          >
+            Add Allergies
+            <ArrowLeft className="w-5 h-5 ml-2 rotate-180" />
+          </Button>
+          <Button
+            onClick={handleSkipAllergies}
+            variant="outline"
+            className="w-full h-12 text-sm font-medium"
+          >
+            Skip for Now
+          </Button>
+        </div>
+      )}
+
+      {currentStep === "allergies" && (
+        <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg space-y-2">
+          <Button
+            onClick={() => {
+              const form = document.querySelector('form');
+              if (form) form.requestSubmit();
+            }}
+            disabled={isUpdatingAllergies}
+            className="w-full h-14 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold text-base rounded-xl shadow-lg"
+          >
+            {isUpdatingAllergies ? (
+              <>
+                <Loader2 className="animate-spin w-5 h-5 mr-2" />
+                Saving...
+              </>
+            ) : (
+              "Save & Continue to Profile"
+            )}
+          </Button>
+          <Button
+            onClick={handleSkipAllergies}
+            variant="outline"
+            className="w-full h-12 text-sm font-medium"
+          >
+            Skip for Now
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

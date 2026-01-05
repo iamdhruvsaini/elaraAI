@@ -7,7 +7,7 @@ import {
   AlertCircle,
   Wand2,
   ShoppingBag,
-  Lightbulb,
+  Camera,
 } from "lucide-react";
 
 import { useRouter } from 'next/navigation';
@@ -41,7 +41,7 @@ const ACTIONS: ActionItem[] = [
   { id: 1, title: "Start Makeup Now", icon: <Wand2 className="w-6 h-6 text-rose-500" />, link:"/" },
   { id: 2, title: "Schedule Event", icon: <Calendar className="w-6 h-6 text-indigo-500" /> ,link:"/"},
   { id: 3, title: "My Vanity", icon: <ShoppingBag className="w-6 h-6 text-teal-500" />, count: "41 items",link:"/" },
-  { id: 4, title: "Face Analysis", icon: <Lightbulb className="w-6 h-6 text-amber-500" />,link:"/face-analysis" },
+   {id:4, title:"Hair Analysis", icon:<CheckCircle2 className="w-6 h-6 text-green-500" />, link:"/hair-analysis "}
 ];
 
 const STATS: BeautyStat[] = [
@@ -128,6 +128,15 @@ const Home: React.FC = () => {
             ))}
           </section>
         </main>
+
+        {/* Floating Camera Button */}
+        <button
+          onClick={() => router.push('/face-analysis')}
+          className="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-transform hover:shadow-amber-500/50 z-50"
+          aria-label="Face Analysis"
+        >
+          <Camera className="w-7 h-7 text-white" />
+        </button>
       </div>
     </div>
   );
