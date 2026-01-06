@@ -566,24 +566,133 @@ Text: {extracted_text[:2000]}
 # 🧪 OCR DIAGNOSTIC ENDPOINT
 # ======================================================
 
+# @router.post("/products/test-ocr")
+# async def test_ocr(
+#     file: UploadFile = File(...),
+#     current_user: User = Depends(get_current_user),
+# ):
+#     """🔍 OCR Diagnostic Tool - Test text extraction without saving"""
+#     try:
+#         logger.info(f"🧪 Testing OCR for user {current_user.id}")
+        
+#         image_bytes = await file.read()
+#         logger.info(f"📦 Image: {len(image_bytes)} bytes, type: {file.content_type}")
+        
+#         client = DocumentAnalysisClient(
+#             endpoint=settings.AZURE_FORM_RECOGNIZER_ENDPOINT,
+#             credential=AzureKeyCredential(settings.AZURE_FORM_RECOGNIZER_KEY)
+#         )
+        
+#         results = {}
+        
+#         async with client:
+#             # Test Model 1: prebuilt-read
+#             try:
+#                 poller = await client.begin_analyze_document(
+#                     model_id="prebuilt-read",
+#                     document=io.BytesIO(image_bytes)
+#                 )
+#                 result = await poller.result()
+                
+#                 text_lines = []
+#                 all_text = ""
+                
+#                 if result.pages:
+#                     for page_num, page in enumerate(result.pages, 1):
+#                         for line_num, line in enumerate(page.lines, 1):
+#                             text_lines.append({
+#                                 "line_number": line_num,
+#                                 "content": line.content,
+#                             })
+#                             all_text += line.content + " "
+                
+#                 results["prebuilt_read"] = {
+#                     "success": True,
+#                     "total_characters": len(all_text.strip()),
+#                     "lines": text_lines,
+#                     "full_text": all_text.strip()
+#                 }
+#             except Exception as e:
+#                 results["prebuilt_read"] = {"success": False, "error": str(e)}
+            
+#             # Test Model 2: prebuilt-document
+#             try:
+#                 poller = await client.begin_analyze_document(
+#                     model_id="prebuilt-document",
+#                     document=io.BytesIO(image_bytes)
+#                 )
+#                 result = await poller.result()
+                
+#                 results["prebuilt_document"] = {
+#                     "success": True,
+#                     "total_characters": len(result.content or ""),
+#                     "full_text": result.content or ""
+#                 }
+#             except Exception as e:
+#                 results["prebuilt_document"] = {"success": False, "error": str(e)}
+        
+#         # Find best model
+#         best_model = None
+#         max_chars = 0
+        
+#         for model_name, model_result in results.items():
+#             if model_result.get("success") and model_result.get("total_characters", 0) > max_chars:
+#                 max_chars = model_result["total_characters"]
+#                 best_model = model_name
+        
+#         return {
+#             "success": True,
+#             "image_info": {
+#                 "size_bytes": len(image_bytes),
+#                 "content_type": file.content_type,
+#                 "filename": file.filename
+#             },
+#             "ocr_results": results,
+#             "summary": {
+#                 "best_model": best_model,
+#                 "max_characters_extracted": max_chars,
+#                 "is_image_readable": max_chars > 50
+#             }
+#         }
+    
+#     except Exception as e:
+#         logger.error(f"❌ OCR test failed: {e}", exc_info=True)
+#         return {"success": False, "error": str(e)}
+
 @router.post("/products/test-ocr")
 async def test_ocr(
     file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """🔍 OCR Diagnostic Tool - Test text extraction without saving"""
+    """🔍 Enhanced OCR Test - Extracts text AND saves to VanityProduct table"""
     try:
         logger.info(f"🧪 Testing OCR for user {current_user.id}")
         
+        # 1️⃣ Read and Upload Image
         image_bytes = await file.read()
+        if len(image_bytes) == 0:
+            raise HTTPException(status_code=400, detail="Empty file")
+        
         logger.info(f"📦 Image: {len(image_bytes)} bytes, type: {file.content_type}")
         
+        # Upload to Azure Storage
+        image_url = await storage_service._upload_image(
+            image_bytes=image_bytes,
+            container_name="results",
+            prefix=f"user_{current_user.id}_test_ocr",
+            content_type=file.content_type or "image/jpeg"
+        )
+        logger.info(f"✅ Uploaded: {image_url}")
+        
+        # 2️⃣ Run OCR Tests
         client = DocumentAnalysisClient(
             endpoint=settings.AZURE_FORM_RECOGNIZER_ENDPOINT,
             credential=AzureKeyCredential(settings.AZURE_FORM_RECOGNIZER_KEY)
         )
         
         results = {}
+        best_text = ""
         
         async with client:
             # Test Model 1: prebuilt-read
@@ -612,6 +721,10 @@ async def test_ocr(
                     "lines": text_lines,
                     "full_text": all_text.strip()
                 }
+                
+                if len(all_text.strip()) > len(best_text):
+                    best_text = all_text.strip()
+                    
             except Exception as e:
                 results["prebuilt_read"] = {"success": False, "error": str(e)}
             
@@ -628,6 +741,10 @@ async def test_ocr(
                     "total_characters": len(result.content or ""),
                     "full_text": result.content or ""
                 }
+                
+                if len(result.content or "") > len(best_text):
+                    best_text = result.content or ""
+                    
             except Exception as e:
                 results["prebuilt_document"] = {"success": False, "error": str(e)}
         
@@ -640,26 +757,343 @@ async def test_ocr(
                 max_chars = model_result["total_characters"]
                 best_model = model_name
         
+        logger.info(f"📜 Best OCR: {len(best_text)} chars from {best_model}")
+        
+        # 3️⃣ Detect & Lookup Barcode (same as scan endpoint)
+        barcode = barcode_service.detect_barcode(best_text)
+        structured_data = None
+        lookup_method = None
+        
+        if barcode:
+            logger.info(f"🔢 Barcode detected: {barcode}")
+            
+            # Try API lookup
+            barcode_data = await barcode_service.lookup_barcode(barcode)
+            
+            if barcode_data:
+                lookup_method = barcode_data.get("source")
+                
+                # Parse ingredients
+                ingredients_text = barcode_data.get("ingredients", "")
+                if isinstance(ingredients_text, str) and ingredients_text:
+                    try:
+                        ing_prompt = f"""
+Extract ingredient list from: {ingredients_text[:500]}
+Return JSON: {{"ingredients": ["ingredient1", "ingredient2"]}}
+"""
+                        ing_result = await llm_service.get_structured_response(
+                            prompt=ing_prompt,
+                            system_role="ingredient parser",
+                            max_tokens=500
+                        )
+                        ingredients_list = ing_result.get("ingredients", [])
+                    except Exception as ing_error:
+                        logger.warning(f"⚠️ Ingredient parsing failed: {ing_error}")
+                        ingredients_list = []
+                else:
+                    ingredients_list = barcode_data.get("ingredients", [])
+                
+                structured_data = {
+                    "brand": barcode_data.get("brand", ""),
+                    "product_name": barcode_data.get("product_name", ""),
+                    "shade": "",
+                    "category": "other",
+                    "description": barcode_data.get("description", ""),
+                    "tags": [],
+                    "price": 0.0,
+                    "ingredients": ingredients_list
+                }
+                
+                logger.info(f"✅ Found via {lookup_method}")
+            else:
+                # Fallback: LLM search
+                logger.info("🤖 API failed, trying LLM search...")
+                llm_result = await barcode_service.search_barcode_with_llm(barcode, llm_service)
+                
+                if llm_result:
+                    structured_data = llm_result
+                    lookup_method = "llm_search"
+                    logger.info("✅ Found via LLM search")
+        
+        # 4️⃣ Fallback: LLM Parsing (same as scan endpoint)
+        if not structured_data:
+            logger.info("🧠 No barcode or lookup failed, using LLM parsing...")
+            
+            if len(best_text) < 15:
+                structured_data = {
+                    "brand": "",
+                    "product_name": "Unknown Product (OCR Test)",
+                    "shade": "",
+                    "category": "other",
+                    "description": "Could not extract info from OCR test",
+                    "tags": [],
+                    "price": 0.0,
+                    "ingredients": []
+                }
+                lookup_method = "failed_ocr"
+            else:
+                prompt = f"""
+Extract cosmetic product info from text. Return ONLY valid JSON:
+
+{{
+    "brand": "",
+    "product_name": "",
+    "shade": "",
+    "category": "foundation|lipstick|eyeshadow|mascara|blush|primer|concealer|eyeliner|skincare|other",
+    "description": "",
+    "tags": [],
+    "price": 0.0,
+    "ingredients": []
+}}
+
+Text: {best_text[:2000]}
+"""
+                
+                try:
+                    llm_resp = await llm_service.client.chat.completions.create(
+                        model=llm_service.model,
+                        messages=[
+                            {"role": "system", "content": "You are a beauty product parser."},
+                            {"role": "user", "content": prompt}
+                        ],
+                        temperature=0.3,
+                        max_tokens=1000,
+                        response_format={"type": "json_object"}
+                    )
+                    
+                    structured_data = json.loads(llm_resp.choices[0].message.content)
+                    lookup_method = "llm_parsing"
+                except Exception as parse_error:
+                    logger.error(f"❌ LLM parsing failed: {parse_error}")
+                    structured_data = {
+                        "brand": "",
+                        "product_name": "Unknown Product (OCR Test)",
+                        "shade": "",
+                        "category": "other",
+                        "description": best_text[:200],
+                        "tags": [],
+                        "price": 0.0,
+                        "ingredients": []
+                    }
+                    lookup_method = "failed_llm"
+        
+        # 5️⃣ Normalize Ingredients
+        ingredients = structured_data.get("ingredients", [])
+        if ingredients and isinstance(ingredients[0], dict):
+            ingredients = [
+                item.get("name", "") or item.get("ingredient", "") 
+                for item in ingredients if isinstance(item, dict)
+            ]
+        ingredients = [str(i).strip() for i in ingredients if i]
+        
+        # 6️⃣ Get User Profile
+        await db.refresh(current_user, ["profile"])
+        user_profile = current_user.profile
+        
+        if user_profile:
+            allergies = user_profile.allergies or []
+            if isinstance(allergies, str):
+                allergies = [allergies]
+            
+            skin_concerns = user_profile.skin_concerns or []
+            if skin_concerns and isinstance(skin_concerns[0], dict):
+                skin_concerns = [c.get("type", "") for c in skin_concerns if isinstance(c, dict)]
+            
+            user_profile_dict = {
+                "allergies": [str(a).strip() for a in allergies if a],
+                "skin_concerns": [str(c).strip() for c in skin_concerns if c],
+                "skin_type": user_profile.skin_type or "unknown",
+                "skin_tone": user_profile.skin_tone or "unknown",
+            }
+        else:
+            user_profile_dict = {
+                "allergies": [],
+                "skin_concerns": [],
+                "skin_type": "unknown",
+                "skin_tone": "unknown",
+            }
+        
+        # 7️⃣ Safety Check
+        try:
+            safety_data = await llm_service.check_product_safety(
+                product_name=structured_data.get("product_name", "Unknown"),
+                product_ingredients=ingredients,
+                user_profile=user_profile_dict
+            )
+        except Exception as e:
+            logger.error(f"⚠️ Safety check failed: {e}")
+            safety_data = {
+                "is_safe": True,
+                "safety_score": 0.8,
+                "warnings": ["Safety check unavailable"],
+                "allergens_found": [],
+                "concern_conflicts": [],
+                "severity": "unknown",
+                "recommendation": "review_manually",
+                "confidence": 0.5
+            }
+        
+        # 8️⃣ Map Category to Enum SAFELY
+        category_str = structured_data.get("category", "other")
+        
+        if not isinstance(category_str, str):
+            category_str = "other"
+        
+        category_str = category_str.lower().strip()
+        
+        category_mapping = {
+            "foundation": "foundation",
+            "base": "foundation",
+            "face makeup": "foundation",
+            "lipstick": "lipstick",
+            "lip color": "lipstick",
+            "lip": "lipstick",
+            "eyeshadow": "eyeshadow",
+            "eye shadow": "eyeshadow",
+            "eyes": "eyeshadow",
+            "mascara": "mascara",
+            "blush": "blush",
+            "rouge": "blush",
+            "cheek": "blush",
+            "primer": "primer",
+            "concealer": "concealer",
+            "eyeliner": "eyeliner",
+            "eye liner": "eyeliner",
+            "skincare": "skincare",
+            "skin care": "skincare",
+            "other": "other",
+        }
+        
+        mapped_category = category_mapping.get(category_str, "other")
+        
+        try:
+            category_value = ProductCategory(mapped_category)
+            logger.info(f"✅ Category: '{category_str}' → {mapped_category}")
+        except (ValueError, AttributeError) as cat_error:
+            logger.warning(f"⚠️ Category error: {cat_error}, using 'other'")
+            try:
+                category_value = ProductCategory.other
+            except AttributeError:
+                category_value = "other"
+        
+        # 9️⃣ Save to VanityProduct Database
+        try:
+            new_product = VanityProduct(
+                user_id=current_user.id,
+                brand=structured_data.get("brand", "")[:100],
+                product_name=structured_data.get("product_name", "Unknown")[:200],
+                category=category_value,
+                shade=structured_data.get("shade", "")[:100],
+                price=float(structured_data.get("price") or 0.0),
+                ingredients=ingredients,
+                is_safe_for_user=safety_data.get("is_safe", True),
+                safety_warnings=safety_data.get("warnings", []),
+                notes=structured_data.get("description", "")[:500],
+                tags=structured_data.get("tags", []),
+                product_image_url=image_url,
+                created_at=datetime.utcnow(),
+            )
+            
+            db.add(new_product)
+            
+            if user_profile:
+                user_profile.products_count = (user_profile.products_count or 0) + 1
+            
+            await db.commit()
+            await db.refresh(new_product)
+            
+            logger.info(f"✅ Saved product ID {new_product.id}")
+            
+        except Exception as db_error:
+            logger.error(f"❌ Database save failed: {db_error}")
+            await db.rollback()
+            raise HTTPException(status_code=500, detail=f"Failed to save product: {str(db_error)}")
+        
+        # 🔟 Index to Azure Search
+        try:
+            if hasattr(category_value, 'value'):
+                category_for_search = category_value.value
+            elif isinstance(category_value, str):
+                category_for_search = category_value
+            else:
+                category_for_search = str(category_value)
+            
+            await search_service.upload_products([{
+                "id": str(new_product.id),
+                "brand": new_product.brand or "",
+                "product_name": new_product.product_name or "Unknown",
+                "category": category_for_search,
+                "shade": new_product.shade or "",
+                "price": float(new_product.price or 0.0),
+                "ingredients": ingredients,
+                "tags": new_product.tags or [],
+                "average_rating": 4.5,
+                "total_reviews": 0,
+                "in_stock": True,
+                "image_url": new_product.product_image_url or "",
+                "product_url": "",
+            }])
+            logger.info("✅ Indexed in Azure Search")
+        except Exception as e:
+            logger.warning(f"⚠️ Azure Search failed: {e}")
+        
+        # 1️⃣1️⃣ Return Enhanced Response
         return {
             "success": True,
+            "message": "OCR test completed and product saved to VanityProduct table",
+            
+            # Product Info
+            "product_id": new_product.id,
+            "product_name": new_product.product_name,
+            "brand": new_product.brand,
+            "category": category_for_search,
+            "shade": new_product.shade,
+            "image_url": new_product.product_image_url,
+            
+            # OCR Diagnostic Info
+            "ocr_results": results,
+            "ocr_summary": {
+                "best_model": best_model,
+                "max_characters_extracted": max_chars,
+                "is_image_readable": max_chars > 50,
+                "ocr_text_preview": best_text[:100]
+            },
+            
+            # Lookup Info
+            "lookup_info": {
+                "barcode_detected": barcode,
+                "lookup_method": lookup_method,
+                "ocr_text_length": len(best_text),
+            },
+            
+            # Safety Info
+            "safety": {
+                "is_safe": safety_data.get("is_safe", True),
+                "safety_score": safety_data.get("safety_score", 0.8),
+                "warnings": safety_data.get("warnings", []),
+                "recommendation": safety_data.get("recommendation", "safe_to_use"),
+                "severity": safety_data.get("severity", "low"),
+            },
+            
+            # Ingredients
+            "ingredients_count": len(ingredients),
+            "ingredients_preview": ingredients[:5] if ingredients else [],
+            "tags": new_product.tags or [],
+            
+            # Image Info
             "image_info": {
                 "size_bytes": len(image_bytes),
                 "content_type": file.content_type,
                 "filename": file.filename
-            },
-            "ocr_results": results,
-            "summary": {
-                "best_model": best_model,
-                "max_characters_extracted": max_chars,
-                "is_image_readable": max_chars > 50
             }
         }
-    
+        
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"❌ OCR test failed: {e}", exc_info=True)
-        return {"success": False, "error": str(e)}
-
-
+        await db.rollback()
+        raise HTTPException(status_code=500, detail=f"OCR test failed: {str(e)}")
 
 # ======================================================
 # 🧠 SMART ADD PRODUCT
