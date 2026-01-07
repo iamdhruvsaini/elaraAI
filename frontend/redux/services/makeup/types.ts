@@ -54,14 +54,14 @@ export const HAIR_LENGTHS: SelectOption[] = [
 ];
 
 export const OCCASIONS: SelectOption[] = [
-  { value: "casual", label: "Casual" },
-  { value: "formal", label: "Formal" },
+  { value: "daily", label: "Daily" },
   { value: "wedding", label: "Wedding" },
   { value: "party", label: "Party" },
   { value: "office", label: "Office" },
   { value: "date_night", label: "Date Night" },
-  { value: "festival", label: "Festival" },
-  { value: "sports", label: "Sports" },
+  { value: "festive", label: "Festival" },
+  { value: "photoshoot", label: "Photoshoot" },
+  { value: "other", label: "Others" },
 ];
 
 export const OUTFIT_STYLES: SelectOption[] = [
