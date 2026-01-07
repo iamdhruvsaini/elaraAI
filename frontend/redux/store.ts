@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { authApi } from "./services/authentication/authService";
 import { profileApi } from "./services/profile/profileService";
 import { vanityApi } from "./services/vanity/vanityService";
+import { makeupApi } from "./services/makeup/makeupService";
 
 
 export const store = configureStore({
@@ -9,9 +10,15 @@ export const store = configureStore({
     [authApi.reducerPath]: authApi.reducer,
     [profileApi.reducerPath]: profileApi.reducer,
     [vanityApi.reducerPath]: vanityApi.reducer,
+    [makeupApi.reducerPath]: makeupApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware, profileApi.middleware, vanityApi.middleware),
+    getDefaultMiddleware().concat(
+      authApi.middleware,
+      profileApi.middleware,
+      vanityApi.middleware,
+      makeupApi.middleware
+    ),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
