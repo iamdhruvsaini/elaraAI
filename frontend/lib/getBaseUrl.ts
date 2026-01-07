@@ -1,3 +1,3 @@
 export const getBaseUrl = () => {
-    return "http://localhost:8000";
+    return "https://elaraai-l0u3.onrender.com";
 }

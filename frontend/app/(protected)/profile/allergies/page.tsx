@@ -33,6 +33,7 @@ const AllergiesPage = () => {
 
   const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
   const [customAllergy, setCustomAllergy] = useState("");
+  const [sensitivityLevel, setSensitivityLevel] = useState<string>("moderate");
 
   const toggleAllergy = (allergy: string) => {
     setSelectedAllergies((prev) =>
@@ -58,7 +59,10 @@ const AllergiesPage = () => {
     e.preventDefault();
 
     try {
-      const response = await updateAllergies({ allergies: selectedAllergies }).unwrap();
+      const response = await updateAllergies({ 
+        allergies: selectedAllergies,
+        sensitivity_level: sensitivityLevel 
+      }).unwrap();
       console.log("✅ Allergies updated successfully:", response);
 
       // Navigate to dashboard/profile page
@@ -132,6 +136,36 @@ const AllergiesPage = () => {
                       }`}
                     >
                       {allergy}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sensitivity Level Selection */}
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Sensitivity Level</Label>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { value: "mild", label: "Mild", description: "Minor reactions" },
+                    { value: "moderate", label: "Moderate", description: "Noticeable reactions" },
+                    { value: "severe", label: "Severe", description: "Serious reactions" },
+                  ].map((level) => (
+                    <button
+                      key={level.value}
+                      type="button"
+                      onClick={() => setSensitivityLevel(level.value)}
+                      className={`px-4 py-3 rounded-lg border-2 transition-all ${
+                        sensitivityLevel === level.value
+                          ? "border-blue-600 bg-blue-600 text-white shadow-md"
+                          : "border-gray-300 bg-white text-gray-700 hover:border-blue-400 hover:bg-blue-50"
+                      }`}
+                    >
+                      <div className="font-medium text-sm">{level.label}</div>
+                      <div className={`text-xs mt-1 ${
+                        sensitivityLevel === level.value ? "text-blue-100" : "text-gray-500"
+                      }`}>
+                        {level.description}
+                      </div>
                     </button>
                   ))}
                 </div>
