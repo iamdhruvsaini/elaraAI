@@ -24,16 +24,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${outfit.className} antialiased flex flex-col px-4 `}>
+      <body className={`${outfit.className} antialiased`}>
         <ReduxProvider>
           <AuthProvider>
             <Toaster position="top-right" />
-            <Header />
+            <div className="flex flex-col px-4 min-h-screen">
+              <Header />
             
-              <main className="overflow-hidden max-w-[440px] sm:mx-auto">
+              <main className="max-w-[440px] w-full sm:mx-auto">
                 {children}
               </main>
-          
+            </div>
           </AuthProvider>
         </ReduxProvider>
       </body>

@@ -58,7 +58,7 @@ const MakeupSessionForm: React.FC<MakeupSessionFormProps> = ({
             value={formData.occasion}
             onValueChange={(value) => onFormChange("occasion", value as OccasionType)}
           >
-            <SelectTrigger className="w-full bg-white/80 backdrop-blur-sm border-slate-200 focus:border-pink-400 focus:ring-pink-400/20 rounded-xl h-12 overflow-hidden">
+            <SelectTrigger className="w-full bg-white/80 backdrop-blur-sm border-slate-200 focus:border-pink-400 focus:ring-pink-400/20 rounded-xl h-12 overflow-hidden text-base md:text-sm">
               <SelectValue placeholder="Select occasion" className="truncate" />
             </SelectTrigger>
             <SelectContent className="bg-white/95 backdrop-blur-md rounded-xl border-slate-200 max-w-[200px]">
@@ -84,7 +84,7 @@ const MakeupSessionForm: React.FC<MakeupSessionFormProps> = ({
             value={formData.scope}
             onValueChange={(value) => onFormChange("scope", value as MakeupScope)}
           >
-            <SelectTrigger className="w-full bg-white/80 backdrop-blur-sm border-slate-200 focus:border-pink-400 focus:ring-pink-400/20 rounded-xl h-12 overflow-hidden">
+            <SelectTrigger className="w-full bg-white/80 backdrop-blur-sm border-slate-200 focus:border-pink-400 focus:ring-pink-400/20 rounded-xl h-12 overflow-hidden text-base md:text-sm">
               <SelectValue placeholder="Select scope" className="truncate" />
             </SelectTrigger>
             <SelectContent className="bg-white/95 backdrop-blur-md rounded-xl border-slate-200 max-w-[200px]">
