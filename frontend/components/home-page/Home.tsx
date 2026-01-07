@@ -40,7 +40,7 @@ interface LookItem {
 const ACTIONS: ActionItem[] = [
   { id: 1, title: "Start Makeup Now", icon: <Wand2 className="w-6 h-6 text-rose-500" />, link:"/" },
   { id: 2, title: "Schedule Event", icon: <Calendar className="w-6 h-6 text-indigo-500" /> ,link:"/"},
-  { id: 3, title: "My Vanity", icon: <ShoppingBag className="w-6 h-6 text-teal-500" />, count: "41 items",link:"/" },
+  { id: 3, title: "My Vanity", icon: <ShoppingBag className="w-6 h-6 text-teal-500" />, count: "41 items",link:"/vanity-management" },
    {id:4, title:"Hair Analysis", icon:<CheckCircle2 className="w-6 h-6 text-green-500" />, link:"/hair-analysis "}
 ];
 

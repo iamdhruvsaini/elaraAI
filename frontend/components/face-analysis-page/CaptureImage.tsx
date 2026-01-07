@@ -85,6 +85,12 @@ const CaptureImage: React.FC = () => {
   };
 
   const handleBack = () => {
+    // Clean up image URLs to prevent memory leaks
+    if (capturedImage) {
+      URL.revokeObjectURL(capturedImage);
+      setCapturedImage(null);
+    }
+    
     if (currentStep === "capture") {
       router.back();
     } else if (currentStep === "results") {

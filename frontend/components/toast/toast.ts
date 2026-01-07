@@ -19,3 +19,5 @@ export const showToast = (
     toast.error(message, { position });
   }
 };
+
+export { toast };

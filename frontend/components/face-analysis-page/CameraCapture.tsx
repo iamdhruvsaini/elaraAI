@@ -90,10 +90,35 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
       startCamera();
     }
 
+    // Cleanup function to stop camera when component unmounts or navigates away
     return () => {
       stopCamera();
     };
-  }, [capturedImage, facingMode]);
+  }, [capturedImage]);
+
+  // Additional cleanup on page visibility change (handles browser back/forward)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stopCamera();
+      }
+    };
+
+    const handleBeforeUnload = () => {
+      stopCamera();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("pagehide", handleBeforeUnload);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("pagehide", handleBeforeUnload);
+      stopCamera();
+    };
+  }, []);
 
   const capturePhoto = () => {
     if (!videoRef.current || !canvasRef.current) return;
@@ -146,6 +171,12 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
   const switchCamera = () => {
     stopCamera();
     setFacingMode((prev) => (prev === "user" ? "environment" : "user"));
+    // Camera will restart automatically via useEffect when facingMode changes
+    setTimeout(() => {
+      if (!capturedImage) {
+        startCamera();
+      }
+    }, 100);
   };
 
   return (
