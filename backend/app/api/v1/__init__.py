@@ -9,6 +9,7 @@ from app.api.v1.endpoints import (
     makeup,
     vanity,
     events,
+    speech
 )
 
 # ✅ Define main router for version 1
@@ -20,3 +21,4 @@ api_v1_router.include_router(profile.router, prefix="/profile", tags=["Profile"]
 api_v1_router.include_router(makeup.router, prefix="/makeup", tags=["Makeup"])
 api_v1_router.include_router(vanity.router, prefix="/vanity", tags=["Vanity | Products"])
 api_v1_router.include_router(events.router, prefix="/events", tags=["Events"])
+api_v1_router.include_router(speech.router, prefix="/speech", tags=["Speech"])
