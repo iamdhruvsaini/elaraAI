@@ -52,17 +52,17 @@ async def lifespan(app: FastAPI):
     os.makedirs(os.path.dirname(settings.LOG_FILE), exist_ok=True)
 
     # Try connecting to the database (with retry for Neon wake-up)
-    for attempt in range(3):
-        try:
-            async with async_engine.begin() as conn:
-                result = await conn.execute(text("SELECT current_database()"))
-                logger.info(f"✅ Connected to database: {result.scalar()}")
-                break
-        except Exception as e:
-            logger.warning(f"⚠️ DB connection attempt {attempt+1} failed: {e}")
-            await asyncio.sleep(3)
-    else:
-        logger.error("❌ Neon DB connection failed after 3 retries.")
+    # for attempt in range(3):
+    #     try:
+    #         async with async_engine.begin() as conn:
+    #             result = await conn.execute(text("SELECT current_database()"))
+    #             logger.info(f"✅ Connected to database: {result.scalar()}")
+    #             break
+    #     except Exception as e:
+    #         logger.warning(f"⚠️ DB connection attempt {attempt+1} failed: {e}")
+    #         await asyncio.sleep(3)
+    # else:
+    #     logger.error("❌ Neon DB connection failed after 3 retries.")
 
     # Initialize tables
     await init_db()
