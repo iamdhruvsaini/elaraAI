@@ -39,7 +39,7 @@ const ACTIONS: ActionItem[] = [
   },
   { 
     id: 2, 
-    title: "Schedule Event", 
+    title: "Schedule Events", 
     subtitle: "Plan ahead",
     icon: <Calendar className="w-6 h-6" />, 
     color: "from-indigo-500 to-purple-500",
