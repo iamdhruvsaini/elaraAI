@@ -74,3 +74,90 @@ export const OUTFIT_STYLES: SelectOption[] = [
   { value: "sporty", label: "Sporty" },
   { value: "vintage", label: "Vintage" },
 ];
+
+// Makeup Session Types
+export type OccasionType = "daily" | "party" | "wedding" | "office" | "date_night" | "formal" | "casual";
+export type MakeupScope = "full_face" | "eyes_only" | "lips_only" | "base_only";
+export type SessionStatus = "in_progress" | "completed" | "abandoned";
+
+// Start Makeup Session Request
+export interface StartMakeupRequest {
+  occasion: OccasionType;
+  scope: MakeupScope;
+  outfit_description: string;
+  scheduled_event_id?: number;
+}
+
+// Start Makeup Session Response
+export interface MakeupSessionResponse {
+  id: number;
+  user_id: number;
+  occasion: OccasionType;
+  scope: MakeupScope;
+  status: SessionStatus;
+  outfit_description: string;
+  outfit_colors: string[];
+  accessories_data: Record<string, any>;
+  makeup_plan: Record<string, any>;
+  products_used: any[];
+  products_needed: any[];
+  current_step: number;
+  total_steps: number;
+  steps_completed: any[];
+  final_image_url: string;
+  user_rating: number;
+  started_at: string;
+  completed_at: string;
+  duration_minutes: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// Style Session Request
+export interface StyleSessionRequest {
+  description: string;
+  accessories: Record<string, any>;
+}
+
+// Style Session Response
+export interface StyleSessionResponse {
+  id: number;
+  outfit_description: string;
+  outfit_type: string;
+  outfit_colors: string[];
+  accessories: Record<string, any>;
+  confidence: number;
+  created_at: string;
+  message: string;
+}
+
+// Makeup Plan Step
+export interface MakeupStep {
+  step_number: number;
+  category: string;
+  instruction: string;
+  products: string[];
+  tips: string[];
+  duration_minutes: number;
+}
+
+// Generate Makeup Plan Response
+export interface MakeupPlanResponse {
+  occasion: string;
+  scope: string;
+  style: string;
+  reasoning: string;
+  intensity: string;
+  steps: MakeupStep[];
+  key_focus: string[];
+  estimated_duration: number;
+  difficulty: string;
+}
+
+// Makeup scope options
+export const MAKEUP_SCOPES: SelectOption[] = [
+  { value: "full_face", label: "Full Face" },
+  { value: "eyes_only", label: "Eyes Only" },
+  { value: "lips_only", label: "Lips Only" },
+  { value: "base_only", label: "Base Only" },
+];

@@ -1,0 +1,5138 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "GlamAI",
+    "description": "AI-Powered Makeup Assistant API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health Check",
+        "description": "Health check endpoint",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "Root"
+        ],
+        "summary": "Root",
+        "description": "Root endpoint",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Register",
+        "description": "Register a new user with email, password, and optional phone.\nCreates a standard EMAIL auth account.",
+        "operationId": "register_api_v1_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegister"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/oauth/google": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Google Oauth",
+        "description": "Google OAuth - handles both registration and login.\n\nFlow:\n1. Check if user exists by Google ID\n2. If not, check by email\n3. If email exists with EMAIL provider, link accounts\n4. If no user exists, create new Google account\n5. Return JWT tokens",
+        "operationId": "google_oauth_api_v1_auth_oauth_google_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleOAuthLogin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Login",
+        "description": "Login with email and password.\nOnly works for accounts created with email/password.",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLogin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Refresh Token",
+        "description": "Generate new access token using refresh token.",
+        "operationId": "refresh_token_api_v1_auth_refresh_post",
+        "parameters": [
+          {
+            "name": "refresh_token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Refresh Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Logout",
+        "description": "Logout (client-side token deletion).",
+        "operationId": "logout_api_v1_auth_logout_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Get Current User Info",
+        "description": "Get current authenticated user's info with profile.",
+        "operationId": "get_current_user_info_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/check-email/{email}": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Check Email Availability",
+        "description": "Check if email is already registered.",
+        "operationId": "check_email_availability_api_v1_auth_check_email__email__get",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Email"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/change-password": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Change Password",
+        "description": "Change password for email-authenticated users only.",
+        "operationId": "change_password_api_v1_auth_change_password_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "current_password",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Current Password"
+            }
+          },
+          {
+            "name": "new_password",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "New Password"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/link-google": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Link Google Account",
+        "description": "Link Google account to existing email/password account.\nAllows users to login with either method after linking.",
+        "operationId": "link_google_account_api_v1_auth_link_google_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleOAuthLogin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/profile/setup": {
+      "post": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Setup Profile",
+        "description": "Initial profile setup after registration",
+        "operationId": "setup_profile_api_v1_profile_setup_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileSetup"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/profile/analyze-face": {
+      "post": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Analyze Face",
+        "description": "🎯 Fast comprehensive face analysis (2-4 seconds)\nUses Azure Computer Vision + OpenCV",
+        "operationId": "analyze_face_api_v1_profile_analyze_face_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_analyze_face_api_v1_profile_analyze_face_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkinAnalysisResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/profile/allergies": {
+      "put": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Update Allergies",
+        "description": "Update allergy profile",
+        "operationId": "update_allergies_api_v1_profile_allergies_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AllergyProfile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/profile/update": {
+      "put": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Update Profile",
+        "description": "Update user profile",
+        "operationId": "update_profile_api_v1_profile_update_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/profile/profile": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Get Profile",
+        "description": "Get user profile",
+        "operationId": "get_profile_api_v1_profile_profile_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/profile/dashboard": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Get Dashboard",
+        "description": "Get dashboard with insights",
+        "operationId": "get_dashboard_api_v1_profile_dashboard_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/makeup/accessory-options": {
+      "get": {
+        "tags": [
+          "Makeup"
+        ],
+        "summary": "Get Accessory Options",
+        "description": "💍 Get flexible accessory + color options for UI.\nSupports:\n  - Dynamic dropdowns\n  - Custom color picker integration\n  - Material suggestions per part",
+        "operationId": "get_accessory_options_api_v1_makeup_accessory_options_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/makeup/start": {
+      "post": {
+        "tags": [
+          "Makeup"
+        ],
+        "summary": "Start Session",
+        "description": "Start a new makeup session",
+        "operationId": "start_session_api_v1_makeup_start_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionStart"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MakeupSessionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/makeup/style-session": {
+      "post": {
+        "tags": [
+          "Makeup"
+        ],
+        "summary": "Create Style Session",
+        "description": "✨ Create a new style session.\nSupports both free-text outfit input and manual accessory selections.",
+        "operationId": "create_style_session_api_v1_makeup_style_session_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StyleSessionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StyleSessionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/makeup/style-session/{session_id}/update": {
+      "put": {
+        "tags": [
+          "Makeup"
+        ],
+        "summary": "Update Style Session",
+        "description": "✨ Update an existing style session (new outfit or accessory change)",
+        "operationId": "update_style_session_api_v1_makeup_style_session__session_id__update_put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StyleSessionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StyleSessionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/makeup/style-history": {
+      "get": {
+        "tags": [
+          "Makeup"
+        ],
+        "summary": "Get Style History",
+        "description": "Get user's outfit & accessory history",
+        "operationId": "get_style_history_api_v1_makeup_style_history_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/StyleSessionResponse"
+                  },
+                  "type": "array",
+                  "title": "Response Get Style History Api V1 Makeup Style History Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/makeup/{session_id}/accessory-recommendation": {
+      "get": {
+        "tags": [
+          "Makeup"
+        ],
+        "summary": "Get Accessory Recommendation",
+        "description": "Get AI recommendation for accessories",
+        "operationId": "get_accessory_recommendation_api_v1_makeup__session_id__accessory_recommendation_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIRecommendation"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/makeup/{session_id}/generate-plan": {
+      "post": {
+        "tags": [
+          "Makeup"
+        ],
+        "summary": "Generate Makeup Plan",
+        "description": "💄 Generate a complete makeup plan with AI (LLM + user profile + outfit context)",
+        "operationId": "generate_makeup_plan_api_v1_makeup__session_id__generate_plan_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MakeupPlan"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/makeup/{session_id}/product-matching": {
+      "get": {
+        "tags": [
+          "Makeup"
+        ],
+        "summary": "Match Products",
+        "description": "Match needed products with user's vanity",
+        "operationId": "match_products_api_v1_makeup__session_id__product_matching_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductMatch"
+                  },
+                  "title": "Response Match Products Api V1 Makeup  Session Id  Product Matching Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/makeup/{session_id}/complete-step": {
+      "post": {
+        "tags": [
+          "Makeup"
+        ],
+        "summary": "Complete Step",
+        "description": "Mark a step as completed",
+        "operationId": "complete_step_api_v1_makeup__session_id__complete_step_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StepCompletion"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/makeup/{session_id}/report-mistake": {
+      "post": {
+        "tags": [
+          "Makeup"
+        ],
+        "summary": "Report Mistake",
+        "description": "Report a mistake and get fix suggestions",
+        "operationId": "report_mistake_api_v1_makeup__session_id__report_mistake_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MistakeReport"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MistakeFix"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/makeup/{session_id}/submit-final": {
+      "post": {
+        "tags": [
+          "Makeup"
+        ],
+        "summary": "Submit Final Look",
+        "description": "Submit final makeup look",
+        "operationId": "submit_final_look_api_v1_makeup__session_id__submit_final_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_submit_final_look_api_v1_makeup__session_id__submit_final_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinalLookAnalysis"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/makeup/{session_id}": {
+      "get": {
+        "tags": [
+          "Makeup"
+        ],
+        "summary": "Get Session",
+        "description": "Get session details",
+        "operationId": "get_session_api_v1_makeup__session_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MakeupSessionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/makeup/hair-suggest": {
+      "post": {
+        "tags": [
+          "Makeup"
+        ],
+        "summary": "Get Hair Suggestion",
+        "description": "Direct endpoint: User inputs outfit details and gets instant AI recommendation\nThis is the main endpoint users hit after login",
+        "operationId": "get_hair_suggestion_api_v1_makeup_hair_suggest_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HairRecommendationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HairRecommendationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/vanity/products/scan": {
+      "post": {
+        "tags": [
+          "Vanity | Products",
+          "Vanity | Products"
+        ],
+        "summary": "Scan Product",
+        "description": "💄 Enhanced Product Scanner with Barcode Lookup",
+        "operationId": "scan_product_api_v1_vanity_products_scan_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_scan_product_api_v1_vanity_products_scan_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/vanity/products/test-ocr": {
+      "post": {
+        "tags": [
+          "Vanity | Products",
+          "Vanity | Products"
+        ],
+        "summary": "Test Ocr",
+        "description": "🔍 Enhanced OCR Test - Extracts text AND saves to VanityProduct table",
+        "operationId": "test_ocr_api_v1_vanity_products_test_ocr_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_test_ocr_api_v1_vanity_products_test_ocr_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/vanity/products": {
+      "post": {
+        "tags": [
+          "Vanity | Products",
+          "Vanity | Products"
+        ],
+        "summary": "Add Product",
+        "description": "Add product with AI enrichment",
+        "operationId": "add_product_api_v1_vanity_products_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VanityProductCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VanityProductResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Vanity | Products",
+          "Vanity | Products"
+        ],
+        "summary": "Get All Products",
+        "description": "Get all user products with filters",
+        "operationId": "get_all_products_api_v1_vanity_products_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ProductCategory"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "name": "is_favorite",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Is Favorite"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "title": "Skip"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VanityListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vanity/products/{product_id}": {
+      "get": {
+        "tags": [
+          "Vanity | Products",
+          "Vanity | Products"
+        ],
+        "summary": "Get Product",
+        "description": "Get specific product",
+        "operationId": "get_product_api_v1_vanity_products__product_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VanityProductResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Vanity | Products",
+          "Vanity | Products"
+        ],
+        "summary": "Delete Product",
+        "description": "Soft delete product",
+        "operationId": "delete_product_api_v1_vanity_products__product_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vanity/stats": {
+      "get": {
+        "tags": [
+          "Vanity | Products",
+          "Vanity | Products"
+        ],
+        "summary": "Get Vanity Stats",
+        "description": "Get vanity statistics",
+        "operationId": "get_vanity_stats_api_v1_vanity_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/events": {
+      "post": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Create Event",
+        "description": "Create a new scheduled event",
+        "operationId": "create_event_api_v1_events_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Get All Events",
+        "description": "Get all user's events",
+        "operationId": "get_all_events_api_v1_events_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "include_past",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Past"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventResponse"
+                  },
+                  "title": "Response Get All Events Api V1 Events Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events/upcoming": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Get Upcoming Events",
+        "description": "Get upcoming events within specified days",
+        "operationId": "get_upcoming_events_api_v1_events_upcoming_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 30,
+              "title": "Days"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventResponse"
+                  },
+                  "title": "Response Get Upcoming Events Api V1 Events Upcoming Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events/{event_id}": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Get Event",
+        "description": "Get specific event details",
+        "operationId": "get_event_api_v1_events__event_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Update Event",
+        "description": "Update event details",
+        "operationId": "update_event_api_v1_events__event_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Delete Event",
+        "description": "Cancel/delete an event",
+        "operationId": "delete_event_api_v1_events__event_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events/{event_id}/start-session": {
+      "post": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Start Session For Event",
+        "description": "Start a makeup session for this scheduled event",
+        "operationId": "start_session_for_event_api_v1_events__event_id__start_session_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events/{event_id}/reminders": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Get Event Reminders",
+        "description": "Get reminder status for event",
+        "operationId": "get_event_reminders_api_v1_events__event_id__reminders_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events/{event_id}/complete": {
+      "post": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Mark Event Complete",
+        "description": "Mark event as completed",
+        "operationId": "mark_event_complete_api_v1_events__event_id__complete_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events/stats/summary": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Get Events Summary",
+        "description": "Get events statistics summary",
+        "operationId": "get_events_summary_api_v1_events_stats_summary_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AIRecommendation": {
+        "properties": {
+          "keep_accessories": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Keep Accessories",
+            "default": []
+          },
+          "remove_accessories": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Remove Accessories",
+            "default": []
+          },
+          "change_accessories": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Change Accessories",
+            "default": []
+          },
+          "reasoning": {
+            "type": "string",
+            "title": "Reasoning"
+          },
+          "makeup_style": {
+            "type": "string",
+            "title": "Makeup Style"
+          },
+          "intensity": {
+            "type": "string",
+            "title": "Intensity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reasoning",
+          "makeup_style",
+          "intensity"
+        ],
+        "title": "AIRecommendation",
+        "description": "AI suggestions for accessories and makeup"
+      },
+      "AllergyProfile": {
+        "properties": {
+          "allergies": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Allergies",
+            "default": []
+          },
+          "sensitivity_level": {
+            "type": "string",
+            "title": "Sensitivity Level",
+            "default": "normal"
+          },
+          "ingredient_preferences": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Ingredient Preferences",
+            "default": []
+          },
+          "avoid_ingredients": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Avoid Ingredients",
+            "default": []
+          }
+        },
+        "type": "object",
+        "title": "AllergyProfile",
+        "description": "User allergy and sensitivity profile"
+      },
+      "Body_analyze_face_api_v1_profile_analyze_face_post": {
+        "properties": {
+          "image": {
+            "type": "string",
+            "format": "binary",
+            "title": "Image"
+          }
+        },
+        "type": "object",
+        "required": [
+          "image"
+        ],
+        "title": "Body_analyze_face_api_v1_profile_analyze_face_post"
+      },
+      "Body_scan_product_api_v1_vanity_products_scan_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_scan_product_api_v1_vanity_products_scan_post"
+      },
+      "Body_submit_final_look_api_v1_makeup__session_id__submit_final_post": {
+        "properties": {
+          "final_data": {
+            "$ref": "#/components/schemas/FinalLookSubmit"
+          },
+          "image": {
+            "type": "string",
+            "format": "binary",
+            "title": "Image"
+          }
+        },
+        "type": "object",
+        "required": [
+          "final_data"
+        ],
+        "title": "Body_submit_final_look_api_v1_makeup__session_id__submit_final_post"
+      },
+      "Body_test_ocr_api_v1_vanity_products_test_ocr_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_test_ocr_api_v1_vanity_products_test_ocr_post"
+      },
+      "DashboardResponse": {
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserResponse"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/UserStats"
+          },
+          "skin_profile_complete": {
+            "type": "boolean",
+            "title": "Skin Profile Complete",
+            "default": false
+          },
+          "last_skin_analysis": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Skin Analysis"
+          },
+          "upcoming_events": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Upcoming Events",
+            "default": []
+          },
+          "recent_sessions": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Recent Sessions",
+            "default": []
+          },
+          "quick_tips": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Quick Tips",
+            "default": []
+          },
+          "personalized_recommendations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Personalized Recommendations",
+            "default": []
+          },
+          "suggested_products": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Suggested Products",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "user",
+          "stats"
+        ],
+        "title": "DashboardResponse",
+        "description": "Enhanced dashboard with skin analysis insights"
+      },
+      "EventCreate": {
+        "properties": {
+          "event_name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Event Name"
+          },
+          "event_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Event Date"
+          },
+          "event_time": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Event Time"
+          },
+          "occasion": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Occasion"
+          },
+          "outfit_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outfit Description"
+          },
+          "remind_1_day_before": {
+            "type": "boolean",
+            "title": "Remind 1 Day Before",
+            "default": false
+          },
+          "remind_2_hours_before": {
+            "type": "boolean",
+            "title": "Remind 2 Hours Before",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "event_name",
+          "event_date",
+          "occasion"
+        ],
+        "title": "EventCreate",
+        "description": "Schema for creating a new event"
+      },
+      "EventResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          },
+          "event_name": {
+            "type": "string",
+            "title": "Event Name"
+          },
+          "event_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Event Date"
+          },
+          "event_time": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Event Time"
+          },
+          "occasion": {
+            "type": "string",
+            "title": "Occasion"
+          },
+          "outfit_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outfit Description"
+          },
+          "makeup_session_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Makeup Session Id"
+          },
+          "remind_1_day_before": {
+            "type": "boolean",
+            "title": "Remind 1 Day Before",
+            "default": false
+          },
+          "remind_2_hours_before": {
+            "type": "boolean",
+            "title": "Remind 2 Hours Before",
+            "default": false
+          },
+          "skincare_reminder_sent": {
+            "type": "boolean",
+            "title": "Skincare Reminder Sent",
+            "default": false
+          },
+          "makeup_reminder_sent": {
+            "type": "boolean",
+            "title": "Makeup Reminder Sent",
+            "default": false
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          },
+          "is_cancelled": {
+            "type": "boolean",
+            "title": "Is Cancelled",
+            "default": false
+          },
+          "session_completed": {
+            "type": "boolean",
+            "title": "Session Completed",
+            "default": false
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "event_name",
+          "event_date",
+          "occasion",
+          "created_at"
+        ],
+        "title": "EventResponse",
+        "description": "Schema for event response - NO outfit_image_url"
+      },
+      "EventUpdate": {
+        "properties": {
+          "event_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Event Name"
+          },
+          "event_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Event Date"
+          },
+          "event_time": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Event Time"
+          },
+          "occasion": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occasion"
+          },
+          "outfit_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outfit Description"
+          },
+          "remind_1_day_before": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remind 1 Day Before"
+          },
+          "remind_2_hours_before": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remind 2 Hours Before"
+          }
+        },
+        "type": "object",
+        "title": "EventUpdate",
+        "description": "Schema for updating an event"
+      },
+      "FaceShape": {
+        "type": "string",
+        "enum": [
+          "round",
+          "oval",
+          "square",
+          "heart",
+          "diamond",
+          "oblong"
+        ],
+        "title": "FaceShape"
+      },
+      "FacialFeatures": {
+        "properties": {
+          "eye_shape": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eye Shape"
+          },
+          "lip_fullness": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lip Fullness"
+          },
+          "nose_shape": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nose Shape"
+          },
+          "face_symmetry": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Face Symmetry"
+          },
+          "eyebrow_shape": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eyebrow Shape"
+          },
+          "cheekbone_prominence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cheekbone Prominence"
+          }
+        },
+        "type": "object",
+        "title": "FacialFeatures",
+        "description": "Detailed facial features for makeup application"
+      },
+      "FinalLookAnalysis": {
+        "properties": {
+          "overall_balance": {
+            "type": "string",
+            "title": "Overall Balance"
+          },
+          "accessory_compatibility": {
+            "type": "string",
+            "title": "Accessory Compatibility"
+          },
+          "suggestions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Suggestions",
+            "default": []
+          },
+          "compliments": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Compliments",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "overall_balance",
+          "accessory_compatibility"
+        ],
+        "title": "FinalLookAnalysis",
+        "description": "AI analysis of final look"
+      },
+      "FinalLookSubmit": {
+        "properties": {
+          "session_id": {
+            "type": "integer",
+            "title": "Session Id"
+          },
+          "rating": {
+            "type": "number",
+            "maximum": 5,
+            "minimum": 1,
+            "title": "Rating"
+          },
+          "feedback": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Feedback"
+          },
+          "what_liked": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "What Liked",
+            "default": []
+          },
+          "issues_faced": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Issues Faced",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id",
+          "rating"
+        ],
+        "title": "FinalLookSubmit",
+        "description": "Submit final makeup look"
+      },
+      "GoogleOAuthLogin": {
+        "properties": {
+          "google_id": {
+            "type": "string",
+            "title": "Google Id",
+            "description": "Unique Google user ID"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "google_id",
+          "email",
+          "full_name"
+        ],
+        "title": "GoogleOAuthLogin",
+        "description": "Google OAuth login/registration"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HairLength": {
+        "type": "string",
+        "enum": [
+          "short",
+          "medium",
+          "long"
+        ],
+        "title": "HairLength"
+      },
+      "HairRecommendationInput": {
+        "properties": {
+          "outfit_description": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Outfit Description"
+          },
+          "outfit_style": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outfit Style"
+          },
+          "occasion": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Occasion"
+          },
+          "face_shape": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FaceShape"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "hair_texture": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HairTexture"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "hair_length": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HairLength"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "outfit_description",
+          "occasion"
+        ],
+        "title": "HairRecommendationInput",
+        "description": "Input from user"
+      },
+      "HairRecommendationResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "recommended_style": {
+            "type": "string",
+            "title": "Recommended Style"
+          },
+          "style_attributes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Style Attributes"
+          },
+          "benefits": {
+            "items": {
+              "$ref": "#/components/schemas/StyleBenefit"
+            },
+            "type": "array",
+            "title": "Benefits"
+          },
+          "alternatives": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Alternatives"
+          },
+          "styling_tips": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Styling Tips"
+          },
+          "maintenance_level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maintenance Level"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "recommended_style",
+          "style_attributes",
+          "benefits",
+          "alternatives",
+          "styling_tips",
+          "maintenance_level"
+        ],
+        "title": "HairRecommendationResponse",
+        "description": "Response with saved data"
+      },
+      "HairTexture": {
+        "type": "string",
+        "enum": [
+          "fine",
+          "medium",
+          "thick",
+          "coarse"
+        ],
+        "title": "HairTexture"
+      },
+      "MakeupPlan": {
+        "properties": {
+          "occasion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occasion"
+          },
+          "scope": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scope"
+          },
+          "style": {
+            "type": "string",
+            "title": "Style"
+          },
+          "reasoning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reasoning"
+          },
+          "intensity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intensity"
+          },
+          "steps": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Steps"
+          },
+          "key_focus": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key Focus"
+          },
+          "estimated_duration": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Duration"
+          },
+          "difficulty": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Difficulty"
+          }
+        },
+        "type": "object",
+        "required": [
+          "style",
+          "reasoning",
+          "intensity",
+          "steps",
+          "key_focus",
+          "estimated_duration",
+          "difficulty"
+        ],
+        "title": "MakeupPlan",
+        "description": "Complete makeup plan"
+      },
+      "MakeupScope": {
+        "type": "string",
+        "enum": [
+          "full_face",
+          "eyes_only",
+          "lips_only",
+          "touch_up",
+          "no_makeup_look"
+        ],
+        "title": "MakeupScope",
+        "description": "Makeup application scope"
+      },
+      "MakeupSessionResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          },
+          "occasion": {
+            "$ref": "#/components/schemas/OccasionType"
+          },
+          "scope": {
+            "$ref": "#/components/schemas/MakeupScope"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SessionStatus"
+          },
+          "outfit_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outfit Description"
+          },
+          "outfit_colors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Outfit Colors",
+            "default": []
+          },
+          "accessories_data": {
+            "type": "object",
+            "title": "Accessories Data",
+            "default": {
+
+            }
+          },
+          "makeup_plan": {
+            "type": "object",
+            "title": "Makeup Plan",
+            "default": {
+
+            }
+          },
+          "products_used": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Products Used",
+            "default": []
+          },
+          "products_needed": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Products Needed",
+            "default": []
+          },
+          "current_step": {
+            "type": "integer",
+            "title": "Current Step"
+          },
+          "total_steps": {
+            "type": "integer",
+            "title": "Total Steps"
+          },
+          "steps_completed": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Steps Completed",
+            "default": []
+          },
+          "final_image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Final Image Url"
+          },
+          "user_rating": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Rating"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started At"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "duration_minutes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Minutes"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "occasion",
+          "scope",
+          "status",
+          "outfit_description",
+          "current_step",
+          "total_steps",
+          "final_image_url",
+          "user_rating",
+          "started_at",
+          "completed_at",
+          "duration_minutes",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "MakeupSessionResponse",
+        "description": "Complete makeup session details"
+      },
+      "MistakeFix": {
+        "properties": {
+          "fix_steps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Fix Steps"
+          },
+          "prevention_tips": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Prevention Tips"
+          },
+          "estimated_fix_time": {
+            "type": "integer",
+            "title": "Estimated Fix Time"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fix_steps",
+          "prevention_tips",
+          "estimated_fix_time"
+        ],
+        "title": "MistakeFix",
+        "description": "Fix suggestion for mistake"
+      },
+      "MistakeReport": {
+        "properties": {
+          "session_id": {
+            "type": "integer",
+            "title": "Session Id"
+          },
+          "step_number": {
+            "type": "integer",
+            "title": "Step Number"
+          },
+          "issue_type": {
+            "type": "string",
+            "title": "Issue Type"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id",
+          "step_number",
+          "issue_type"
+        ],
+        "title": "MistakeReport",
+        "description": "Report a mistake during makeup"
+      },
+      "OccasionType": {
+        "type": "string",
+        "enum": [
+          "daily",
+          "office",
+          "party",
+          "wedding",
+          "festive",
+          "date_night",
+          "photoshoot",
+          "other"
+        ],
+        "title": "OccasionType",
+        "description": "Makeup occasion types"
+      },
+      "ProductCategory": {
+        "type": "string",
+        "enum": [
+          "foundation",
+          "concealer",
+          "powder",
+          "blush",
+          "bronzer",
+          "highlighter",
+          "eyeshadow",
+          "eyeliner",
+          "kajal",
+          "mascara",
+          "eyebrow",
+          "lipstick",
+          "lip_gloss",
+          "lip_liner",
+          "primer",
+          "setting_spray",
+          "tools",
+          "other"
+        ],
+        "title": "ProductCategory",
+        "description": "Supported product categories"
+      },
+      "ProductMatch": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "needed": {
+            "type": "boolean",
+            "title": "Needed"
+          },
+          "has_product": {
+            "type": "boolean",
+            "title": "Has Product"
+          },
+          "product_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Id"
+          },
+          "product_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Name"
+          },
+          "substitution_available": {
+            "type": "boolean",
+            "title": "Substitution Available",
+            "default": false
+          },
+          "substitution_suggestion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Substitution Suggestion"
+          },
+          "purchase_link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purchase Link"
+          },
+          "is_safe": {
+            "type": "boolean",
+            "title": "Is Safe",
+            "default": true
+          },
+          "safety_warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Safety Warnings",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "needed",
+          "has_product"
+        ],
+        "title": "ProductMatch",
+        "description": "Product matching result"
+      },
+      "ProfileSetup": {
+        "properties": {
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "age": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100,
+                "minimum": 13
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          }
+        },
+        "type": "object",
+        "required": [
+          "full_name"
+        ],
+        "title": "ProfileSetup",
+        "description": "Initial profile setup after registration"
+      },
+      "ProfileUpdate": {
+        "properties": {
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "age": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100,
+                "minimum": 13
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "skin_tone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skin Tone"
+          },
+          "skin_tone_hex": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skin Tone Hex"
+          },
+          "fitzpatrick_scale": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fitzpatrick Scale"
+          },
+          "undertone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Undertone"
+          },
+          "skin_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skin Type"
+          },
+          "texture_score": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Texture Score"
+          },
+          "hydration_level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hydration Level"
+          },
+          "oil_level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oil Level"
+          },
+          "pore_size": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pore Size"
+          },
+          "face_shape": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Face Shape"
+          },
+          "facial_features": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Facial Features"
+          },
+          "skin_concerns": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SkinConcernDetail"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skin Concerns"
+          },
+          "allergies": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allergies"
+          },
+          "sensitivity_level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sensitivity Level"
+          },
+          "ingredient_preferences": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ingredient Preferences"
+          },
+          "avoid_ingredients": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avoid Ingredients"
+          },
+          "preferred_language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preferred Language"
+          },
+          "enable_voice_guidance": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enable Voice Guidance"
+          },
+          "enable_notifications": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enable Notifications"
+          },
+          "dark_mode": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dark Mode"
+          }
+        },
+        "type": "object",
+        "title": "ProfileUpdate",
+        "description": "Update user profile"
+      },
+      "SessionStart": {
+        "properties": {
+          "occasion": {
+            "$ref": "#/components/schemas/OccasionType"
+          },
+          "scope": {
+            "$ref": "#/components/schemas/MakeupScope"
+          },
+          "outfit_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outfit Description"
+          },
+          "scheduled_event_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scheduled Event Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "occasion",
+          "scope"
+        ],
+        "title": "SessionStart",
+        "description": "Start a new makeup session"
+      },
+      "SessionStatus": {
+        "type": "string",
+        "enum": [
+          "in_progress",
+          "completed",
+          "cancelled",
+          "paused"
+        ],
+        "title": "SessionStatus",
+        "description": "Session completion status"
+      },
+      "SkinAnalysisResult": {
+        "properties": {
+          "skin_tone": {
+            "type": "string",
+            "title": "Skin Tone",
+            "description": "Very Fair, Fair, Light, Medium, Tan, Deep"
+          },
+          "skin_tone_hex": {
+            "type": "string",
+            "title": "Skin Tone Hex",
+            "description": "Hex color code of skin tone"
+          },
+          "fitzpatrick_scale": {
+            "type": "string",
+            "title": "Fitzpatrick Scale",
+            "description": "Type I-VI"
+          },
+          "undertone": {
+            "type": "string",
+            "title": "Undertone",
+            "description": "Warm, Cool, Neutral, Olive"
+          },
+          "skin_type": {
+            "type": "string",
+            "title": "Skin Type",
+            "description": "Oily, Dry, Combination, Normal, Sensitive"
+          },
+          "texture_score": {
+            "type": "number",
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Texture Score",
+            "description": "Skin smoothness score"
+          },
+          "hydration_level": {
+            "type": "string",
+            "title": "Hydration Level",
+            "description": "Low, Normal, High"
+          },
+          "oil_level": {
+            "type": "string",
+            "title": "Oil Level",
+            "description": "Low, Normal, High"
+          },
+          "pore_size": {
+            "type": "string",
+            "title": "Pore Size",
+            "description": "Fine, Medium, Large"
+          },
+          "face_shape": {
+            "type": "string",
+            "title": "Face Shape",
+            "description": "Oval, Round, Square, Heart, Diamond, Oblong"
+          },
+          "facial_features": {
+            "$ref": "#/components/schemas/FacialFeatures"
+          },
+          "concerns": {
+            "items": {
+              "$ref": "#/components/schemas/SkinConcernDetail"
+            },
+            "type": "array",
+            "title": "Concerns",
+            "default": []
+          },
+          "confidence_scores": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Confidence Scores",
+            "description": "Confidence scores for each analysis component"
+          },
+          "recommendations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Recommendations",
+            "default": []
+          },
+          "raw_data": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Raw Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "skin_tone",
+          "skin_tone_hex",
+          "fitzpatrick_scale",
+          "undertone",
+          "skin_type",
+          "texture_score",
+          "hydration_level",
+          "oil_level",
+          "pore_size",
+          "face_shape",
+          "facial_features"
+        ],
+        "title": "SkinAnalysisResult",
+        "description": "Comprehensive skin analysis from face image",
+        "example": {
+          "concerns": [
+            {
+              "confidence": 0.85,
+              "locations": [
+                "around_eyes"
+              ],
+              "severity": "mild",
+              "type": "dark_circles"
+            }
+          ],
+          "confidence_scores": {
+            "overall": 0.92,
+            "skin_tone": 0.95,
+            "undertone": 0.88
+          },
+          "face_shape": "Oval",
+          "facial_features": {
+            "eye_shape": "almond",
+            "face_symmetry": "good",
+            "lip_fullness": "medium"
+          },
+          "fitzpatrick_scale": "Type IV",
+          "hydration_level": "Normal",
+          "oil_level": "Normal",
+          "pore_size": "Medium",
+          "recommendations": [
+            "Use warm-toned foundation",
+            "Apply hydrating primer"
+          ],
+          "skin_tone": "Medium",
+          "skin_tone_hex": "#C8A882",
+          "skin_type": "Combination",
+          "texture_score": 0.75,
+          "undertone": "Warm"
+        }
+      },
+      "SkinConcernDetail": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "severity": {
+            "type": "string",
+            "title": "Severity"
+          },
+          "locations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Locations",
+            "default": []
+          },
+          "confidence": {
+            "type": "number",
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Confidence",
+            "default": 0.7
+          },
+          "detected_automatically": {
+            "type": "boolean",
+            "title": "Detected Automatically",
+            "default": true
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "severity"
+        ],
+        "title": "SkinConcernDetail",
+        "description": "Detailed skin concern information"
+      },
+      "StepCompletion": {
+        "properties": {
+          "session_id": {
+            "type": "integer",
+            "title": "Session Id"
+          },
+          "step_number": {
+            "type": "integer",
+            "title": "Step Number"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "issue_encountered": {
+            "type": "boolean",
+            "title": "Issue Encountered",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id",
+          "step_number"
+        ],
+        "title": "StepCompletion",
+        "description": "Mark step as complete"
+      },
+      "StyleBenefit": {
+        "properties": {
+          "benefit": {
+            "type": "string",
+            "title": "Benefit"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "benefit",
+          "description"
+        ],
+        "title": "StyleBenefit",
+        "description": "Individual benefit of the hairstyle"
+      },
+      "StyleSessionCreate": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Text describing outfit and look"
+          },
+          "accessories": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accessories",
+            "description": "Optional manual accessory selection"
+          }
+        },
+        "type": "object",
+        "title": "StyleSessionCreate"
+      },
+      "StyleSessionResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "outfit_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outfit Description"
+          },
+          "outfit_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outfit Type"
+          },
+          "outfit_colors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Outfit Colors",
+            "default": []
+          },
+          "accessories": {
+            "type": "object",
+            "title": "Accessories",
+            "default": {
+
+            }
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence",
+            "default": 0.9
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "StyleSessionResponse"
+      },
+      "Token": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "expires_in": {
+            "type": "integer",
+            "title": "Expires In"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "username": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Username"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "refresh_token",
+          "expires_in"
+        ],
+        "title": "Token"
+      },
+      "UserLogin": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "UserLogin",
+        "description": "User login with email and password"
+      },
+      "UserProfileResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          },
+          "skin_tone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skin Tone"
+          },
+          "skin_tone_hex": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skin Tone Hex"
+          },
+          "fitzpatrick_scale": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fitzpatrick Scale"
+          },
+          "undertone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Undertone"
+          },
+          "skin_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skin Type"
+          },
+          "texture_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Texture Score"
+          },
+          "hydration_level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hydration Level"
+          },
+          "oil_level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oil Level"
+          },
+          "pore_size": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pore Size"
+          },
+          "face_shape": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Face Shape"
+          },
+          "facial_features": {
+            "type": "object",
+            "title": "Facial Features",
+            "default": {
+
+            }
+          },
+          "skin_concerns": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Skin Concerns",
+            "default": []
+          },
+          "concern_details": {
+            "type": "object",
+            "title": "Concern Details",
+            "default": {
+
+            }
+          },
+          "allergies": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Allergies",
+            "default": []
+          },
+          "sensitivity_level": {
+            "type": "string",
+            "title": "Sensitivity Level",
+            "default": "normal"
+          },
+          "ingredient_preferences": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Ingredient Preferences",
+            "default": []
+          },
+          "avoid_ingredients": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Avoid Ingredients",
+            "default": []
+          },
+          "face_image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Face Image Url"
+          },
+          "last_analysis_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Analysis Date"
+          },
+          "analysis_confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Analysis Confidence"
+          },
+          "preferred_language": {
+            "type": "string",
+            "title": "Preferred Language",
+            "default": "en"
+          },
+          "enable_voice_guidance": {
+            "type": "boolean",
+            "title": "Enable Voice Guidance",
+            "default": true
+          },
+          "enable_notifications": {
+            "type": "boolean",
+            "title": "Enable Notifications",
+            "default": true
+          },
+          "dark_mode": {
+            "type": "boolean",
+            "title": "Dark Mode",
+            "default": false
+          },
+          "total_sessions": {
+            "type": "integer",
+            "title": "Total Sessions",
+            "default": 0
+          },
+          "products_count": {
+            "type": "integer",
+            "title": "Products Count",
+            "default": 0
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "created_at"
+        ],
+        "title": "UserProfileResponse",
+        "description": "Complete user profile response with enhanced skin analysis"
+      },
+      "UserRegister": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "title": "Password",
+            "description": "Password must be at least 8 characters"
+          },
+          "full_name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 2,
+            "title": "Full Name"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone",
+            "description": "Optional phone number"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password",
+          "full_name"
+        ],
+        "title": "UserRegister",
+        "description": "User registration with email and password"
+      },
+      "UserResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "age": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "auth_provider": {
+            "type": "string",
+            "title": "Auth Provider"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "is_verified": {
+            "type": "boolean",
+            "title": "Is Verified"
+          },
+          "is_premium": {
+            "type": "boolean",
+            "title": "Is Premium"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "last_login": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Login"
+          },
+          "profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UserProfileResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "auth_provider",
+          "is_active",
+          "is_verified",
+          "is_premium",
+          "created_at"
+        ],
+        "title": "UserResponse",
+        "description": "User response with profile"
+      },
+      "UserStats": {
+        "properties": {
+          "total_sessions": {
+            "type": "integer",
+            "title": "Total Sessions"
+          },
+          "products_in_vanity": {
+            "type": "integer",
+            "title": "Products In Vanity"
+          },
+          "upcoming_events": {
+            "type": "integer",
+            "title": "Upcoming Events"
+          },
+          "total_looks_saved": {
+            "type": "integer",
+            "title": "Total Looks Saved"
+          },
+          "favorite_products": {
+            "type": "integer",
+            "title": "Favorite Products"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_sessions",
+          "products_in_vanity",
+          "upcoming_events",
+          "total_looks_saved",
+          "favorite_products"
+        ],
+        "title": "UserStats",
+        "description": "User statistics for dashboard"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VanityListResponse": {
+        "properties": {
+          "products": {
+            "items": {
+              "$ref": "#/components/schemas/VanityProductResponse"
+            },
+            "type": "array",
+            "title": "Products"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "skip": {
+            "type": "integer",
+            "title": "Skip"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "products",
+          "total",
+          "skip",
+          "limit"
+        ],
+        "title": "VanityListResponse",
+        "description": "List of vanity products with pagination"
+      },
+      "VanityProductCreate": {
+        "properties": {
+          "product_name": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Product Name"
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProductCategory"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "shade": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shade"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "ingredients": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ingredients"
+          },
+          "purchase_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purchase Date"
+          },
+          "expiry_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiry Date"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tags"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_name"
+        ],
+        "title": "VanityProductCreate",
+        "description": "Simplified product input schema.\nUser only provides minimal info — AI enriches the rest."
+      },
+      "VanityProductResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProductCategory"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "shade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shade"
+          },
+          "product_image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Image Url"
+          },
+          "barcode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Barcode"
+          },
+          "purchase_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purchase Date"
+          },
+          "expiry_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiry Date"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "ingredients": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Ingredients",
+            "default": []
+          },
+          "is_safe_for_user": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Safe For User",
+            "default": true
+          },
+          "safety_warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Safety Warnings",
+            "default": []
+          },
+          "skin_safety_rating": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skin Safety Rating"
+          },
+          "allergy_conflicts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Allergy Conflicts",
+            "default": []
+          },
+          "product_source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Source",
+            "default": "auto"
+          },
+          "times_used": {
+            "type": "integer",
+            "title": "Times Used"
+          },
+          "last_used": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Used"
+          },
+          "is_favorite": {
+            "type": "boolean",
+            "title": "Is Favorite"
+          },
+          "rating": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rating"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tags",
+            "default": []
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "is_finished": {
+            "type": "boolean",
+            "title": "Is Finished"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "category",
+          "brand",
+          "product_name",
+          "shade",
+          "product_image_url",
+          "barcode",
+          "purchase_date",
+          "expiry_date",
+          "price",
+          "times_used",
+          "last_used",
+          "is_favorite",
+          "rating",
+          "notes",
+          "is_active",
+          "is_finished",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "VanityProductResponse",
+        "description": "Full vanity product info (merged AI + user data)"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
