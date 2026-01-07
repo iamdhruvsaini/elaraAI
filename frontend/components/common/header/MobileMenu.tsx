@@ -1,83 +1,169 @@
-import { Home, Compass, Sparkles, User, LogIn, UserPlus, PersonStanding } from "lucide-react";
+import {
+  Home,
+  Compass,
+  Sparkles,
+  User,
+  LogIn,
+  UserPlus,
+  PersonStanding,
+  Menu,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
 import { NavLink } from "./NavLink";
 
 interface Props {
   isAuthenticated: boolean;
-  closeMenu: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   onLogin: () => void;
   onLogout: () => void;
 }
 
 export const MobileMenu = ({
   isAuthenticated,
-  closeMenu,
+  open,
+  onOpenChange,
   onLogin,
   onLogout,
 }: Props) => {
-  return (
-    <div className="lg:hidden border-t border-border bg-white py-4">
-      <nav className="flex flex-col gap-1 mb-4">
-        <NavLink href="/home" icon={Home} onClick={closeMenu}>
-          Home
-        </NavLink>
-        <NavLink href="/profile" icon={PersonStanding} onClick={closeMenu}>
-          Profile
-        </NavLink>
-        <NavLink href="/how-it-works" icon={Compass} onClick={closeMenu}>
-          How It Works
-        </NavLink>
-      </nav>
+  const closeMenu = () => onOpenChange(false);
 
-      <div className="flex flex-col gap-2 pt-4 border-t border-border">
-        {isAuthenticated ? (
-          <>
-            <Button asChild className="bg-primary text-white" >
-              <Link href="/plan">
-                <Sparkles className="h-4 w-4" />
-                Create Plan
-              </Link>
-            </Button>
-            <Button variant="outline" asChild className="w-full">
-              <Link href="/profile">
-                <User className="h-4 w-4" />
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="lg:hidden min-h-[44px] min-w-[44px]"
+          aria-label="Toggle mobile menu"
+        >
+          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </Button>
+      </SheetTrigger>
+
+      <SheetContent
+        side="right"
+        className="w-[85vw] max-w-[400px] flex flex-col p-0"
+      >
+        <SheetHeader className="px-6 py-4 border-b">
+          <SheetTitle className="text-left text-xl font-bold">Menu</SheetTitle>
+        </SheetHeader>
+
+        <div className="flex-1 overflow-y-auto">
+          {/* Main Navigation Section */}
+          <nav className="px-3 py-4">
+            <p className="px-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Navigation
+            </p>
+            <div className="space-y-1">
+              <NavLink
+                href="/home"
+                icon={Home}
+                onClick={closeMenu}
+                variant="mobile"
+              >
+                Home
+              </NavLink>
+              <NavLink
+                href="/profile"
+                icon={PersonStanding}
+                onClick={closeMenu}
+                variant="mobile"
+              >
                 Profile
-              </Link>
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full"
-              onClick={() => {
-                onLogout();
-                closeMenu();
-              }}
-            >
-              Logout
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button
-              variant="outline"
-              className="bg-primary text-white" 
-              onClick={() => {
-                onLogin();
-                closeMenu();
-              }}
-            >
-              <LogIn className="h-4 w-4" />
-              Login
-            </Button>
-            <Button variant="ghost"  asChild className="bg-primary text-white" >
-              <Link href="/signup">
-                <UserPlus className="h-4 w-4" />
-                Sign Up
-              </Link>
-            </Button>
-          </>
-        )}
-      </div>
-    </div>
+              </NavLink>
+              <NavLink
+                href="/how-it-works"
+                icon={Compass}
+                onClick={closeMenu}
+                variant="mobile"
+              >
+                How It Works
+              </NavLink>
+            </div>
+          </nav>
+
+          <Separator className="my-2" />
+
+          {/* Actions Section */}
+          <div className="px-6 py-4 space-y-3">
+            <p className="pb-1 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Quick Actions
+            </p>
+            {isAuthenticated ? (
+              <>
+                <Button
+                  asChild
+                  className="w-full min-h-[48px] text-base font-semibold"
+                  size="lg"
+                >
+                  <Link href="/plan" onClick={closeMenu}>
+                    <Sparkles className="h-5 w-5 mr-2" />
+                    Create Plan
+                  </Link>
+                </Button>
+                <Button
+                  variant="secondary"
+                  asChild
+                  className="w-full min-h-[48px] text-base"
+                  size="lg"
+                >
+                  <Link href="/profile" onClick={closeMenu}>
+                    <User className="h-5 w-5 mr-2" />
+                    My Profile
+                  </Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full min-h-[48px] text-base text-destructive hover:text-destructive hover:bg-destructive/10"
+                  size="lg"
+                  onClick={() => {
+                    onLogout();
+                    closeMenu();
+                  }}
+                >
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  className="w-full min-h-[48px] text-base font-semibold"
+                  size="lg"
+                  onClick={() => {
+                    onLogin();
+                    closeMenu();
+                  }}
+                >
+                  <LogIn className="h-5 w-5 mr-2" />
+                  Login
+                </Button>
+                <Button
+                  variant="outline"
+                  asChild
+                  className="w-full min-h-[48px] text-base"
+                  size="lg"
+                >
+                  <Link href="/signup" onClick={closeMenu}>
+                    <UserPlus className="h-5 w-5 mr-2" />
+                    Sign Up
+                  </Link>
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 };
