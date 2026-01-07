@@ -125,41 +125,93 @@ class MakeupStep(BaseModel):
     tips: List[str] = []
 
 
+
+    
+class ProductRequirement(BaseModel):
+    """Enhanced product requirement with detailed specifications"""
+    category: str
+    specific_type: str
+    shade_requirement: Optional[str] = None
+    finish_type: Optional[str] = None  # matte, dewy, satin
+    priority: str = "required"  # required, optional, nice-to-have
+    alternative_options: List[str] = []
+    usage_tips: Union[str, List[str]] = ""  # Can be string or list
+    
+    @field_validator('usage_tips')
+    @classmethod
+    def convert_usage_tips_to_string(cls, v):
+        """Convert list to string if needed"""
+        if isinstance(v, list):
+            return " ".join(v) if v else ""
+        return v or ""
+
 class MakeupPlan(BaseModel):
     """Complete makeup plan"""
     occasion: Optional[str] = None
     scope: Optional[str] = None
     style: str
+    product_requirements: List[ProductRequirement]
     reasoning: Optional[str]
     intensity: Optional[str]
     steps: List[Dict]
     key_focus: Optional[List[str]]
     estimated_duration: Optional[int]
     difficulty: Optional[str]
-
+    tips: List[str] = []
+    warnings: List[str] = []
+    order_matters: bool = True
+    
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
 class ProductMatch(BaseModel):
     """Product matching result"""
     category: str
-    needed: bool
-    has_product: bool
+    needed: bool = True
+    has_product: bool = False
+    
+    # If product exists
     product_id: Optional[int] = None
     product_name: Optional[str] = None
-    substitution_available: bool = False
-    substitution_suggestion: Optional[str] = None
-    purchase_link: Optional[str] = None
+    brand: Optional[str] = None
+    shade: Optional[str] = None
+    finish: Optional[str] = None
+    
+    # Safety information
     is_safe: bool = True
     safety_warnings: List[str] = []
+    expiry_status: Optional[str] = None  # fresh, expiring_soon, expired
+    last_used: Optional[str] = None
+    
+    # Suitability scoring
+    suitability_score: float = 0.0  # 0-100
+    suitability_reasons: List[str] = []
+    
+    # Alternatives
+    substitution_available: bool = False
+    substitution_suggestions: List[str] = []
+    
+    # Shopping info
+    need_to_buy: bool = False
+    recommended_products: List[Dict] = []
+    estimated_price_range: Optional[str] = None
 
 
 # ============= Session Progress =============
 
-class StepCompletion(BaseModel):
+class StepCompletionResponse(BaseModel):
     """Mark step as complete"""
-    session_id: int
-    step_number: int
-    notes: Optional[str] = None
-    issue_encountered: bool = False
+    message: str
+    step_completed: int
+    current_step: int
+    total_steps: int
+    progress_percent: float
+    
+    next_step_preview: Optional[Dict] = None
+    estimated_time_remaining: Optional[int] = None
+    products_used: List[str] = []
+    
+    all_steps_complete: bool = False
+    session_complete: bool = False
 
 
 class MistakeReport(BaseModel):
@@ -195,7 +247,8 @@ class FinalLookAnalysis(BaseModel):
     suggestions: List[str] = []
     compliments: List[str] = []
 
-
+class StepCompletionRequest(BaseModel):
+    step_number: int
 # ============= Session Response =============
 
 class MakeupSessionResponse(BaseModel):
