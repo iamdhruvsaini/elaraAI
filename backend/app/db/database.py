@@ -1,6 +1,6 @@
 """
 GlamAI - Database Configuration
-Async + Sync SQLAlchemy setup with Neon SSL
+Async + Sync SQLAlchemy setup with SSL support
 """
 
 import ssl
@@ -11,26 +11,28 @@ from app.core.config import settings
 from loguru import logger
 
 
-
-
-
 # ============================================================
-# SSL CONTEXT (required for Neon connections)
+# SSL CONTEXT (required for Render/Neon connections)
 # ============================================================
 ssl_context = ssl.create_default_context()
+ssl_context.check_hostname = False      # Don't verify hostname
+ssl_context.verify_mode = ssl.CERT_NONE # Don't verify certificate
 
 # ============================================================
 # ASYNC ENGINE (used by FastAPI runtime)
 # ============================================================
-# Must use: postgresql+asyncpg://user:pass@host/dbname  (no ?sslmode=require)
+# Must use: postgresql+asyncpg://user:pass@host/dbname
 async_engine = create_async_engine(
     settings.DATABASE_URL,
     echo=False,
     future=True,
-    connect_args={"ssl": ssl_context},
-    # pool_pre_ping=True,
-    # pool_size=10,
-    # max_overflow=20,
+    connect_args={
+        "ssl": ssl_context,
+        "server_settings": {"jit": "off"}
+    },
+    pool_pre_ping=True,
+    pool_size=10,
+    max_overflow=20,
 )
 
 # ============================================================
@@ -41,7 +43,7 @@ sync_engine = create_engine(
     settings.DATABASE_URL_SYNC,
     echo=False,
     future=True,
-    # pool_pre_ping=True,
+    pool_pre_ping=True,
 )
 
 # ============================================================
@@ -67,24 +69,6 @@ Base = declarative_base()
 # ============================================================
 # DATABASE SESSION DEPENDENCY
 # ============================================================
-# async def get_db() -> AsyncSession:
-#     """
-#     FastAPI dependency that provides an async DB session.
-#     Handles commit, rollback, and close automatically.
-#     """
-#     async with AsyncSessionLocal() as session:
-#         try:
-#             yield session
-#             await session.commit()
-#         except Exception as e:
-#             logger.error(f"❌ Database session error: {e}")
-#             await session.rollback()
-#             raise
-#         finally:
-#             await session.close()
-# ✅ app/db/database.py
-
-
 async def get_db():
     """
     FastAPI dependency that yields a fully async SQLAlchemy session.
@@ -100,8 +84,6 @@ async def get_db():
         finally:
             await session.close()
 
-
-
 # ============================================================
 # INITIALIZATION HELPERS
 # ============================================================
@@ -111,13 +93,18 @@ async def init_db():
     Should be called once at startup (via lifespan or CLI).
     """
     logger.info("📦 Initializing database schema...")
-    async with async_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    logger.info("✅ Database schema initialized successfully.")
+    try:
+        async with async_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("✅ Database schema initialized successfully.")
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize database: {e}")
+        raise
 
 async def close_db():
     """
     Dispose all database connections gracefully.
     """
-    logger.info("🛑 Async engine connections closed.")
+    logger.info("🛑 Closing database connections...")
     await async_engine.dispose()
+    logger.info("✅ Database connections closed.")
