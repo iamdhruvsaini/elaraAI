@@ -4,7 +4,19 @@ import React, { useState, FormEvent } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { showToast } from "../toast/toast";
 import { useRouter } from "next/navigation";
+import { Sparkles, User, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 
+function GoogleIcon() {
+  return (
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+    </svg>
+  );
+}
 
 export default function Signup() {
   const { registerUser, registrationLoading, registrationError } = useAuth();
@@ -13,26 +25,27 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
 
-    // frontend-only validation
     if (password !== confirm) {
       setError("Passwords do not match");
       return;
     }
 
     try {
-      const data=await registerUser({
+      await registerUser({
         full_name: fullName,
         email,
         password
       });
-      router.replace("/");
-      showToast("Registration successful!", "success","bottom-right");
+      router.replace("/home");
+      showToast("Registration successful!", "success", "bottom-right");
     } catch (err: any) {
       setError("Registration failed");
       showToast("Registration failed", "error", "bottom-right");
@@ -40,109 +53,135 @@ export default function Signup() {
   }
 
   return (
-    <div className="flex items-start justify-center py-8 text-foreground">
-      <div className="w-full max-w-md">
-        <div className="bg-white text-card-foreground rounded-lg py-6 px-4 shadow-md border border-border">
-          <div className="text-center">
-            <h1 className="text-xl font-semibold">Let's Get to Know You</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Create an account to get started
-            </p>
+    <div className="min-h-[calc(100vh-80px)] flex flex-col justify-center py-6">
+      <div className="w-full max-w-[440px] mx-auto px-1">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-200">
+            <Sparkles className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold text-slate-800">Create Account</h1>
+          <p className="text-slate-500 mt-1">Start your personalized beauty journey</p>
+        </div>
+
+        {/* Card */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl shadow-purple-100/50">
+          {/* Google Button */}
+          <button
+            type="button"
+            className="w-full flex items-center gap-3 justify-center h-12 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-medium border border-slate-200 transition-colors"
+          >
+            <GoogleIcon />
+            <span>Continue with Google</span>
+          </button>
+
+          {/* Divider */}
+          <div className="my-5 flex items-center">
+            <div className="flex-1 h-px bg-slate-200" />
+            <span className="px-4 text-sm text-slate-400">or sign up with email</span>
+            <div className="flex-1 h-px bg-slate-200" />
           </div>
 
-          <div className="mt-4 space-y-3">
-            <button
-              type="button"
-              className="w-full flex items-center gap-3 justify-center rounded-md py-3 px-4 bg-primary text-white border border-border btn-focus-custom"
-            >
-              <svg
-                className="w-5 h-5"
-                viewBox="0 0 48 48"
-                fill="none"
-                aria-hidden
-              >
-                <path
-                  d="M44.5 20H24v8.5h11.7C34.2 32 30 35 24 35c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.6 0 6.9 1.4 9.3 3.8l6.3-6.3C36.7 3.7 30.7 1.5 24 1.5 11.1 1.5 1.5 11.1 1.5 24S11.1 46.5 24 46.5 46.5 36.9 46.5 24c0-1.6-.2-3.1-.5-4.5z"
-                  fill="#fff"
-                />
-              </svg>
-              <span className="font-medium">Continue with Google</span>
-            </button>
-
-            <div className="my-2 flex items-center">
-              <div className="flex-1 h-px bg-border" />
-              <span className="px-3 text-sm text-muted-foreground">OR</span>
-              <div className="flex-1 h-px bg-border" />
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-3">
-              <label className="block">
-                <span className="text-sm">Full Name</span>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-slate-700">Full Name</label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   type="text"
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="mt-1 block w-full text-black rounded-md border border-border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-foreground"
-                  placeholder="Full name"
+                  className="w-full h-12 pl-11 pr-4 rounded-xl border border-slate-200 bg-white/80 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-400/50 focus:border-pink-400 transition-all"
+                  placeholder="Your full name"
                   autoComplete="name"
                 />
-              </label>
+              </div>
+            </div>
 
-              <label className="block">
-                <span className="text-sm">Email</span>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-slate-700">Email</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 block w-full text-black rounded-md border border-border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-foreground"
+                  className="w-full h-12 pl-11 pr-4 rounded-xl border border-slate-200 bg-white/80 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-400/50 focus:border-pink-400 transition-all"
                   placeholder="you@example.com"
                   autoComplete="email"
                 />
-              </label>
+              </div>
+            </div>
 
-              <label className="block">
-                <span className="text-sm">Password</span>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-slate-700">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="mt-1 block w-full text-black rounded-md border border-border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-foreground"
+                  className="w-full h-12 pl-11 pr-12 rounded-xl border border-slate-200 bg-white/80 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-400/50 focus:border-pink-400 transition-all"
                   placeholder="Create a password"
                   autoComplete="new-password"
                 />
-              </label>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
 
-              <label className="block">
-                <span className="text-sm">Confirm Password</span>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-slate-700">Confirm Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
-                  type="password"
+                  type={showConfirm ? "text" : "password"}
                   required
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
-                  className="mt-1 block w-full text-black rounded-md border border-border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-foreground"
+                  className="w-full h-12 pl-11 pr-12 rounded-xl border border-slate-200 bg-white/80 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-400/50 focus:border-pink-400 transition-all"
                   placeholder="Confirm password"
                   autoComplete="new-password"
                 />
-              </label>
-              
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                >
+                  {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
 
-              <button
-                type="submit"
-                disabled={registrationLoading}
-                className="w-full rounded-md bg-primary text-white py-2 mt-1 btn-focus-custom"
-              >
-                {registrationLoading
-                  ? "Creating account..."
-                  : "Create account"}
-              </button>
-              {error && (
-                <p className="text-sm text-red-600 mt-2 text-center">{error}</p>
-              )}
-            </form>
-          </div>
+            <button
+              type="submit"
+              disabled={registrationLoading}
+              className="w-full h-12 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-purple-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all mt-2"
+            >
+              {registrationLoading ? "Creating account..." : "Create Account"}
+            </button>
+
+            {error && (
+              <p className="text-sm text-red-500 text-center bg-red-50 p-3 rounded-xl">{error}</p>
+            )}
+          </form>
+
+          {/* Footer */}
+          <p className="text-center text-slate-500 mt-6">
+            Already have an account?{" "}
+            <Link href="/login" className="text-pink-600 font-semibold hover:text-pink-700">
+              Sign In
+            </Link>
+          </p>
         </div>
       </div>
     </div>

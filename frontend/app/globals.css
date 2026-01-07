@@ -260,4 +260,14 @@
   .btn-shine:hover::before {
     @apply translate-x-full;
   }
+
+  /* Hide scrollbar for mobile category filters */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
