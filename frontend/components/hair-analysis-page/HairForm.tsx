@@ -116,7 +116,7 @@ const HairForm: React.FC<HairFormProps> = ({
           !formData.face_shape ||
           formData.outfit_description.trim().length < 5
         }
-        className="w-full h-14 bg-gradient-to-r from-pink-500 via-purple-500 to-violet-500 hover:from-pink-600 hover:via-purple-600 hover:to-violet-600 text-white font-bold text-lg rounded-2xl shadow-lg shadow-purple-200 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full h-14 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold text-base rounded-2xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isLoading ? (
           <span className="flex items-center gap-2">

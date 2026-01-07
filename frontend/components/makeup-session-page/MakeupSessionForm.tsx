@@ -172,7 +172,8 @@ const MakeupSessionForm: React.FC<MakeupSessionFormProps> = ({
             type="button"
             onClick={handleAddAccessory}
             disabled={!newAccessoryKey.trim() || !newAccessoryValue.trim()}
-            className="w-full h-9 bg-gradient-to-r from-purple-100 to-pink-100 hover:from-purple-200 hover:to-pink-200 text-purple-700 font-medium text-sm rounded-lg"
+            variant="outline"
+            className="w-full h-10 font-medium text-sm rounded-xl border-slate-200"
           >
             <Plus className="w-4 h-4 mr-1" />
             Add Accessory
@@ -189,7 +190,7 @@ const MakeupSessionForm: React.FC<MakeupSessionFormProps> = ({
           !formData.scope ||
           formData.outfit_description.trim().length < 5
         }
-        className="w-full h-14 bg-gradient-to-r from-pink-500 via-purple-500 to-violet-500 hover:from-pink-600 hover:via-purple-600 hover:to-violet-600 text-white font-bold text-lg rounded-2xl shadow-lg shadow-purple-200 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full h-14 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold text-base rounded-2xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isLoading ? (
           <span className="flex items-center gap-2">
@@ -199,7 +200,7 @@ const MakeupSessionForm: React.FC<MakeupSessionFormProps> = ({
         ) : (
           <span className="flex items-center gap-2">
             <Sparkles className="w-5 h-5" />
-            Start Makeup Session
+            Generate Makeup Plan
           </span>
         )}
       </Button>

@@ -1,7 +1,6 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Sparkles, TrendingUp, User } from "lucide-react";
+import { Sparkles, Package, Calendar } from "lucide-react";
 
 interface StatsCardsProps {
   totalSessions: number;
@@ -15,42 +14,24 @@ export const StatsCards = ({
   upcomingEvents,
 }: StatsCardsProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-      <Card className="shadow-md border-0 bg-gradient-to-br from-purple-500 to-purple-600 text-white">
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-purple-100 text-sm">Makeup Sessions</p>
-              <p className="text-3xl font-bold mt-1">{totalSessions}</p>
-            </div>
-            <Sparkles className="w-12 h-12 text-purple-200" />
-          </div>
-        </CardContent>
-      </Card>
+    <div className="grid grid-cols-3 gap-3">
+      <div className="bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl p-3 text-white shadow-lg shadow-purple-200">
+        <Sparkles className="w-6 h-6 text-white/80 mb-2" />
+        <p className="text-2xl font-bold">{totalSessions}</p>
+        <p className="text-xs text-white/80">Sessions</p>
+      </div>
 
-      <Card className="shadow-md border-0 bg-gradient-to-br from-pink-500 to-pink-600 text-white">
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-pink-100 text-sm">Products in Vanity</p>
-              <p className="text-3xl font-bold mt-1">{productsInVanity}</p>
-            </div>
-            <TrendingUp className="w-12 h-12 text-pink-200" />
-          </div>
-        </CardContent>
-      </Card>
+      <div className="bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-3 text-white shadow-lg shadow-purple-200">
+        <Package className="w-6 h-6 text-white/80 mb-2" />
+        <p className="text-2xl font-bold">{productsInVanity}</p>
+        <p className="text-xs text-white/80">Products</p>
+      </div>
 
-      <Card className="shadow-md border-0 bg-gradient-to-br from-indigo-500 to-indigo-600 text-white">
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-indigo-100 text-sm">Upcoming Events</p>
-              <p className="text-3xl font-bold mt-1">{upcomingEvents}</p>
-            </div>
-            <User className="w-12 h-12 text-indigo-200" />
-          </div>
-        </CardContent>
-      </Card>
+      <div className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl p-3 text-white shadow-lg shadow-indigo-200">
+        <Calendar className="w-6 h-6 text-white/80 mb-2" />
+        <p className="text-2xl font-bold">{upcomingEvents}</p>
+        <p className="text-xs text-white/80">Events</p>
+      </div>
     </div>
   );
 };

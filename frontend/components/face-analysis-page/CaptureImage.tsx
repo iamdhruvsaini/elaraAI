@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import CameraCapture from "./CameraCapture";
 import ResultsDisplay from "./ResultsDisplay";
 import AllergiesForm from "./AllergiesForm";
+import AnalysisLoader from "./AnalysisLoader";
 
 type FlowStep = "capture" | "results" | "allergies";
 
@@ -101,7 +102,11 @@ const CaptureImage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 flex flex-col">
+    <>
+      {/* Analysis Loader Overlay */}
+      <AnalysisLoader isAnalyzing={isAnalyzing} />
+
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b border-gray-200 px-4 py-3 flex items-center justify-between shadow-sm">
         <button
@@ -168,20 +173,20 @@ const CaptureImage: React.FC = () => {
 
       {/* Fixed Bottom Actions */}
       {currentStep === "capture" && capturedImage && (
-        <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg">
+        <div className="sticky bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 p-4 pb-6">
           <Button
             onClick={handleAnalyze}
             disabled={isAnalyzing}
-            className="w-full h-14 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold text-base rounded-xl shadow-lg"
+            className="w-full h-14 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold text-base rounded-2xl shadow-lg"
           >
             {isAnalyzing ? (
               <>
                 <Loader2 className="animate-spin w-5 h-5 mr-2" />
-                Analyzing...
+                Analyzing Your Skin...
               </>
             ) : (
               <>
-                Continue
+                Analyze My Face
                 <ArrowLeft className="w-5 h-5 ml-2 rotate-180" />
               </>
             )}
@@ -190,10 +195,10 @@ const CaptureImage: React.FC = () => {
       )}
 
       {currentStep === "results" && (
-        <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg space-y-2">
+        <div className="sticky bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 p-4 pb-6 space-y-3">
           <Button
             onClick={handleAddAllergies}
-            className="w-full h-14 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold text-base rounded-xl shadow-lg"
+            className="w-full h-14 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold text-base rounded-2xl shadow-lg"
           >
             Add Allergies
             <ArrowLeft className="w-5 h-5 ml-2 rotate-180" />
@@ -201,7 +206,7 @@ const CaptureImage: React.FC = () => {
           <Button
             onClick={handleSkipAllergies}
             variant="outline"
-            className="w-full h-12 text-sm font-medium"
+            className="w-full h-12 font-medium text-slate-700 rounded-xl border-slate-200"
           >
             Skip for Now
           </Button>
@@ -209,14 +214,14 @@ const CaptureImage: React.FC = () => {
       )}
 
       {currentStep === "allergies" && (
-        <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg space-y-2">
+        <div className="sticky bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 p-4 pb-6 space-y-3">
           <Button
             onClick={() => {
               const form = document.querySelector('form');
               if (form) form.requestSubmit();
             }}
             disabled={isUpdatingAllergies}
-            className="w-full h-14 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold text-base rounded-xl shadow-lg"
+            className="w-full h-14 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold text-base rounded-2xl shadow-lg"
           >
             {isUpdatingAllergies ? (
               <>
@@ -224,19 +229,20 @@ const CaptureImage: React.FC = () => {
                 Saving...
               </>
             ) : (
-              "Save & Continue to Profile"
+              "Save & Continue"
             )}
           </Button>
           <Button
             onClick={handleSkipAllergies}
             variant="outline"
-            className="w-full h-12 text-sm font-medium"
+            className="w-full h-12 font-medium text-slate-700 rounded-xl border-slate-200"
           >
             Skip for Now
           </Button>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 };
 

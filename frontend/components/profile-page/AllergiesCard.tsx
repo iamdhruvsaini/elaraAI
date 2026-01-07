@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, Edit, Loader2, Save, X, Plus } from "lucide-react";
 import { useUpdateAllergiesMutation } from "@/redux/services/profile/profileService";
@@ -89,198 +87,179 @@ export const AllergiesCard = ({
   // View Mode
   if (!isEditing) {
     return (
-      <Card className="shadow-xl border-0">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-red-600" />
-              <CardTitle className="text-lg">Allergies & Sensitivities</CardTitle>
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-lg">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-red-100 to-orange-100 rounded-lg flex items-center justify-center">
+              <AlertCircle className="w-4 h-4 text-red-500" />
             </div>
-            <Button
-              onClick={() => setIsEditing(true)}
-              variant="ghost"
-              size="sm"
-              className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
-            >
-              <Edit className="w-4 h-4 mr-1" />
-              Edit
-            </Button>
+            <h3 className="font-semibold text-slate-800">Allergies</h3>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Sensitivity Level */}
-          <div>
-            <p className="text-xs text-gray-500 mb-1">Sensitivity Level</p>
-            <Badge
-              variant="outline"
-              className={`capitalize ${
-                initialSensitivity === "highly_sensitive"
-                  ? "border-red-500 text-red-600"
-                  : initialSensitivity === "sensitive"
-                  ? "border-orange-500 text-orange-600"
-                  : "border-green-500 text-green-600"
-              }`}
-            >
-              {initialSensitivity?.replace("_", " ") || "Normal"}
-            </Badge>
-          </div>
+          <button
+            onClick={() => setIsEditing(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+          >
+            <Edit className="w-4 h-4" />
+            Edit
+          </button>
+        </div>
 
-          {/* Allergies List */}
-          <div>
-            <p className="text-xs text-gray-500 mb-2">Known Allergies</p>
-            {initialAllergies && initialAllergies.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {initialAllergies.map((allergy) => (
-                  <Badge
-                    key={allergy}
-                    variant="secondary"
-                    className="px-3 py-1 bg-red-50 text-red-700 border border-red-200 capitalize"
-                  >
-                    {allergy}
-                  </Badge>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-gray-500">No allergies listed</p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+        {/* Sensitivity Level */}
+        <div className="mb-4">
+          <p className="text-xs text-slate-500 mb-1.5">Sensitivity Level</p>
+          <span
+            className={`inline-flex px-3 py-1 rounded-full text-xs font-medium capitalize ${
+              initialSensitivity === "highly_sensitive"
+                ? "bg-red-100 text-red-700"
+                : initialSensitivity === "sensitive"
+                ? "bg-orange-100 text-orange-700"
+                : "bg-green-100 text-green-700"
+            }`}
+          >
+            {initialSensitivity?.replace("_", " ") || "Normal"}
+          </span>
+        </div>
+
+        {/* Allergies List */}
+        <div>
+          <p className="text-xs text-slate-500 mb-2">Known Allergies</p>
+          {initialAllergies && initialAllergies.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {initialAllergies.map((allergy) => (
+                <span
+                  key={allergy}
+                  className="px-3 py-1 bg-red-50 text-red-700 text-xs font-medium rounded-full capitalize"
+                >
+                  {allergy}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-400">No allergies listed</p>
+          )}
+        </div>
+      </div>
     );
   }
 
   // Edit Mode
   return (
-    <Card className="shadow-xl border-0 ring-2 ring-purple-500">
-      <CardHeader className="bg-purple-50 rounded-t-lg">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <AlertCircle className="w-5 h-5 text-purple-600" />
-            <CardTitle className="text-lg">Edit Allergies</CardTitle>
+    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-lg ring-2 ring-purple-400">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center">
+            <AlertCircle className="w-4 h-4 text-purple-600" />
           </div>
-          <div className="flex gap-2">
-            <Button
-              onClick={handleCancel}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-1"
-            >
-              <X className="w-4 h-4" />
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSave}
-              disabled={isUpdating}
-              size="sm"
-              className="bg-purple-600 hover:bg-purple-700 flex items-center gap-1"
-            >
-              {isUpdating ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Save className="w-4 h-4" />
-              )}
-              Save
-            </Button>
-          </div>
+          <h3 className="font-semibold text-slate-800">Edit Allergies</h3>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-6 pt-6">
-        {/* Sensitivity Level Selection */}
-        <div>
-          <p className="text-sm font-medium text-gray-700 mb-3">Sensitivity Level</p>
-          <div className="flex flex-wrap gap-2">
-            {SENSITIVITY_LEVELS.map((level) => (
-              <Button
-                key={level}
-                type="button"
-                variant={sensitivityLevel === level ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSensitivityLevel(level)}
-                className={`capitalize ${
-                  sensitivityLevel === level
-                    ? level === "highly_sensitive"
-                      ? "bg-red-500 hover:bg-red-600"
-                      : level === "sensitive"
-                      ? "bg-orange-500 hover:bg-orange-600"
-                      : "bg-green-500 hover:bg-green-600"
-                    : ""
-                }`}
-              >
-                {level.replace("_", " ")}
-              </Button>
-            ))}
-          </div>
+        <div className="flex gap-2">
+          <button
+            onClick={handleCancel}
+            className="w-8 h-8 flex items-center justify-center text-slate-500 hover:bg-slate-100 rounded-lg transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={isUpdating}
+            className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg"
+          >
+            {isUpdating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          </button>
         </div>
+      </div>
 
-        {/* Selected Allergies */}
-        <div>
-          <p className="text-sm font-medium text-gray-700 mb-3">Selected Allergies</p>
-          {selectedAllergies.length > 0 ? (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {selectedAllergies.map((allergy) => (
-                <Badge
-                  key={allergy}
-                  variant="secondary"
-                  className="px-3 py-1.5 bg-red-100 text-red-700 border border-red-300 capitalize cursor-pointer hover:bg-red-200 flex items-center gap-1"
-                  onClick={() => handleRemoveAllergen(allergy)}
-                >
-                  {allergy}
-                  <X className="w-3 h-3 ml-1" />
-                </Badge>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-gray-500 mb-4">No allergies selected</p>
-          )}
-        </div>
-
-        {/* Common Allergens */}
-        <div>
-          <p className="text-sm font-medium text-gray-700 mb-3">Common Allergens</p>
-          <div className="flex flex-wrap gap-2">
-            {COMMON_ALLERGENS.map((allergen) => (
-              <Button
-                key={allergen}
-                type="button"
-                variant={selectedAllergies.includes(allergen) ? "default" : "outline"}
-                size="sm"
-                onClick={() => handleToggleAllergen(allergen)}
-                className={`capitalize text-xs ${
-                  selectedAllergies.includes(allergen)
-                    ? "bg-purple-600 hover:bg-purple-700"
-                    : "hover:bg-purple-50"
-                }`}
-              >
-                {allergen}
-              </Button>
-            ))}
-          </div>
-        </div>
-
-        {/* Add Custom Allergen */}
-        <div>
-          <p className="text-sm font-medium text-gray-700 mb-3">Add Custom Allergen</p>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={customAllergen}
-              onChange={(e) => setCustomAllergen(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleAddCustom()}
-              placeholder="Enter allergen name..."
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
-            />
-            <Button
+      {/* Sensitivity Level Selection */}
+      <div className="mb-5">
+        <p className="text-xs font-medium text-slate-500 mb-2">Sensitivity Level</p>
+        <div className="flex gap-2">
+          {SENSITIVITY_LEVELS.map((level) => (
+            <button
+              key={level}
               type="button"
-              onClick={handleAddCustom}
-              disabled={!customAllergen.trim()}
-              size="sm"
-              className="bg-purple-600 hover:bg-purple-700"
+              onClick={() => setSensitivityLevel(level)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-all ${
+                sensitivityLevel === level
+                  ? level === "highly_sensitive"
+                    ? "bg-red-500 text-white"
+                    : level === "sensitive"
+                    ? "bg-orange-500 text-white"
+                    : "bg-green-500 text-white"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
             >
-              <Plus className="w-4 h-4" />
-            </Button>
-          </div>
+              {level.replace("_", " ")}
+            </button>
+          ))}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      {/* Selected Allergies */}
+      <div className="mb-5">
+        <p className="text-xs font-medium text-slate-500 mb-2">Selected Allergies</p>
+        {selectedAllergies.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {selectedAllergies.map((allergy) => (
+              <button
+                key={allergy}
+                onClick={() => handleRemoveAllergen(allergy)}
+                className="inline-flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full capitalize hover:bg-red-200 transition-colors"
+              >
+                {allergy}
+                <X className="w-3 h-3" />
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-slate-400">Tap allergens below to add</p>
+        )}
+      </div>
+
+      {/* Common Allergens */}
+      <div className="mb-5">
+        <p className="text-xs font-medium text-slate-500 mb-2">Common Allergens</p>
+        <div className="flex flex-wrap gap-1.5">
+          {COMMON_ALLERGENS.map((allergen) => (
+            <button
+              key={allergen}
+              type="button"
+              onClick={() => handleToggleAllergen(allergen)}
+              className={`px-2.5 py-1 rounded-lg text-xs font-medium capitalize transition-all ${
+                selectedAllergies.includes(allergen)
+                  ? "bg-purple-500 text-white"
+                  : "bg-slate-100 text-slate-600 hover:bg-purple-50"
+              }`}
+            >
+              {allergen}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Add Custom Allergen */}
+      <div>
+        <p className="text-xs font-medium text-slate-500 mb-2">Add Custom</p>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={customAllergen}
+            onChange={(e) => setCustomAllergen(e.target.value)}
+            onKeyPress={(e) => e.key === "Enter" && handleAddCustom()}
+            placeholder="Enter allergen..."
+            className="flex-1 h-10 px-3 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-pink-400/50 focus:border-pink-400"
+          />
+          <button
+            type="button"
+            onClick={handleAddCustom}
+            disabled={!customAllergen.trim()}
+            className="w-10 h-10 flex items-center justify-center bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl disabled:opacity-50"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };

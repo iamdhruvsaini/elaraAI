@@ -149,9 +149,10 @@ const HairResults: React.FC<HairResultsProps> = ({ result, onReset }) => {
       {/* Try Again Button */}
       <Button
         onClick={onReset}
-        className="w-full h-14 bg-white hover:bg-slate-50 text-slate-800 font-bold text-lg rounded-2xl shadow-md border border-slate-200 transition-all duration-300"
+        variant="outline"
+        className="w-full h-12 font-medium text-slate-700 rounded-xl border-slate-200"
       >
-        <RefreshCw className="w-5 h-5 mr-2" />
+        <RefreshCw className="w-4 h-4 mr-2" />
         Try Another Style
       </Button>
     </div>

@@ -4,127 +4,138 @@ import { useAuth } from "@/context/AuthContext";
 import React, { useState, FormEvent } from "react";
 import { showToast } from "../toast/toast";
 import { useRouter } from "next/navigation";
-
-
+import { Sparkles, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 
 function GoogleIcon() {
   return (
-    <svg className="w-5 h-5" viewBox="0 0 48 48" fill="none" aria-hidden>
-      <path d="M44.5 20H24v8.5h11.7C34.2 32 30 35 24 35c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.6 0 6.9 1.4 9.3 3.8l6.3-6.3C36.7 3.7 30.7 1.5 24 1.5 11.1 1.5 1.5 11.1 1.5 24S11.1 46.5 24 46.5 46.5 36.9 46.5 24c0-1.6-.2-3.1-.5-4.5z" fill="#fff" />
-    </svg>
-  );
-}
-
-function MailIcon() {
-  return (
     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M3 6.5v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M21 6.5l-9 7-9-7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-
-function PhoneIcon() {
-  return (
-    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M22 16.92V20a2 2 0 0 1-2.18 2 19.86 19.86 0 0 1-8.63-3.07A19.5 19.5 0 0 1 3.07 7.81 19.86 19.86 0 0 1 0 0.82 2 2 0 0 1 2 0h3.09a2 2 0 0 1 2 1.72c.12 1.02.44 2 .95 2.89a2 2 0 0 1-.45 2.02L6 8.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
     </svg>
   );
 }
 
 export default function Login() {
-  const { loginUser,loginLoading,loginError } = useAuth();
+  const { loginUser, loginLoading, loginError } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router=useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    const formData={
-      email,
-      password
-    }
-    if(!email || !password){
-      showToast("Missing Fields","error","bottom-right");
+    const formData = { email, password };
+    
+    if (!email || !password) {
+      showToast("Missing Fields", "error", "bottom-right");
       return;
     }
 
-    try{
+    try {
       await loginUser(formData);
-      router.replace("/");
-      showToast("Login Success","success","bottom-right");
-
-    }catch (error) {
-      showToast("Login Failed","error","bottom-right");
+      router.replace("/home");
+      showToast("Login Success", "success", "bottom-right");
+    } catch (error) {
+      showToast("Login Failed", "error", "bottom-right");
     }
-   
   }
 
   return (
-    <div className="flex items-start justify-center py-8 md:px-4 text-foreground">
-      <div className="w-full max-w-md">
-        <div className="bg-white text-card-foreground rounded-lg py-6 px-4 shadow-md border border-border">
-          <h1 className="text-2xl font-semibold text-center">Welcome Back!</h1>
-          <p className="text-sm text-muted-foreground text-center mt-2 mb-4">Sign in to continue</p>
+    <div className="min-h-[calc(100vh-80px)] flex flex-col justify-center py-6">
+      <div className="w-full max-w-[440px] mx-auto px-1">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-200">
+            <Sparkles className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold text-slate-800">Welcome Back!</h1>
+          <p className="text-slate-500 mt-1">Sign in to continue your beauty journey</p>
+        </div>
 
-          <div className="space-y-3">
-            <button
-              type="button"
-              className="w-full flex items-center gap-3 justify-center rounded-md py-3 px-4 bg-primary text-white border border-border btn-focus-custom"
-            >
-              <GoogleIcon /> <span className="font-medium">Continue with Google</span>
-            </button>
+        {/* Card */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl shadow-purple-100/50">
+          {/* Google Button */}
+          <button
+            type="button"
+            className="w-full flex items-center gap-3 justify-center h-12 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-medium border border-slate-200 transition-colors"
+          >
+            <GoogleIcon />
+            <span>Continue with Google</span>
+          </button>
 
+          {/* Divider */}
+          <div className="my-6 flex items-center">
+            <div className="flex-1 h-px bg-slate-200" />
+            <span className="px-4 text-sm text-slate-400">or continue with email</span>
+            <div className="flex-1 h-px bg-slate-200" />
           </div>
 
-          <div className="my-4 flex items-center">
-            <div className="flex-1 h-px bg-border" />
-            <span className="px-3 text-sm text-muted-foreground">OR</span>
-            <div className="flex-1 h-px bg-border" />
-          </div>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-slate-700">Email</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full h-12 pl-11 pr-4 rounded-xl border border-slate-200 bg-white/80 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-400/50 focus:border-pink-400 transition-all"
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                />
+              </div>
+            </div>
 
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <label className="block">
-              <span className="text-sm">Email</span>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-foreground"
-                placeholder="you@example.com"
-                autoComplete="email"
-              />
-            </label>
-
-            <label className="block">
-              <span className="text-sm">Password</span>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-foreground"
-                placeholder="Your password"
-                autoComplete="current-password"
-              />
-            </label>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-slate-700">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full h-12 pl-11 pr-12 rounded-xl border border-slate-200 bg-white/80 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-400/50 focus:border-pink-400 transition-all"
+                  placeholder="Your password"
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
 
             <button
               type="submit"
               disabled={loginLoading}
-              className="w-full rounded-md bg-primary text-primary-foreground py-2 mt-1 btn-focus-custom"
+              className="w-full h-12 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-purple-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all mt-2"
             >
-              {loginLoading ? "Signing in..." : "Sign in"}
+              {loginLoading ? "Signing in..." : "Sign In"}
             </button>
 
             {!!loginError && (
-              <p className="text-sm text-red-600 mt-2">
-                Login failed. Please check your credentials and try again.
+              <p className="text-sm text-red-500 text-center bg-red-50 p-3 rounded-xl">
+                Login failed. Please check your credentials.
               </p>
             )}
           </form>
 
+          {/* Footer */}
+          <p className="text-center text-slate-500 mt-6">
+            Don't have an account?{" "}
+            <Link href="/signup" className="text-pink-600 font-semibold hover:text-pink-700">
+              Sign Up
+            </Link>
+          </p>
         </div>
       </div>
     </div>

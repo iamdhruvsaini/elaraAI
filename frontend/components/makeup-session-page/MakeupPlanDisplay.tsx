@@ -222,7 +222,7 @@ const MakeupPlanDisplay: React.FC<MakeupPlanDisplayProps> = ({
         <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-bold text-slate-800">Products Needed</h3>
-            <button className="text-sm font-medium text-pink-500">View Details →</button>
+            <span className="text-xs font-medium text-pink-500">{productsNeeded.length} items</span>
           </div>
           <div className="space-y-2">
             {productsNeeded.map((product, idx) => (
@@ -236,28 +236,19 @@ const MakeupPlanDisplay: React.FC<MakeupPlanDisplayProps> = ({
       )}
 
       {/* Fixed Bottom Actions */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-100 p-4 space-y-3">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-100 p-4 pb-6 z-50">
         <div className="max-w-[440px] mx-auto space-y-3">
           <Button
             onClick={onStartSession}
             disabled={isLoading}
-            className="w-full h-14 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-bold text-lg rounded-2xl shadow-lg"
+            className="w-full h-14 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold text-base rounded-2xl shadow-lg"
           >
             <Volume2 className="w-5 h-5 mr-2" />
-            Start Makeup Session
+            Start Voice-Guided Session
           </Button>
 
-          {onSaveForLater && (
-            <button
-              onClick={onSaveForLater}
-              className="w-full text-center text-sm font-medium text-slate-500 hover:text-slate-700"
-            >
-              Save Plan for Later
-            </button>
-          )}
-
           <p className="text-center text-xs text-slate-400">
-            Step {Math.min(expandedSteps[0] || 1, plan.steps.length)} of {plan.steps.length}
+            {plan.steps.length} steps • ~{plan.steps.reduce((acc, s) => acc + (s.duration_minutes || 2), 0)} minutes
           </p>
         </div>
       </div>

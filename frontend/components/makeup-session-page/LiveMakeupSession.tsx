@@ -314,9 +314,9 @@ const LiveMakeupSession: React.FC<LiveMakeupSessionProps> = ({
             {/* Complete Makeup Button */}
             <Button
               onClick={handleCompleteMakeup}
-              className="w-full h-14 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-bold text-lg rounded-2xl shadow-lg"
+              className="w-full h-14 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold text-base rounded-2xl shadow-lg"
             >
-              COMPLETE MAKEUP
+              Complete Makeup ✨
             </Button>
           </div>
         </div>
