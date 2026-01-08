@@ -1,4 +1,4 @@
-import { MeResponse } from "@/redux/services/authentication/types";
+import { MeResponse, GoogleOAuthRequest } from "@/redux/services/authentication/types";
 
 export type AuthContextType = {
   currentUser: MeResponse | null;
@@ -13,6 +13,7 @@ export type AuthContextType = {
   loginLoading: boolean;
   loginError: unknown;
 
-  signInWithGoogle: () => Promise<void>;
+  signInWithGoogle: (googleData: GoogleOAuthRequest) => Promise<any>;
+  googleLoading: boolean;
   logout: () => void;
 };

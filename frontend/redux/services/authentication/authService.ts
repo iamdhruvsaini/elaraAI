@@ -7,6 +7,8 @@ import type {
   MeResponse,
   RegisterUserRequest,
   RegisterUserResponse,
+  GoogleOAuthRequest,
+  GoogleOAuthResponse,
 } from "./types";
 import { baseQueryWithAuth } from "@/redux/baseQuery";
 
@@ -45,7 +47,13 @@ export const authApi = createApi({
       }),
     }),
 
-
+    googleOAuth: builder.mutation<GoogleOAuthResponse, GoogleOAuthRequest>({
+      query: (body) => ({
+        url: "auth/oauth/google",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -53,7 +61,8 @@ export const {
   useRegisterUserMutation,
   useLoginUserMutation,
   useLazyGetMeQuery,
-  useCaptureUserImageMutation
-  } = authApi;
+  useCaptureUserImageMutation,
+  useGoogleOAuthMutation,
+} = authApi;
 
 export default authApi;

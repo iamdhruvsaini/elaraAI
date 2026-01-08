@@ -11,6 +11,7 @@ import {
   useLoginUserMutation,
   useRegisterUserMutation,
   useLazyGetMeQuery,
+  useGoogleOAuthMutation,
 } from "@/redux/services/authentication/authService";
 import type {
   LoginUserRequest,
@@ -18,6 +19,8 @@ import type {
   RegisterUserResponse,
   LoginUserResponse,
   MeResponse,
+  GoogleOAuthRequest,
+  GoogleOAuthResponse,
 } from "@/redux/services/authentication/types";
 import { AuthContextType } from "@/lib/types/authContext-types";
 
@@ -56,6 +59,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const [loginUserMutation, { isLoading: loginLoading, error: loginError }] =
     useLoginUserMutation();
+
+  const [googleOAuthMutation, { isLoading: googleLoading }] =
+    useGoogleOAuthMutation();
 
   const [getMe] = useLazyGetMeQuery();
 
@@ -152,6 +158,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     clearAuth();
   };
 
+  /* =======================
+     Google OAuth
+  ======================= */
+
+  const signInWithGoogle = async (googleData: GoogleOAuthRequest) => {
+    const response = await googleOAuthMutation(googleData).unwrap();
+    if (!response) return response;
+
+    saveTokens(response);
+    setIsAuthenticated(true);
+
+    // background fetch
+    getMe()
+      .unwrap()
+      .then((me) => setCurrentUser(me))
+      .catch(() => clearAuth());
+
+    return response;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -167,7 +193,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         loginLoading,
         loginError,
 
-        signInWithGoogle: async () => {},
+        signInWithGoogle,
+        googleLoading,
         logout,
       }}
     >
