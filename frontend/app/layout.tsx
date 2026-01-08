@@ -26,16 +26,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${outfit.className} antialiased flex flex-col px-4 `}>
-        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
+        <GoogleOAuthProvider
+          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}
+        >
           <ReduxProvider>
             <AuthProvider>
               <Toaster position="top-right" />
-              <Header />
-              
-                <main className="overflow-hidden max-w-[440px] sm:mx-auto">
+              <div className="flex flex-col px-4 min-h-screen">
+                <Header />
+
+                <main className="max-w-[440px] w-full sm:mx-auto">
                   {children}
                 </main>
-            
+              </div>
             </AuthProvider>
           </ReduxProvider>
         </GoogleOAuthProvider>

@@ -101,8 +101,8 @@ const ProfilePage = () => {
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
       <div className="w-full max-w-[440px] mx-auto px-4 pb-8">
         {/* Header */}
-        <div className="sticky top-0 z-10 bg-gradient-to-br from-pink-50 via-white to-purple-50 pt-4 pb-4">
-          <div className="flex items-center gap-3 mb-4">
+        <div className="z-10 pt-4 pb-4">
+          <div className="flex items-center gap-3 mb-4 bg-white/60 backdrop-blur-sm rounded-2xl p-3 shadow-sm">
             <button 
               onClick={() => router.push("/home")}
               className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-sm hover:bg-white transition-colors"
@@ -162,15 +162,7 @@ const ProfilePage = () => {
           />
         </div>
 
-        {/* Complete Badge */}
-        <div className="mt-8 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-4 text-center border border-emerald-100">
-          <div className="flex items-center justify-center gap-2 mb-1">
-            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-          </div>
-          <p className="text-sm font-medium text-emerald-700">Profile Setup Complete! 🎉</p>
-        </div>
+        
       </div>
     </div>
   );

@@ -19,8 +19,9 @@ from sqlalchemy import text
 
 from app.core.config import settings
 from app.db.database import async_engine, init_db, close_db
-from app.api.v1.endpoints import auth, profile, makeup, vanity, events
+from app.api.v1.endpoints import auth, profile, makeup, vanity, events,speech
 from app.api.v1 import api_v1_router
+
 
 
 # ============================================================
@@ -171,8 +172,12 @@ app.include_router(
     prefix=f"{settings.API_V1_PREFIX}/events",
     tags=["Events & Scheduling"],
 )
+app.include_router(
+    speech.router,
+    prefix=f"{settings.API_V1_PREFIX}/speech",
+    tags=["Speech"],
+)
 app.include_router(api_v1_router)
-
 # ============================================================
 # EXCEPTION HANDLERS
 # ============================================================

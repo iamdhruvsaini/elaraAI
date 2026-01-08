@@ -274,7 +274,7 @@ const LiveMakeupSession: React.FC<LiveMakeupSessionProps> = ({
         </main>
 
         {/* Fixed Bottom Controls */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-100 p-4 pb-6 safe-area-inset-bottom">
+        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-100 p-4 pb-6 safe-area-inset-bottom z-50">
           <div className="max-w-[440px] mx-auto space-y-3">
             {/* Voice & Pause Controls */}
             <div className="flex gap-3">
